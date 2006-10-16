@@ -32,15 +32,13 @@
 $:.unshift File.dirname(__FILE__)
 
 # require_once TEXY_DIR.'libs/url.php';            // object encapsulate of URL
-# require_once TEXY_DIR.'libs/module.php';         // Texy! module base class
-# require_once TEXY_DIR.'libs/parser.php';         // Texy! parser
-# require_once TEXY_DIR.'libs/html.wellform.php';
 
 
 require 'utilities'
 require 'constants'
 require 'dom'
 require 'html'
+require 'html_well_form'
 require 'modifier'
 require 'module'
 require 'parser'
@@ -250,6 +248,17 @@ class Texy
     protected :init
 
 
+
+    # Translate all white spaces (\t \n \r space) to meta-spaces \x15-\x18
+    # which are ignored by some formatting functions
+    def self.freeze_spaces(string)
+        string.tr(" \t\r\n", "\x15\x16\x17\x18")
+    end
+
+    # Revert meta-spaces back to normal spaces
+    def self.unfreeze_spaces(string)
+        string.tr("\x15\x16\x17\x18", " \t\r\n")
+    end
 
     # Remove special controls chars used by Texy!
     def self.wash(text)

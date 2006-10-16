@@ -1,7 +1,7 @@
 require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/texy'
 
-class BasicTest < Test::Unit::TestCase
+class TexyTest < Test::Unit::TestCase
 
     # Assert that result produced by Texy is equal to expected result.
     def assert_texy(expected, source)

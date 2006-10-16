@@ -346,7 +346,7 @@ class Texy
         def to_html
             html = super
 
-            html = HtmlWellForm.new.process(html)
+            html = Html::WellForm.new.process(html)
 
             # Post-process.
             texy.modules.each do |mod|
