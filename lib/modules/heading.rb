@@ -61,8 +61,8 @@ class Texy
             @range_surround = [10, 0]
             self.title = nil
 
-            @delta_underline = nil
-            @delta_surround = nil
+            @elements_underline = []
+            @elements_surround = []
 
             text
         end
@@ -86,8 +86,7 @@ class Texy
             el = Texy::HeadingElement.new(texy)
             el.level = LEVELS[m_line]
             if balancing == :dynamic
-                # (rane) FIXME: This shlud be reference to @delta_underline
-                el.delta_level = @delta_underline
+                @elements_underline < el
             end
 
             el.modifier.set_properties(m_mod1, m_mod2, m_mod3, m_mod4)
@@ -107,36 +106,42 @@ class Texy
             # dynamic headings balancing
             @range_underline[0] = [@range_underline[0], el.level].min
             @range_underline[1] = [@range_underline[1], el.level].max
-            @delta_underline = -@rangeUnderline[0]
-            @delta_surround =
-                @range_surround[0] + (@range_underline[1] ? (@range_underline[1] - @range_underline[0] + 1) : 0);
+
+            delta = -@rangeUnderline[0]
+            @elements_underline.each do |el|
+                el.delta_level = delta
+            end
+
+            delta = @range_surround[0] + (@range_underline[1] ? (@range_underline[1] - @range_underline[0] + 1) : 0);
+            @elements_surround.each do |el|
+                el.delta_level = delta
+            end
         end
 
 
 
-        /**
-         * Callback function (for blocks)
-         *
-         *            ### Heading .(title)[class]{style}>
-         *
-         */
-        public function processBlockSurround($parser, $matches)
-        {
-            list(, $mLine, $mChar, $mContent, $mMod1, $mMod2, $mMod3, $mMod4) = $matches;
-            //    [1] => ###
-            //    [2] => ...
-            //    [3] => (title)
-            //    [4] => [class]
-            //    [5] => {style}
-            //    [6] => >
+        # Callback function (for blocks)
+        #
+        #   ### Heading .(title)[class]{style}>
+        #
+        def process_block_surround(parser, matches)
+            m_line, m_char, m_content, m_mod1, m_mod2, m_mod3, m_mod4 = matches[1..-1]
+            # [1] => ###
+            # [2] => ...
+            # [3] => (title)
+            # [4] => [class]
+            # [5] => {style}
+            # [6] => >
 
-            $el = new TexyHeadingElement($this->texy);
-            $el->level = 7 - min(7, max(2, strlen($mLine)));
-            if ($this->balancing == self::DYNAMIC)
-                $el->deltaLevel = & $this->_deltaSurround;
+            el = Texy::HeadingElement.new(texy)
+            el.level = 7 - [7, [2, m_line.length].max].min
 
-            $el->modifier->setProperties($mMod1, $mMod2, $mMod3, $mMod4);
-            $el->parse(trim($mContent));
+            if balancing == :dynamic
+                @elements_surround << el
+            end
+
+            el.modifier.set_properties(m_mod1, m_mod2, m_mod3, m_mod4)
+            el.parse(m_content.strip)
 
             if ($this->handler)
                 if (call_user_func_array($this->handler, array($el)) === FALSE) return;
@@ -152,11 +157,7 @@ class Texy
             $this->_deltaSurround    = -$this->_rangeSurround[0] + ($this->_rangeUnderline[1] ? ($this->_rangeUnderline[1] - $this->_rangeUnderline[0] + 1) : 0);
 
         }
-
-
-
-
-    } // TexyHeadingModule
+    end
 
 
 
