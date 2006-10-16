@@ -3,41 +3,24 @@ require File.dirname(__FILE__) + '/../lib/texy'
 
 class TexyTest < Test::Unit::TestCase
 
-    # Assert that result produced by Texy is equal to expected result.
-    def assert_texy(expected, source)
-        texy = Texy.new
+    FIXTURES_DIR = File.dirname(__FILE__) + '/fixtures'
 
-        assert_equal expected, texy.process(source)
+    def setup
+        @texy = Texy.new
+        @texy.notice_shown = true # disable notice
+        @texy.formatter_module.line_wrap = 0 # disable line wrapping
     end
 
+    # Generate one test method for each fixture found.
+    Dir.glob("#{FIXTURES_DIR}/*.texy") do |texy_file|
+        method_name = File.basename(texy_file).gsub('.texy', '')
+
+        define_method "test_#{method_name}".to_sym do
+            source = File.read texy_file
+            expected = File.read texy_file.gsub('.texy', '.html')
 
 
-    def test_paragraphs
-        source = <<END
-První odstavec lorem ipsum dolor sit amet.
-
-Druhý odstavec, který tvoří jeden řádek.
-A druhý řádek textu. Texy! je spojí.
-END
-
-        expected = <<END
-<p>První odstavec lorem ipsum dolor sit amet.</p>
-
-<p>Druhý odstavec, který tvoří jeden řádek.
-A druhý řádek textu. Texy! je spojí.</p>
-END
-
-        assert_texy expected, source
+            assert_equal expected, @texy.process(source)
+        end
     end
-
-#     def test_complex
-#         texy = Texy.new
-#
-#         source = File.read File.dirname(__FILE__) + '/fixtures/complex.texy'
-#
-#         expected = File.read File.dirname(__FILE__) + '/fixtures/complex.html'
-#         actual = texy.process source
-#
-#         assert_equal expected, actual
-#     end
 end

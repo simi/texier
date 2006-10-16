@@ -265,4 +265,18 @@ class Texy
         text.gsub /[\x15-\x1F]+/, ''
     end
 
+    def self.hash_opening?(hash)
+        hash[1].chr == "\x1F"
+    end
+
+
+
+    def notice_shown=(b)
+        @notice_shown = b
+    end
+
+    def notice_shown?
+        @notice_shown ||= false
+        @notice_shown
+    end
 end

@@ -55,7 +55,7 @@ class Texy
             s.gsub!('&quot;', '"') unless in_quotes
 
             # preserve numeric entities?
-            s.gsub!(/&amp;([a-zA-Z0-9]+|#x[0-9a-fA-F]+|#[0-9]+);/, '&$1;') if entity
+            s.gsub!(/&amp;([a-zA-Z0-9]+|#x[0-9a-fA-F]+|#[0-9]+);/, '&\1;') if entity
 
             s
         end
@@ -77,7 +77,7 @@ class Texy
             end
 
             # preserve numeric entities
-            html.gsub!(/&([a-zA-Z0-9]+);/, '&amp;$1;')
+            html.gsub!(/&([a-zA-Z0-9]+);/, '&amp;\1;')
 
             # these are only allowed named entites
             ALLOWED_ENTITIES.each do |from, to|
@@ -140,7 +140,7 @@ class Texy
             tags.reverse.inject('') do |result, (tag, attrs)|
                 next if tag.empty? || EMPTY[tag] || attrs[EMPTY_TAG]
                 result + "</#{tag}>"
-            end
+            end.to_s
         end
     end
 end

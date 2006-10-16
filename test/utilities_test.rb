@@ -16,4 +16,13 @@ class UtilitiesTest < Test::Unit::TestCase
             {'foo' => 'hello', 'bar' => 'world'}.assign_to_all('whazup')
         )
     end
+
+    def test_string_word_wrap
+        assert_equal(
+            "this is very long sting\nthat should be wrapped",
+            'this is very long sting that should be wrapped'.word_wrap(25)
+        )
+
+        assert_equal('short string', 'short string'.word_wrap(25))
+    end
 end

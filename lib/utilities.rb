@@ -1,3 +1,15 @@
+class String
+    # Emulation of PHP's word wrap function.
+    def word_wrap(width)
+        self.gsub(/\n/, "\n\n").gsub(/(.{1,#{width}})(\s+|$)/, "\\1\n").strip
+    end
+
+    # Remove HTML tags, leave only plain text.
+    def strip_html_tags
+        self.gsub(/<[^>]>/, '')
+    end
+end
+
 class Symbol
     # Turns the symbol into a simple proc, which is especially useful for enumerations. Examples:
     #
