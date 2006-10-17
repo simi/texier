@@ -64,20 +64,21 @@ class Texy
 
                 break if @offset >= min_pos
 
-                keys.dup.each_with_index do |key, index|
+                keys.each_with_index do |key, index|
+                    next unless key
                     next unless arr_pos[key]
 
                     if arr_pos[key] < @offset
                         delta = arr_pos[key] == -2 ? 1 :0
 
                         # (rane) Take substring of input string to emulate php's preg_match, which has
-                        # offset parameter. (FIXME: this solution is not exactly correct see
-                        # http://www.php.net/manual/en/function.preg-match.php, but perhaps it will work)
+                        # "offset" parameter. (FIXME: this solution is not completely correct - see
+                        # http://www.php.net/manual/en/function.preg-match.php - but perhaps it will work)
                         if match_data = pb[key][:pattern].match(text[(@offset + delta)..-1])
                             arr_matches[key] = match_data.to_a
                             arr_pos[key] = match_data.begin(0) + @offset + delta # (rane) add offset to obtain absolute position
                         else
-                            keys.delete_at index
+                            keys[index] = nil
                             next
                         end
                     end
