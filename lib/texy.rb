@@ -200,15 +200,13 @@ class Texy
     #
     # Format:
     #   {:handler => proc,
-    #    :pattern => regular expression,
-    #    :user => user arguments}
+    #    :pattern => regular expression}
     attr_reader :line_patterns
 
-    def register_line_pattern(handler, pattern, user_args = nil)
+    def register_line_pattern(handler, pattern)
         @line_patterns << {
             :handler => handler,
-            :pattern => pattern,
-            :user => user_args
+            :pattern => pattern
         }
     end
 
@@ -216,17 +214,15 @@ class Texy
     #
     # Format:
     #   {:handler => proc,
-    #    :pattern => regular expression,
-    #    :user => user arguments}
+    #    :pattern => regular expression}
     attr_reader :block_patterns
 
-    def register_block_pattern(handler, pattern, user_args = nil)
+    def register_block_pattern(handler, pattern)
         # raise ArgumentError, 'Not a block pattern: ' + pattern.source unless /(.)\^.*\$\\1[a-z]*/i =~ pattern
 
         @block_patterns << {
             :handler => handler,
-            :pattern => Regexp.new(pattern.source, pattern.options | Regexp.MULTILINE), # force multiline!
-            :user => user_args
+            :pattern => pattern
         }
     end
 

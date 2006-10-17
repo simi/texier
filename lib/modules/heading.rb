@@ -29,29 +29,24 @@ class Texy
             self.balancing = :dynamic
 
             self.allowed = {
-                :surrounded = true,
-                :underlined = true
+                :surrounded => true,
+                :underlined => true
             }
-
-#             private $_rangeUnderline;
-#             private $_deltaUnderline;
-#             private $_rangeSurround;
-#             private $_deltaSurround;
         end
 
         # Module initialization.
-        def init()
-            if allowed[:underlined]
+        def init
+            if allowed && allowed[:underlined]
                 texy.register_block_pattern(
                     method(:process_block_underline),
-                    /^(\S.*?)#{PATTERN_MODIFIER_H}?\n(\#|\*|\=|\-){3,}?$/
+                    /^(\S.*?)#{PATTERN_MODIFIER_H}?\n(#|\*|=|-){3,}$/
                 )
             end
 
-            if allowed[:surrounded]
+            if allowed && allowed[:surrounded]
                 texy.register_block_pattern(
                     method(:process_block_surround),
-                    /^((\#|\=){2,}?)(?!\\2)(.+?)\\2*?#{PATTERN_MODIFIER_H}?()$/
+                    /^((#|=){2,})(?!\2)(.+?)\2*#{PATTERN_MODIFIER_H}?()$/ # (rane) TODO: wtf is the final "()" doing there?
                 )
             end
         end
@@ -73,23 +68,14 @@ class Texy
         #   -------------------------------
         #
         def process_block_underline(parser, matches)
-            m_content, m_mod1, m_mod2, m_mod3, m_mod4, m_line = matches[1..-1]
-            # matches:
-            #    [1] => ...
-            #    [2] => (title)
-            #    [3] => [class]
-            #    [4] => {style}
-            #    [5] => >
-            #
-            #    [6] => ...
+            m_content, m_line = matches.values_at(1, -1)
 
             el = Texy::HeadingElement.new(texy)
             el.level = LEVELS[m_line]
-            if balancing == :dynamic
-                @elements_underline < el
-            end
 
-            el.modifier.set_properties(m_mod1, m_mod2, m_mod3, m_mod4)
+            @elements_underline << el if balancing == :dynamic
+
+            el.modifier.set_properties(*matches[2..-2])
             el.parse(m_content.strip)
 
             if handler
@@ -99,15 +85,13 @@ class Texy
             parser.element.append_child(el)
 
             # document title
-            if title.nil?
-                self.title = el.to_html.strip_html_tags
-            end
+            self.title ||= el.to_html.strip_html_tags
 
             # dynamic headings balancing
             @range_underline[0] = [@range_underline[0], el.level].min
             @range_underline[1] = [@range_underline[1], el.level].max
 
-            delta = -@rangeUnderline[0]
+            delta = -@range_underline[0]
             @elements_underline.each do |el|
                 el.delta_level = delta
             end
@@ -125,38 +109,35 @@ class Texy
         #   ### Heading .(title)[class]{style}>
         #
         def process_block_surround(parser, matches)
-            m_line, m_char, m_content, m_mod1, m_mod2, m_mod3, m_mod4 = matches[1..-1]
-            # [1] => ###
-            # [2] => ...
-            # [3] => (title)
-            # [4] => [class]
-            # [5] => {style}
-            # [6] => >
+            m_line, m_char, m_content = matches[1..3]
 
             el = Texy::HeadingElement.new(texy)
             el.level = 7 - [7, [2, m_line.length].max].min
 
-            if balancing == :dynamic
-                @elements_surround << el
-            end
+            @elements_surround << el if balancing == :dynamic
 
-            el.modifier.set_properties(m_mod1, m_mod2, m_mod3, m_mod4)
+            el.modifier.set_properties(*matches[4..-1])
             el.parse(m_content.strip)
 
-            if ($this->handler)
-                if (call_user_func_array($this->handler, array($el)) === FALSE) return;
+            if handler
+                return unless handler.call(el)
+            end
 
-            $parser->element->appendChild($el);
+            parser.element.append_child(el)
 
-            // document title
-            if ($this->title === NULL) $this->title = strip_tags($el->toHtml());
+            # document title
+            self.title ||= el.to_html.strip_html_tags
 
-            // dynamic headings balancing
-            $this->_rangeSurround[0] = min($this->_rangeSurround[0], $el->level);
-            $this->_rangeSurround[1] = max($this->_rangeSurround[1], $el->level);
-            $this->_deltaSurround    = -$this->_rangeSurround[0] + ($this->_rangeUnderline[1] ? ($this->_rangeUnderline[1] - $this->_rangeUnderline[0] + 1) : 0);
 
-        }
+            # dynamic headings balancing
+            @range_surround[0] = [@range_surround[0], el.level].min
+            @range_surround[1] = [@range_surround[1], el.level].max
+
+            delta = -@range_surround[0] + (@range_underline[1] != 0 ? @range_underline[1] - @range_underline[0] + 1 : 0)
+            @elements_surround.each do |el|
+                el.delta_level = delta
+            end
+        end
     end
 
 
@@ -175,7 +156,7 @@ class Texy
 
         protected
             def generate_tags(tags)
-                self.tag = 'h' . [6, [1, level + delta_level + texy.heading_module.top].max].min
+                self.tag = 'h' + [6, [1, level + delta_level + texy.heading_module.top].max].min.to_s
                 super
             end
     end

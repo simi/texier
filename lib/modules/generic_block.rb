@@ -26,7 +26,7 @@ class Texy
             str_blocks.each do |str|
                 str.strip!
                 next if str.empty?
-                process_single_block parser, str
+                process_single_block(parser, str)
             end
         end
 

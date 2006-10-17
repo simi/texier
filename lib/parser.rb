@@ -53,7 +53,7 @@ class Texy
             @offset = 0
 
             pb = texy.block_patterns
-            keys = 0..pb.size - 1
+            keys = (0..pb.size - 1).to_a
             arr_matches = []
             arr_pos = Array.new(pb.size, -1)
 
@@ -64,15 +64,18 @@ class Texy
 
                 break if @offset >= min_pos
 
-                keys.each_with_index do |key, index|
+                keys.dup.each_with_index do |key, index|
                     next unless arr_pos[key]
 
                     if arr_pos[key] < @offset
-                        delta = if arr_pos[key] == -2 then 1 else 0 end
+                        delta = arr_pos[key] == -2 ? 1 :0
 
+                        # (rane) Take substring of input string to emulate php's preg_match, which has
+                        # offset parameter. (FIXME: this solution is not exactly correct see
+                        # http://www.php.net/manual/en/function.preg-match.php, but perhaps it will work)
                         if match_data = pb[key][:pattern].match(text[(@offset + delta)..-1])
                             arr_matches[key] = match_data.to_a
-                            arr_pos[key] = match_data.begin(0)
+                            arr_pos[key] = match_data.begin(0) + @offset + delta # (rane) add offset to obtain absolute position
                         else
                             keys.delete_at index
                             next
@@ -86,25 +89,25 @@ class Texy
 
                     if arr_pos[key] < min_pos
                         min_pos = arr_pos[key]
-                        min_ley = key
+                        min_key = key
                     end
                 end
 
-                next_offset = if min_key == -1 then text.length else arr_pos[min_key] end
+                next_offset = (min_key == -1) ? text.length : arr_pos[min_key]
 
                 if next_offset > @offset
-                    string = text[@offset..next_offset]
+                    string = text[@offset, next_offset - @offset]
                     @offset = next_offset
 
-                    texy.generic_block_module.process_block self, string
+                    texy.generic_block_module.process_block(self, string)
                     next
                 end
 
-                px = pb[min_key]
                 matches = arr_matches[min_key]
+
                 @offset = arr_pos[min_key] + matches[0].length + 1 # 1 = \n
 
-                ok = px[:handler].call(self, matches, *px[:user])
+                ok = pb[min_key][:handler].call(self, matches)
 
                 if ok == false || @offset <= arr_pos[min_key] # module rejects text
                     @offset = arr_pos[min_key] # turn offset back
@@ -128,7 +131,7 @@ class Texy
             offset = 0
             hash_str_len = 0 # (rane) FIXME: this is not used. what is it for?
             pl = texy.line_patterns
-            keys = 0..pl.size - 1
+            keys = (0..pl.size - 1).to_a
             arr_matches = []
             arr_pos = Array.new(pl.size, -1)
 
@@ -139,12 +142,12 @@ class Texy
 
                 keys.each_with_index do |key, index|
                     if arr_pos[key] < offset
-                        delta = if arr_pos[key] == -2 then 1 else 0 end
+                        delta = arr_pos[key] == -2 ? 1 : 0
 
                         if match_data = pl[key][:pattern].match(text[(offset + delta)..-1])
                             next if match_data[0].empty?
-                            arr_pos[key] = match_data.begin(0)
 
+                            arr_pos[key] = match_data.begin(0) + offset + delta
                             arr_matches[key] = match_data.to_a
                         else
                             keys.delete_at index
@@ -167,7 +170,7 @@ class Texy
 
                 px = pl[min_key]
                 offset = arr_pos[min_key]
-                replacement = px[:handler].call(self, arr_matches[min_key], *px[:user])
+                replacement = px[:handler].call(self, arr_matches[min_key])
                 len = arr_matches[min_key][0].length
 
                 text[offset, len] = replacement
