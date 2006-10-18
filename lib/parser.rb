@@ -211,12 +211,13 @@ class Texy
     # Internal html parsing structure
     class HtmlParser < Parser
 
-        PATTERN = /<(\/?)([a-z][a-z0-9_:-]*)(|\s(?:[\sa-z0-9:-]|=\s*"[^"#{HASH}]*"|=\s*\'[^\'#{HASH}]*\'|=[^>#{HASH}]*)*)(\/?)>|<!--([^#{HASH}]*?)-->/i
+        PATTERN = /<(\/?)([a-z][a-z0-9_:-]*)(|\s(?:[\sa-z0-9:-]|=\s*"[^"#{HASH}]*"|=\s*'[^\'#{HASH}]*'|=[^>#{HASH}]*)*)(\/?)>|<!--([^#{HASH}]*?)-->/i
 
         def parse(text)
             # Initialization
             texy = element.texy
 
+            # (rane) attempt to emulate php's preg_match_all...
             matches = []
             offset = 0
 
@@ -225,19 +226,19 @@ class Texy
 
                 break unless match_data
 
-                matches << match_data
-                offset = match_data.end(0)
+                matches << [match_data.begin(0) + offset, match_data.to_a]
+                offset += match_data.end(0)
             end
 
             matches.reverse.each do |match|
-                text[match.begin(0)..match.end(0)] = texy.html_module.process(self, match.to_a)
+                text[match[0], match[1][0].length] = texy.html_module.process(self, match[1])
             end
 
             text = Html.html_chars(text, false, true)
 
             element.set_content(text, true)
             # (rane) FIXME: shouldn't there be = instead of == ?
-            element.content_type == DomElement.CONTENT_BLOCK
+            element.content_type == DomElement::CONTENT_BLOCK
         end
     end
 end

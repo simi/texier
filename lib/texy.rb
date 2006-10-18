@@ -112,9 +112,9 @@ class Texy
     # Covert Texy! document into (X)HTML code.
     def process(source, single_line = false)
         if single_line
-            parse_line source
+            parse_line(source)
         else
-            parse source
+            parse(source)
         end
 
         dom.to_html
@@ -129,7 +129,7 @@ class Texy
 
         # process
         @dom = Texy::Dom.new(self)
-        @dom.parse source
+        @dom.parse(source)
     end
 
 
@@ -258,7 +258,7 @@ class Texy
 
     # Remove special controls chars used by Texy!
     def self.wash(text)
-        text.gsub /[\x15-\x1F]+/, ''
+        text.gsub(/[\x15-\x1F]+/, '')
     end
 
     def self.hash_opening?(hash)

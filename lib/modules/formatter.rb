@@ -20,16 +20,15 @@ class Texy
             space = base_indent
             hash_table = {}
 
-
             # freeze all pre, textarea, script and style elements
             counter = 0
-            text.gsub!(/<(pre|textarea|script|style)(.*?)<\/\\1>/im) do
+            text.gsub!(/<(pre|textarea|script|style)(.*?)<\/\1>/im) do |match|
                 # create new unique key for matched string
                 # and saves pair (key => str) into hash_table
                 key = "<#{$1}>\x1A#{counter.to_s(4).tr('0123', "\x1B\x1C\x1D\x1E")}\x1A</#{$1}>"
                 counter += 1
 
-                hash_table[key] = $0
+                hash_table[key] = match
                 key
             end
 

@@ -33,8 +33,6 @@ class Texy
             )
         end
 
-
-
         # Callback function (for blocks)
         #
         #    /-----code html .(title)[class]{style}
@@ -45,7 +43,7 @@ class Texy
         def process_block(parser, matches)
             m_type, m_second, m_content = matches.values_at(1, 2, 7)
 
-            m_second = m_second.downcase.strip
+            m_second = m_second.to_s.downcase.strip
             m_content.gsub!(/\A\n+|\n+\Z/, '') #trim($mContent, "\n");
 
             m_type ||= 'pre' # default type
@@ -61,73 +59,73 @@ class Texy
             end
 
             case m_type
-            when 'none', 'div'
-                el = BlockElement.new(texy)
-                el.tag = 'div'
-                el.modifier.set_properties(*matches[3..6])
+                when 'none', 'div'
+                    el = BlockElement.new(texy)
+                    el.tag = 'div'
+                    el.modifier.set_properties(*matches[3..6])
 
-                outdent(m_content)
+                    outdent(m_content)
 
-                if div_handler
-                    return unless div_handler.call(el, m_content)
-                end
+                    if div_handler
+                        return unless div_handler.call(el, m_content)
+                    end
 
-                el.parse(m_content)
-                parser.element.append_child(el)
+                    el.parse(m_content)
+                    parser.element.append_child(el)
 
-            when 'source'
-                el = SourceBlockElement.new(texy)
-                el.modifier.set_properties(*matches[3..6])
+                when 'source'
+                    el = SourceBlockElement.new(texy)
+                    el.modifier.set_properties(*matches[3..6])
 
-                outdent(m_content)
+                    outdent(m_content)
 
-                el.parse(m_content)
-                parser.element.append_child(el)
+                    el.parse(m_content)
+                    parser.element.append_child(el)
 
-            when 'comment'
+                when 'comment'
 
-            when 'html'
-                el = HtmlBlockElement.new(texy)
-                el.parse(m_content)
+                when 'html'
+                    el = HtmlBlockElement.new(texy)
+                    el.parse(m_content)
 
-                if html_handler
-                    return unless html_handler.call(el, true)
-                end
+                    if html_handler
+                        return unless html_handler.call(el, true)
+                    end
 
-                parser.element.append_child(el)
+                    parser.element.append_child(el)
 
-            when 'text'
-                el = TextualElement.new(texy)
-                el.set_content(Html::html_chars(m_content).gsub("\n", '<br />'), true)
+                when 'text'
+                    el = TextualElement.new(texy)
+                    el.set_content(Html::html_chars(m_content).gsub("\n", '<br />'), true)
 
-                if html_handler
-                    return unless html_handler.call(el, false)
-                end
+                    if html_handler
+                        return unless html_handler.call(el, false)
+                    end
 
-                parser.element.append_child(el)
+                    parser.element.append_child(el)
 
-            else # pre | code | samp
-                el = CodeBlockElement.new(texy)
-                el.modifier.set_properties(*matches[3..6])
-                el.type = m_type
-                el.lang = m_second
+                else # pre | code | samp
+                    el = CodeBlockElement.new(texy)
+                    el.modifier.set_properties(*matches[3..6])
+                    el.type = m_type
+                    el.lang = m_second
 
-                outdent(m_content)
+                    outdent(m_content)
 
-                el.set_content(m_content, false) # not html-safe content
+                    el.set_content(m_content, false) # not html-safe content
 
-                if code_handler
-                    return unless code_handler.call(el)
-                end
+                    if code_handler
+                        return unless code_handler.call(el)
+                    end
 
-                parser.element.append_child(el)
+                    parser.element.append_child(el)
             end
         end
 
         private
             # outdent
             def outdent(text)
-                if (spaces = text.index(/\S/) > 0)
+                if (spaces = text.index(/\S/)) > 0
                     text.gsub!(/^ {1,#{spaces}}/, '')
                 end
             end

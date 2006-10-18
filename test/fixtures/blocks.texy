@@ -1,0 +1,8 @@
+/---html
+  <em>příklad</em>: **this is not strong**
+\---
+
+
+/---text
+  <em>příklad</em>: **this is not strong**
+\---

@@ -38,7 +38,7 @@ class Texy
     #   (?<= |^)\.
     # instead of
     #   (?:\ \.|^\.)
-    # but ruby does not support lookbehinds. I hope it's correct alternative
+    # but ruby does not support lookbehinds. I hope it's equivalent :)
 
 
     # modifier .(title)[class]{style}<>^
