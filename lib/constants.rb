@@ -22,28 +22,29 @@ class Texy
 
 
     # links
-    PATTERN_LINK_REF = "\[[^\[\]\*\n#{HASH}]+\]" # reference [refName]
-    PATTERN_LINK_IMAGE = "\[\*[^\n#{HASH}]+\*\]" # [* ... *]
-    PATTERN_LINK_URL = "(?:\[[^\]\n]+\]|(?!\[)[^\s#{HASH}]*?[^:);,.!?\s#{HASH}])" # any url
-    PATTERN_LINK = "(?::(#{PATTERN_LINK_URL}))" # any link
-    PATTERN_LINK_N = "(?::(#{PATTERN_LINK_URL}|:))" # any link (also unstated)
-    PATTERN_EMAIL = '[a-z0-9.+_-]+@[a-z0-9.+_-]{2,}\.[a-z]{2,}' # name@exaple.com
+    PATTERN_LINK_REF = /\[[^\[\]\*\n#{HASH}]+\]/ # reference [refName]
+    PATTERN_LINK_IMAGE = /\[\*[^\n#{HASH}]+\*\]/ # [* ... *]
+    PATTERN_LINK_URL = /(?:\[[^\]\n]+\]|(?!\[)[^\s#{HASH}]*?[^:);,.!?\s#{HASH}])/ # any url
+    PATTERN_LINK = /(?::(#{PATTERN_LINK_URL}))/ # any link
+    PATTERN_LINK_N = /(?::(#{PATTERN_LINK_URL}|:))/ # any link (also unstated)
+    PATTERN_EMAIL = /[a-z0-9.+_-]+@[a-z0-9.+_-]{2,}\.[a-z]{2,}/ # name@exaple.com
 
-    # modifier .(title)[class]{style}
-    PATTERN_MODIFIER = '(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\})(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\})??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\})??)'
 
-    # modifier .(title)[class]{style}<>
-    PATTERN_MODIFIER_H = '(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))??)'
-    # (rane) There was
+    # (rane) In these PATTERN_MODIFIER_X, There was
     #   (?<= |^)\.
     # instead of
     #   (?:\ \.|^\.)
-    # but ruby does not support lookbehinds. I hope it's equivalent :)
+    # but ruby does not support lookbehinds. This should be equivalent.
 
+    # modifier .(title)[class]{style}
+    PATTERN_MODIFIER = /(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\})(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\})??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\})??)/
+
+    # modifier .(title)[class]{style}<>
+    PATTERN_MODIFIER_H = /(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<))??)/
 
     # modifier .(title)[class]{style}<>^
-    PATTERN_MODIFIER_HV = '(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??)'
+    PATTERN_MODIFIER_HV = /(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??)/
 
     # images [* urls .(title)[class]{style} >]
-    PATTERN_IMAGE =  "\[\*([^\n#{HASH}]+)#{PATTERN_MODIFIER}? *(\*|>|<)\]"
+    PATTERN_IMAGE = /\[\*([^\n#{HASH}]+)#{PATTERN_MODIFIER}? *(\*|>|<)\]/
 end

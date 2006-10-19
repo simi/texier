@@ -27,9 +27,13 @@ class Texy
 
         # Module initialization.
         def init
+
+            # (rane) FIXME: in original code, there was . instead of [a-zA-Z0-9_-] in the second caturing block,
+            # but it caused the pattern to swallow the modifier ( ".[blabla]" ). I have to figure out why it
+            # works in original code but not here.
             texy.register_block_pattern(
                 method(:process_block),
-                /^\/--+ *(?:(code|samp|text|html|div|notexy|source|comment)( .*?)?|) *#{PATTERN_MODIFIER_H}?\n(.*?\n)?(?:\\--+ *\1?|\z)()$/mi
+                /^\/--+\ *(?:(code|samp|text|html|div|notexy|source|comment)(\ [a-zA-Z0-9_-]*?)?|)\ *#{PATTERN_MODIFIER_H}?\n(.*?\n)?(?:\\--+\ *\1?|\z)()$/mi
             )
         end
 

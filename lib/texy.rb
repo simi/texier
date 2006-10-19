@@ -78,6 +78,12 @@ class Texy
     # TAB width (for converting tabs to spaces)
     attr_accessor :tab_width
 
+    # Allowed classes
+    attr_accessor :allowed_classes
+
+    # Allowed inline CSS styles
+    attr_accessor :allowed_styles
+
     # Allowed HTML tags
     attr_accessor :allowed_tags
 
@@ -94,6 +100,8 @@ class Texy
     def initialize
         self.utf = false
         self.tab_width = 8
+        self.allowed_classes = :all
+        self.allowed_styles = :all
         self.allowed_tags = Texy::Html::VALID # full support for HTML tags
         self.summary = {
             :images => [],

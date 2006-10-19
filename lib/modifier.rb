@@ -53,7 +53,7 @@ class Texy
 
                 arg_x = arg[1..-2].strip
 
-                case arg_x[0]
+                case arg[0]
                     when ?{ then styles += arg_x + ';'
                     when ?( then self.title = arg_x
                     when ?[ then classes += ' ' +  arg_x
@@ -112,8 +112,8 @@ class Texy
             return if string.to_s.empty?
 
             # little speed-up trick
-            tmp = if texy.allowed_classes.kind_of? Array
-                texy.allowed_classes.to_hash.invert
+            tmp = if @texy.allowed_classes.kind_of? Array
+                @texy.allowed_classes.to_hash.invert
             else
                 {}
             end
@@ -128,7 +128,7 @@ class Texy
                     self.id = value[1..-1]
                 else
                     unfiltered_classes << value
-                    classes << value if texy.allowed_classes == :all || tmp[value]
+                    classes << value if @texy.allowed_classes == :all || tmp[value]
                 end
             end
         end
