@@ -47,7 +47,7 @@ class Texy
                 if allowed[:quick_link]
                     texy.register_line_pattern(
                         method(:process_line_quick),
-                        /([#{CHAR}0-9@\#$%&.,_-]+?)(?=:\[)#{PATTERN_LINK}()/ # (rane) TODO: there was some utf stuff here...
+                        /([#{CHAR}0-9@#\$%&\.,_-]+?)(?=:\[)#{PATTERN_LINK}()/
                     )
                 end
 
@@ -58,15 +58,14 @@ class Texy
                 if allowed[:url]
                     texy.register_line_pattern(
                         method(:process_line_url),
-                        # (rane) TODO: also some utf stuff here
-                        /(?:[^\s\^\(\[\<:](?:https?:\/\/|www\.|ftp:\/\/|ftp\.)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;\#,-]+[\/\w\d+~%?@=_\#])/i
+                        /[\s^\(\[<:]((?:https?:\/\/|www\.|ftp:\/\/|ftp\.)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;#,-]+[\/\w\d+~%?@=_#])/i
                     )
                 end
 
                 if allowed[:email]
                     texy.register_line_pattern(
                         method(:process_line_url),
-                        /(?:[^\s\^\(\[\<:]#{PATTERN_EMAIL})/
+                        /([^\s\^\(\[\<:]#{PATTERN_EMAIL})/
                     )
                 end
             end
@@ -106,13 +105,11 @@ class Texy
             def pre_process(text)
                 # [la trine]: http://www.dgx.cz/trine/ text odkazu .(title)[class]{style}
                 if allowed[:references]
-                    text.gsub(/^\[([^\[\]\#\?\*\n]+?)\]: +(#{PATTERN_LINK_IMAGE}|(?!\[)\S+)(\ .+?)?#{PATTERN_MODIFIER}?()$/) do
-                        m_ref, m_link, m_label = $1, $2, $3
-
-                        el_ref = LinkReference.new(texy, m_link, m_label)
+                    text.gsub(/^\[([^\[\]#\?\*\n]+?)\]:\ +(#{PATTERN_LINK_IMAGE}|(?!\[)\S+)(\ .+?)?#{PATTERN_MODIFIER}?()$/) do
+                        el_ref = LinkReference.new(texy, $2, $3)
                         el_ref.modifier.set_properties($4, $5, $6)
 
-                        add_reference(m_ref, el_ref)
+                        add_reference($1, el_ref)
                         ''
                     end
                 else
@@ -149,7 +146,7 @@ class Texy
 
             # Callback function: http://www.dgx.cz
             def process_line_url(parser, matches)
-                m_url = matches[0]
+                m_url = matches[1]
 
                 el_link = LinkElement.new(texy)
                 el_link.set_link_raw(m_url)
@@ -172,7 +169,7 @@ class Texy
             url = url[1..-2] if url.length > 1 && (url[0] == ?' || url[0] == ?")
 
             self.url = url.strip
-            self.label = label.strip
+            self.label = label.strip if label
         end
     end
 
@@ -196,7 +193,7 @@ class Texy
                 el_ref = texy.link_module.reference(link[1..-2])
 
                 if el_ref
-                    self.modifier = el_ref.dup # $this->modifier->copyFrom($elRef->modifier);
+                    self.modifier = el_ref.modifier.dup # $this->modifier->copyFrom($elRef->modifier);
                     link = el_ref.url + el_ref.query
                     link = CGI.escape(Texy.wash(text)).gsub('%s', link)
                 else

@@ -139,6 +139,8 @@ class Texy
                 min_pos = text.length
 
                 keys.each_with_index do |key, index|
+                    next unless key
+
                     if arr_pos[key] < offset
                         delta = arr_pos[key] == -2 ? 1 : 0
 
@@ -148,7 +150,7 @@ class Texy
                             arr_pos[key] = match_data.begin(0) + offset + delta
                             arr_matches[key] = match_data.to_a
                         else
-                            keys.delete_at index
+                            keys[index] = nil
                             next
                         end
                     end
@@ -176,6 +178,8 @@ class Texy
                 delta = replacement.length - len
 
                 keys.each do |key|
+                    next unless key
+
                     if arr_pos[key] < offset + len
                         arr_pos[key] = -1
                     else

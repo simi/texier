@@ -98,7 +98,7 @@ class Texy
 
                     when 'text'
                         el = TextualElement.new(texy)
-                        el.set_content(Html::html_chars(m_content).gsub("\n", '<br />'), true)
+                        el.set_content(Texy::Html::html_chars(m_content).gsub("\n", '<br />'), true)
 
                         if html_handler
                             return unless html_handler.call(el, false)

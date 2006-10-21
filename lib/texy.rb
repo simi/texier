@@ -29,12 +29,12 @@
 #
 ##########################################################################################
 
-$:.unshift File.dirname(__FILE__)
+$:.unshift(File.dirname(__FILE__) + '/texy')
 
 # require_once TEXY_DIR.'libs/url.php';            // object encapsulate of URL
 
 
-require 'core_extensions'
+require File.dirname(__FILE__) + '/core_extensions'
 require 'constants'
 require 'dom'
 require 'html'

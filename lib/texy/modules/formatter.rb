@@ -1,6 +1,6 @@
 class Texy
     module Modules
-        class FormatterModule < Module
+        class Formatter < Base
             attr_accessor :base_indent # indent for top elements
             attr_accessor :line_wrap # line width, doesn't include indent space
             attr_accessor :indent
@@ -38,7 +38,7 @@ class Texy
                 text.gsub!(/ +/, ' ')
 
                 # indent all block elements + br
-                text.gsub!(/ *<(\/?)(#{Html::BLOCK.keys.join('|')}|br)(>| [^>]*>) */i) do |match|
+                text.gsub!(/ *<(\/?)(#{Texy::Html::BLOCK.keys.join('|')}|br)(>| [^>]*>) */i) do |match|
                     # Insert \n + spaces into HTML code
 
                     m_closing, m_tag = $1, $2
@@ -51,7 +51,7 @@ class Texy
 
                     if m_tag == 'br' # exception
                         "\n#{"\t" * [0, space - 1].max}#{match}"
-                    elsif Html::EMPTY[m_tag]
+                    elsif Texy::Html::EMPTY[m_tag]
                         "\r#{"\t" * space}#{match}\r#{"\t" * space}"
                     elsif m_closing == '/'
                         space -= 1

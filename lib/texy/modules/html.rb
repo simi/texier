@@ -57,16 +57,16 @@ class Texy
                 return match unless texy.allowed_tags # disabled
 
                 tag = m_tag.downcase
-                tag = m_tag unless Html::VALID[tag] # undo lowercase
+                tag = m_tag unless Texy::Html::VALID[tag] # undo lowercase
 
-                empty = (m_empty == '/') || Html::EMPTY[tag]
+                empty = (m_empty == '/') || Texy::Html::EMPTY[tag]
                 is_opening = m_closing != '/'
 
                 return match if empty && !is_opening # error - can't close empty element
                 return match if texy.allowed_tags.kind_of?(Hash) && texy.allowed_tags[tag].nil? # is element allowed?
 
                 el = HtmlTagElement.new(texy)
-                el.content_type = Html::INLINE[tag] ? DomElement::CONTENT_NONE : DomElement::CONTENT_BLOCK
+                el.content_type = Texy::Html::INLINE[tag] ? DomElement::CONTENT_NONE : DomElement::CONTENT_BLOCK
 
                 if is_opening # process attributes
                     attrs = {}

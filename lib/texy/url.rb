@@ -53,6 +53,10 @@ class Texy
             @flags & ABSOLUTE != 0
         end
 
+        def relative?
+            @flags & ABSOLUTE == 0
+        end
+
         # Indicates whether URL is email address (mailto://)
         def email?
             @flags & EMAIL != 0
@@ -78,8 +82,8 @@ class Texy
                     @url = 'mai'
                     s = "lto:#{value}"
 
-                    (0..s.length).each do |i|
-                        @url += "&##{s[i]};"
+                    s.each_byte do |i|
+                        @url += "&##{i};"
                     end
                 else
                     @url = "mailto:#{value}"
@@ -97,7 +101,7 @@ class Texy
                 end
 
                 @url = value
-            elsif relative? # relative URL
+            else # relative URL
                 @url = @root + value
             end
         end

@@ -1,7 +1,7 @@
 require 'test/unit'
-require File.dirname(__FILE__) + '/../lib/utilities'
+require File.dirname(__FILE__) + '/../lib/core_extensions'
 
-class UtilitiesTest < Test::Unit::TestCase
+class CoreExtensionsTest < Test::Unit::TestCase
     def test_array_to_hash
         assert_equal({0 => 'hello', 1 => 'world'}, ['hello', 'world'].to_hash)
     end
