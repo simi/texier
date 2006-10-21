@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/../module'
-
 class Texy
 
     # Horizontal line module class

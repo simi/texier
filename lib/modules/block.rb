@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/../module'
-
 class Texy
 
     # Block module class
@@ -151,9 +149,9 @@ class Texy
         def generate_tags(tags)
             super
 
-            if self.tag # (rane) maybe !tag.empty?
-                tags.each do |(tag, attrs)|
-                    if tag == self.tag
+            if tag # (rane) maybe !tag.empty?
+                tags.each do |(t, attrs)|
+                    if t == tag
                         attrs[:class] << lang
 
                         tags << [type, {}] if type # (rane) maybe !type.empty?

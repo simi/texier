@@ -16,18 +16,15 @@ class Texy
     class BlockParser < Parser
 
         # Match current line against RE.
-        # If succesfull, increments current position and returns true.
-        def receive_next(pattern, matches)
-            # anchored & multiline
-            anchored_pattern = Regexp.new('\A' + pattern.source, pattern.options | Regexp.MULTILINE)
-
-            if match_data = anchored_pattern.match(@text[@offset, -1])
+        #
+        # If succesfull, increments current position and returns matched data.
+        def receive_next(pattern)
+            if match_data = pattern.match(@text[@offset..-1])
                 @offset += match_data[0].length + 1 # 1 = "\n"
 
-                matches = match_data.to_a
-                true
+                match_data.to_a
             else
-                false
+                nil
             end
         end
 
@@ -35,7 +32,7 @@ class Texy
             while @offset > 0
                 @offset -= 1
 
-                if @text[@offset - 1].chr == NEW_LINE
+                if @text[@offset - 1] == ?\n
                     lines_count -= 1
 
                     break if lines_count < 1

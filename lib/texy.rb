@@ -42,7 +42,7 @@ require 'html_well_form'
 require 'modifier'
 require 'module'
 require 'parser'
-
+require 'url'
 
 
 require 'modules/block'
@@ -87,6 +87,12 @@ class Texy
     # Allowed HTML tags
     attr_accessor :allowed_tags
 
+    # Do obfuscate e-mail addresses?
+    attr_writer :obfuscate_email
+    def obfuscate_email?
+        @obfuscate_email
+    end
+
     # DOM structure for parsed text
     attr_reader :dom
 
@@ -96,6 +102,7 @@ class Texy
     # Merge lines mode
     attr_accessor :merge_lines
 
+    attr_accessor :reference_handler
 
     def initialize
         self.utf = false
@@ -103,6 +110,7 @@ class Texy
         self.allowed_classes = :all
         self.allowed_styles = :all
         self.allowed_tags = Texy::Html::VALID # full support for HTML tags
+        self.obfuscate_email = true
         self.summary = {
             :images => [],
             :links => [],
@@ -112,6 +120,8 @@ class Texy
 
         @line_patterns = []
         @block_patterns = []
+
+        @references = {}
 
         # load all modules
         load_modules
@@ -271,6 +281,25 @@ class Texy
 
     def self.hash_opening?(hash)
         hash[1].chr == "\x1F"
+    end
+
+
+
+    # Add new named reference
+    def add_reference(name, obj)
+        name.downcase! # watch out for utf8!
+        @references[name] = obj
+    end
+
+    # Receive new named link. If not exists, try call user function to create one.
+    def reference(name)
+        low_name = name.downcase # watch out for UTF8 !
+
+
+        return @references[low_name] if @references[low_name]
+        return reference_handler.call(name, self) if reference_handler
+
+        false
     end
 
 

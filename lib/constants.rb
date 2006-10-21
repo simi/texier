@@ -12,7 +12,6 @@ class Texy
     # character classes
     CHAR = 'A-Za-z\x86-\xff' # International char - use instead of \w
     CHAR_UTF = 'A-Za-z\x86-\x{ffff}'
-    NEW_LINE = '\n'
 
     # hashing meta-charakters
     HASH = "\x15-\x1F" # Any hash char
@@ -22,7 +21,7 @@ class Texy
 
 
     # links
-    PATTERN_LINK_REF = /\[[^\[\]\*\n#{HASH}]+\]/ # reference [refName]
+    PATTERN_LINK_REF = /\[[^\[\]\*\n#{HASH}]+?\]/ # reference [refName]
     PATTERN_LINK_IMAGE = /\[\*[^\n#{HASH}]+\*\]/ # [* ... *]
     PATTERN_LINK_URL = /(?:\[[^\]\n]+\]|(?!\[)[^\s#{HASH}]*?[^:);,.!?\s#{HASH}])/ # any url
     PATTERN_LINK = /(?::(#{PATTERN_LINK_URL}))/ # any link

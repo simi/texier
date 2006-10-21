@@ -59,6 +59,9 @@ class Texy
                     attrs[:style]['text-align'] = modifier.h_align if modifier.h_align
                     attrs[:style]['vertical-align'] = modifier.v_align if modifier.v_align
 
+                    # (rane) give the caller a chance to modify the attributes
+                    attrs = yield attrs if block_given?
+
                     tags << [tag, attrs]
                 end
             end
@@ -72,7 +75,7 @@ class Texy
             # Convert element to HTML string
             def to_html
                 tags = []
-                generate_tags tags
+                generate_tags(tags)
 
                 Html.opening_tags(tags) + generate_content + Html.closing_tags(tags)
             end
@@ -263,11 +266,10 @@ class Texy
         def to_html
             if behave_as_opening
                 tags = []
-                generate_tags tags
+                generate_tags(tags)
 
                 @closing_tag = Html.closing_tags(tags)
-
-                Html.opening_tags tags
+                Html.opening_tags(tags)
             else
                 @closing_tag
             end
@@ -309,8 +311,8 @@ class Texy
             text = Texy.wash(text)
 
             # Standardize line endings to unix-like (dos, mac).
-            text.gsub! "\r\n", NEW_LINE # DOS
-            text.gsub! "\r", NEW_LINE # Mac
+            text.gsub! "\r\n", "\n" # DOS
+            text.gsub! "\r", "\n" # Mac
 
             # Replace tabs with spaces.
             tab_width = texy.tab_width

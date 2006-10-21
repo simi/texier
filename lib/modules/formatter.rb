@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/../module'
-
 class Texy
     class FormatterModule < Module
         attr_accessor :base_indent # indent for top elements
