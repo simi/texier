@@ -34,17 +34,16 @@ $:.unshift File.dirname(__FILE__)
 # require_once TEXY_DIR.'libs/url.php';            // object encapsulate of URL
 
 
-require 'utilities'
+require 'core_extensions'
 require 'constants'
 require 'dom'
 require 'html'
 require 'html_well_form'
 require 'modifier'
-require 'module'
 require 'parser'
 require 'url'
 
-
+require 'modules/base'
 require 'modules/block'
 require 'modules/definition_list'
 require 'modules/formatter'
@@ -187,28 +186,28 @@ class Texy
     # This array can be changed by overriding this method (by subclasses) or directly in main code.
     def load_modules
         # Line parsing - order does not matter
-        @script_module = ScriptModule.new(self)
-        @html_module = HtmlModule.new(self)
-        @image_module = ImageModule.new(self)
-        @link_module = LinkModule.new(self)
-        @phrase_module = PhraseModule.new(self)
-        @smilies_module = SmiliesModule.new(self)
+        @script_module = Modules::Script.new(self)
+        @html_module = Modules::Html.new(self)
+        @image_module = Modules::Image.new(self)
+        @link_module = Modules::Link.new(self)
+        @phrase_module = Modules::Phrase.new(self)
+        @smilies_module = Modules::Smilies.new(self)
 
         # Block parsing - order does not matter
-        @block_module = BlockModule.new(self)
-        @heading_module = HeadingModule.new(self)
-        @horiz_line_module = HorizLineModule.new(self)
-        @quote_module = QuoteModule.new(self)
-        @list_module = ListModule.new(self)
-        @definition_list_module = DefinitionListModule.new(self)
-        @table_module = TableModule.new(self)
-        @image_desc_module = ImageDescModule.new(self)
-        @generic_block_module = GenericBlockModule.new(self)
+        @block_module = Modules::Block.new(self)
+        @heading_module = Modules::Heading.new(self)
+        @horiz_line_module = Modules::HorizLine.new(self)
+        @quote_module = Modules::Quote.new(self)
+        @list_module = Modules::List.new(self)
+        @definition_list_module = Modules::DefinitionList.new(self)
+        @table_module = Modules::Table.new(self)
+        @image_desc_module = Modules::ImageDesc.new(self)
+        @generic_block_module = Modules::GenericBlock.new(self)
 
         # post process
-        @quick_correct_module = QuickCorrectModule.new(self)
-        @long_words_module = LongWordsModule.new(self)
-        @formatter_module = FormatterModule.new(self)
+        @quick_correct_module = Modules::QuickCorrect.new(self)
+        @long_words_module = Modules::LongWords.new(self)
+        @formatter_module = Modules::Formatter.new(self)
     end
     protected :load_modules
 
