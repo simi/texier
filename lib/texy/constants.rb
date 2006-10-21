@@ -20,7 +20,7 @@ class Texy
     HASH_WC = "\x1A-\x1F" # Hashed tag or element (with content)
 
     # links
-    PATTERN_LINK_REF = /\[[^\[\]\*\n#{HASH}]+\]/ # reference [refName]
+    PATTERN_LINK_REF = /\[[^\[\]\*\n#{HASH}]+?\]/ # reference [refName]
     PATTERN_LINK_IMAGE = /\[\*[^\n#{HASH}]+\*\]/ # [* ... *]
     PATTERN_LINK_URL = /(?:\[[^\]\n]+?\]|(?!\[)[^\s#{HASH}]*[^:\);,\.!\?\s#{HASH}])/ # any url
     PATTERN_LINK = /(?::(#{PATTERN_LINK_URL}))/ # any link

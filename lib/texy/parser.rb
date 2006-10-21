@@ -144,6 +144,7 @@ class Texy
                     if arr_pos[key] < offset
                         delta = arr_pos[key] == -2 ? 1 : 0
 
+
                         if match_data = pl[key][:pattern].match(text[(offset + delta)..-1])
                             next if match_data[0].empty?
 

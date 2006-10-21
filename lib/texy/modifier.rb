@@ -11,17 +11,6 @@ class Texy
     #   ^ - _     vertical align modifier
     #
     class Modifier
-        # (rane) TODO: replace these with symbols?
-        HALIGN_LEFT = 'left'
-        HALIGN_RIGHT = 'right'
-        HALIGN_CENTER = 'center'
-        HALIGN_JUSTIFY = 'justify'
-        VALIGN_TOP = 'top'
-        VALIGN_MIDDLE = 'middle'
-        VALIGN_BOTTOM = 'bottom'
-
-
-
         attr_accessor :id
         attr_accessor :classes
         attr_accessor :unfiltered_classes
@@ -57,12 +46,12 @@ class Texy
                     when ?{ then styles += arg_x + ';'
                     when ?( then self.title = arg_x
                     when ?[ then classes += ' ' +  arg_x
-                    when ?^ then self.v_align = VALIGN_TOP
-                    when ?- then self.v_align = VALIGN_MIDDLE
-                    when ?_ then self.v_align = VALIGN_BOTTOM
-                    when ?= then self.h_align = HALIGN_JUSTIFY
-                    when ?> then self.h_align = HALIGN_RIGHT
-                    when ?< then self.h_align = if arg == '<>' then HALIGN_CENTER else HALIGN_LEFT end
+                    when ?^ then self.v_align = :top
+                    when ?- then self.v_align = :middle
+                    when ?_ then self.v_align = :bottom
+                    when ?= then self.h_align = :justify
+                    when ?> then self.h_align = :right
+                    when ?< then self.h_align = if arg == '<>' then :center else :left end
                 end
             end
 

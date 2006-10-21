@@ -37,15 +37,10 @@ class Texy
             #             ...
             #
             def process_single_block(parser, content)
-                match_data = /\A(.*?)#{PATTERN_MODIFIER_H}?(\n.*?)?()\Z/mx.match(content)
+                match_data = /\A(.*?)#{PATTERN_MODIFIER_H}?(\n.*?)?()\Z/m.match(content)
 
-                m_content, m_mod1, m_mod2, m_mod3, m_mod4, m_content2 = match_data.captures
-                # [1] => ...
-                # [2] => (title)
-                # [3] => [class]
-                # [4] => {style}
-                # [5] => >
-
+                m_content, m_content2 = match_data[1], match_data[6]
+                mods = match_data.to_a[2..5]
 
                 # ....
                 #  ...  => \n
@@ -56,13 +51,13 @@ class Texy
                 end
 
                 el = GenericBlockElement.new(texy)
-                el.modifier.set_properties(m_mod1, m_mod2, m_mod3, m_mod4)
+                el.modifier.set_properties(*mods)
                 el.parse m_content
 
                 # specify tag
                 if el.content_type == DomElement::CONTENT_TEXTUAL
                     el.tag = 'p'
-                elsif !m_mod1.empty? || !m_mod2.empty? || !m_mod3.empty? || !m_mod4.empty?
+                elsif mods.any?
                     el.tag = 'div'
                 elsif el.content_type == DomElement::CONTENT_BLOCK
                     el.tag = ''

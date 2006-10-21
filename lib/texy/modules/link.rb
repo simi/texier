@@ -195,7 +195,7 @@ class Texy
                 if el_ref
                     self.modifier = el_ref.modifier.dup # $this->modifier->copyFrom($elRef->modifier);
                     link = el_ref.url + el_ref.query
-                    link = CGI.escape(Texy.wash(text)).gsub('%s', link)
+                    link.gsub!('%s', CGI.escape(Texy.wash(text)))
                 else
                     set_link(link[1..-2])
                     return

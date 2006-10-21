@@ -29,9 +29,8 @@ class Texy
         #   root::      root, for relative URL's
         #   is_image::  image indicator (user usage)
         def set(value, root = '', is_image = false)
-            self.value = value.strip
-            root = root.rstrip + '/' if root
-            @root = root
+            self.value = value.to_s.strip
+            @root = root.gsub(/[\/\\]/, '') + '/' if root
 
             # will be completed on demand
             @url = nil

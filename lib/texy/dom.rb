@@ -77,7 +77,7 @@ class Texy
                 tags = []
                 generate_tags(tags)
 
-                Html.opening_tags(tags) + generate_content + Html.closing_tags(tags)
+                Html.opening_tags(tags) + generate_content.to_s + Html.closing_tags(tags)
             end
 
         protected
@@ -130,7 +130,7 @@ class Texy
 
             def generate_content
                 @children.inject('') do |html, child|
-                    html += child[1].to_html
+                    html + child[1].to_html
                 end
             end
 
