@@ -118,7 +118,7 @@ class Texy
                             texy.summary[:links] << attrs['href'] if attrs['href']
                     end
 
-                    attrs[Html::EMPTY_TAG] = true if empty
+                    attrs[Texy::Html::EMPTY_TAG] = true if empty
                     el.tags << [tag, attrs]
                     el.opening = true
                 else # closing tag

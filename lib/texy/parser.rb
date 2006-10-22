@@ -21,7 +21,6 @@ class Texy
         def receive_next(pattern)
             if match_data = pattern.match(@text[@offset..-1])
                 @offset += match_data[0].length + 1 # 1 = "\n"
-
                 match_data.to_a
             else
                 nil
@@ -29,14 +28,16 @@ class Texy
         end
 
         def move_backward(lines_count = 1)
-            while @offset > 0
-                @offset -= 1
+            @offset -= 1
 
+            while @offset > 0
                 if @text[@offset - 1] == ?\n
                     lines_count -= 1
 
                     break if lines_count < 1
                 end
+
+                @offset -= 1
             end
 
             @offset = [@offset, 0].max

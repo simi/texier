@@ -1,18 +1,6 @@
 class Texy
     # Regular expressions
 
-    #     international characters 'A-Za-z\x86-\xff'
-    #     unicode                  'A-Za-z\x86-\x{ffff}'
-    #     numbers                  0-9
-    #     spaces                   \n\r\t\x32
-    #     control                  \x00 - \x31  (without spaces)
-    #     others                   !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-
-
-    # character classes
-    CHAR = 'A-Za-z\x86-\xff' # International char - use instead of \w
-    CHAR_UTF = 'A-Za-z\x86-\x{ffff}'
-
     # hashing meta-charakters
     HASH = "\x15-\x1F" # Any hash char
     HASH_SPACES = "\x15-\x18" # Hashed space
@@ -44,5 +32,5 @@ class Texy
     PATTERN_MODIFIER_HV = /(?:\ *(?:\ \.|^\.)(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??(\([^\n\)]+\)|\[[^\n\]]+\]|\{[^\n\}]+\}|(?:<>|>|=|<)|(?:\^|\-|\_))??)/
 
     # images [* urls .(title)[class]{style} >]
-    PATTERN_IMAGE = /\[\*([^\n#{HASH}]+)#{PATTERN_MODIFIER}? *(\*|>|<)\]/
+    PATTERN_IMAGE = /\[\*([^\n#{HASH}]+?)#{PATTERN_MODIFIER}?\ *(\*|>|<)\]/
 end

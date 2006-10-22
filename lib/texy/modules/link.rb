@@ -47,7 +47,7 @@ class Texy
                 if allowed[:quick_link]
                     texy.register_line_pattern(
                         method(:process_line_quick),
-                        /([#{CHAR}0-9@#\$%&\.,_-]+?)(?=:\[)#{PATTERN_LINK}()/
+                        /([\w0-9@#\$%&\.,_-]+?)(?=:\[)#{PATTERN_LINK}()/
                     )
                 end
 
@@ -58,14 +58,14 @@ class Texy
                 if allowed[:url]
                     texy.register_line_pattern(
                         method(:process_line_url),
-                        /[\s^\(\[<:]((?:https?:\/\/|www\.|ftp:\/\/|ftp\.)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;#,-]+[\/\w\d+~%?@=_#])/i
+                        /([\s^\(\[<:])((?:https?:\/\/|www\.|ftp:\/\/|ftp\.)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;#,-]+[\/\w\d+~%?@=_#])/i
                     )
                 end
 
                 if allowed[:email]
                     texy.register_line_pattern(
                         method(:process_line_url),
-                        /([^\s\^\(\[\<:]#{PATTERN_EMAIL})/
+                        /([\s^\(\[\<:])(#{PATTERN_EMAIL})/
                     )
                 end
             end
@@ -146,12 +146,10 @@ class Texy
 
             # Callback function: http://www.dgx.cz
             def process_line_url(parser, matches)
-                m_url = matches[1]
-
                 el_link = LinkElement.new(texy)
-                el_link.set_link_raw(m_url)
+                el_link.set_link_raw(matches[2])
 
-                parser.element.append_child(el_link, el_link.link.as_textual)
+                matches[1] + parser.element.append_child(el_link, el_link.link.as_textual)
             end
         end
     end

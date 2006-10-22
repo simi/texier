@@ -67,7 +67,7 @@ class Texy
             # Preprocessing
             def pre_process(text)
                 # [*image*]: urls .(title)[class]{style}
-                text.gsub(/^\[\*([^\n]+)\*\]:\ +(.+?)\ *#{PATTERN_MODIFIER}?()/) do
+                text.gsub(/^\[\*([^\n]+?)\*\]:\ +(.+?)\ *#{PATTERN_MODIFIER}?()$/) do
                     el_ref = ImageReference.new(texy, $2)
                     el_ref.modifier.set_properties($3, $4, $5)
 
@@ -200,8 +200,8 @@ class Texy
                 # width x height generate
                 require_size
 
-                attrs['width'] = width if width
-                attrs['height'] = height if height
+                attrs['width'] = width.to_s if width
+                attrs['height'] = height.to_s if height
 
                 # attribute generate
                 texy.summary[:images] << attrs['src'] = image_url
@@ -222,15 +222,12 @@ class Texy
 
             def require_size
                 return if width
-                return unless defined? RMagick
+                return unless defined? Magick
 
-#                 $file = $this->texy->imageModule->rootPrefix . '/' . $this->image->asURL();
-#                 if (!is_file($file)) return FALSE;
-#
-#                 $size = getImageSize($file);
-#                 if (!is_array($size)) return FALSE;
-#
-#                 $this->setSize($size[0], $size[1]);
+                # (rane) TODO: check for exceptions...
+                image = Magick::Image::read(file).first
+
+                set_size(image.columns, image.rows)
             end
 
         public

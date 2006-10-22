@@ -56,8 +56,8 @@ class Texy
                     attrs[:style] = modifier.styles
 
 
-                    attrs[:style]['text-align'] = modifier.h_align if modifier.h_align
-                    attrs[:style]['vertical-align'] = modifier.v_align if modifier.v_align
+                    attrs[:style]['text-align'] = modifier.h_align.to_s if modifier.h_align
+                    attrs[:style]['vertical-align'] = modifier.v_align.to_s if modifier.v_align
 
                     # (rane) give the caller a chance to modify the attributes
                     attrs = yield attrs if block_given?
@@ -109,13 +109,7 @@ class Texy
 
         # child must be BlockElement or TextualElement
         def append_child(child)
-
-            # (rane) This was already commented out in original version:
-            # unless child.kind_of?(BlockElement) || child.kind_of?(TextualElement)
-            #     raise ArgumentError, 'Only InlineTagElement allowed'
-            # end
-
-            @children << [nil, child]
+            @children << [@children.size, child]
 
             self.content_type = [self.content_type, child.content_type].max
         end
@@ -324,7 +318,7 @@ class Texy
             end
 
             # Remmove Texy! comments.
-            comment_chars = if texy.utf then "\xC2\xA7" else "\xA7" end
+            comment_chars = "\xC2\xA7"
 
             text.gsub! /#{comment_chars}{2,}(?!#{comment_chars}).*(#{comment_chars}{2,}|$)(?!#{comment_chars})/m, ''
 

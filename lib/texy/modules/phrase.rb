@@ -66,7 +66,7 @@ class Texy
                 if allowed['*']
                     texy.register_line_pattern(
                         proc {|p, m| process_phrase(p, m, allowed['*'])},
-                        /([^\*])?\*(?!\ |\*)(.+?[^\ \*])#{PATTERN_MODIFIER}?\*(?!\*)#{PATTERN_LINK}??()/
+                        /\*(?!\ |\*)(.+?[^\ \*])#{PATTERN_MODIFIER}?\*(?!\*)#{PATTERN_LINK}?()/
                     )
                 end
 
@@ -114,7 +114,7 @@ class Texy
                 if allowed['~']
                     texy.register_line_pattern(
                         proc {|p, m| process_phrase(p, m, allowed['~'])},
-                        /~(?!\ )([^~]+?[^\ ])#{PATTERN_MODIFIER}?~(?!~)#{PATTERN_LINK}??()/
+                        /~(?!\ )([^~]+?[^\ ])#{PATTERN_MODIFIER}?~(?!~)#{PATTERN_LINK}?()/
                     )
                 end
 
@@ -122,7 +122,7 @@ class Texy
                 if allowed['~~']
                     texy.register_line_pattern(
                         proc {|p, m| process_phrase(p, m, allowed['~~'])},
-                        /~~(?!\ |~)(.+?[\ \~])#{PATTERN_MODIFIER}?~~(?!~)#{PATTERN_LINK}??()/
+                        /~~(?!\ |~)(.+?[^\ ~])#{PATTERN_MODIFIER}?~~(?!~)#{PATTERN_LINK}?()/
                     )
                 end
 
@@ -130,7 +130,7 @@ class Texy
                     # acronym/abbr "et al."((and others))
                     texy.register_line_pattern(
                         proc {|p, m| process_phrase(p, m, allowed['""()'])},
-                        /"(?!\ )([^"]+[\ ])#{PATTERN_MODIFIER}?\"(?!\")\(\((.+?)\)\)()/
+                        /"(?!\ )([^"]+?[^\ ])#{PATTERN_MODIFIER}?"(?!")\(\((.+?)\)\)()/
                     )
                 end
 
@@ -138,7 +138,7 @@ class Texy
                     # acronym/abbr NATO((North Atlantic Treaty Organisation))
                     texy.register_line_pattern(
                         proc {|p, m| process_phrase(p, m, allowed['()'])},
-                        /([#{CHAR}]{2,}?)()()()\(\((.+?)\)\)/
+                        /(\w{2,}?)()()()\(\((.+?)\)\)/
                     )
                 end
 
@@ -170,10 +170,10 @@ class Texy
                 match, m_content, m_link = matches.values_at(0, 1, 5)
                 mods = matches[2..4]
 
-                if m_content.empty?
+                if m_content.to_s.empty?
                     match_data = /^(.)+?(.+?)#{PATTERN_MODIFIER}?\1+()/.match(match)
-                    match, m_delim, m_content, m_link = match_data.select(0, 1, 2, 6)
-                    mods = match_data.select(3, 4, 5)
+                    match, m_delim, m_content, m_link = match_data.to_a.values_at(0, 1, 2, 6)
+                    mods = match_data.to_a[3..5]
                 end
 
                 tags = '' if (tags == 'span') && m_link # eliminate unnecesary spans, use <a ..> instead

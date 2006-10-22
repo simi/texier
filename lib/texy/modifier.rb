@@ -126,8 +126,8 @@ class Texy
             return if string.to_s.empty?
 
             # little speed-up trick
-            tmp = if texy.allowed_styles.kind_of? Array
-                texy.allowed_styles.to_hash.invert
+            tmp = if @texy.allowed_styles.kind_of? Array
+                @texy.allowed_styles.to_hash.invert
             else
                 {}
             end
@@ -139,12 +139,12 @@ class Texy
 
                 next if property.empty?
 
-                if Html.accepted_attrs[property] # attribute
+                if Html::ACCEPTED_ATTRS[property] # attribute
                     unfiltered_attrs[property] = value
                 else # style
                     unfiltered_styles[property] = value
 
-                    styles[property] = value if texy.allowed_styles == :all || tmp[property]
+                    styles[property] = value if @texy.allowed_styles == :all || tmp[property]
                 end
             end
         end

@@ -29,6 +29,8 @@
 #
 ##########################################################################################
 
+$KCODE = 'u'
+
 $:.unshift(File.dirname(__FILE__) + '/texy')
 
 # require_once TEXY_DIR.'libs/url.php';            // object encapsulate of URL
@@ -55,7 +57,7 @@ require 'modules/image'
 require 'modules/image_desc'
 require 'modules/link'
 require 'modules/list'
-require 'modules/long_words'
+# require 'modules/long_words'
 require 'modules/phrase'
 require 'modules/quick_correct'
 require 'modules/quote'
@@ -71,9 +73,6 @@ require 'modules/table'
 #   html = texy.process text
 #
 class Texy
-    # Use UTF-8? (texy configuration)
-    attr_accessor :utf
-
     # TAB width (for converting tabs to spaces)
     attr_accessor :tab_width
 
@@ -104,7 +103,6 @@ class Texy
     attr_accessor :reference_handler
 
     def initialize
-        self.utf = false
         self.tab_width = 8
         self.allowed_classes = :all
         self.allowed_styles = :all
@@ -172,7 +170,7 @@ class Texy
         :image_desc_module,
         :link_module,
         :list_module,
-        :long_words_module,
+#        :long_words_module,
         :phrase_module,
         :quick_correct_module,
         :quote_module,
@@ -206,7 +204,7 @@ class Texy
 
         # post process
         @quick_correct_module = Modules::QuickCorrect.new(self)
-        @long_words_module = Modules::LongWords.new(self)
+#        @long_words_module = Modules::LongWords.new(self)
         @formatter_module = Modules::Formatter.new(self)
     end
     protected :load_modules

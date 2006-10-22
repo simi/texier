@@ -93,9 +93,9 @@ class Texy
                 lower = value.downcase
 
                 # must begins with 'http://' or 'ftp://'
-                if lower[0..4] == 'www.'
+                if lower[0..3] == 'www.'
                     return @url = "http://#{value}"
-                elsif lower[0..4] == 'ftp.'
+                elsif lower[0..3] == 'ftp.'
                     return @url = "ftp://#{value}"
                 end
 

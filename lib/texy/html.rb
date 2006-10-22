@@ -100,7 +100,7 @@ class Texy
             return '' if tags.empty?
 
             tags.inject('') do |result, (tag, attrs)|
-                next if tag.empty?
+                next '' if tag.empty?
 
                 empty = EMPTY[tag] || attrs[EMPTY_TAG]
                 attr_str = ''
@@ -110,8 +110,8 @@ class Texy
 
                     attrs.downcase_keys.each do |name, value|
                         if value.kind_of?(Hash) && name == 'style'
-                            value = value.downcase_keys.inject([]) do |style, key_s, value_s|
-                                style << "#{keys_s}:#{value_s}" unless key_s.empty? || value_s.empty?
+                            value = value.downcase_keys.inject([]) do |style, (key_s, value_s)|
+                                style << "#{key_s}:#{value_s}" unless key_s.empty? || value_s.empty?
                                 style
                             end.join(';')
                         elsif value.kind_of?(Array)

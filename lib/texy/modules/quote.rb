@@ -23,20 +23,18 @@ class Texy
                     )
                 end
 
-                # (rane) FIXME: ruby doesn't support lookbehinds - think up something else here!
-
-    #             if allowed[:line]
-    #                 texy.register_line_pattern(
-    #                     method(:process_line), #proc {|parser, matches| process_line(parser, matches, 'q')},
-    #                     /(?<!\>)(\>\>)(?!\ |\>)(.+?)#{PATTERN_MODIFIER}?(?<!\ |\<)\<\<(?!\<)#{PATTERN_LINK}??()/
-    #                 )
-    #             end
+                if allowed[:line]
+                    texy.register_line_pattern(
+                        method(:process_line),
+                        /(>>)(?!\ |\>)(.+?[^\ <])#{PATTERN_MODIFIER}?<<(?!<)#{PATTERN_LINK}?()/
+                    )
+                end
             end
 
 
 
             # Callback function: >>.... .(title)[class]{style}<<:LINK
-            def process_line(parser, matches, tag = 'p') # (rane) what is the tag parameter for?
+            def process_line(parser, matches)
                 m_mark, m_content, m_link = matches.values_at(1, 2, 6)
 
                 el = QuoteElement.new(texy)

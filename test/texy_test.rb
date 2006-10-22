@@ -15,12 +15,19 @@ class TexyTest < Test::Unit::TestCase
     Dir.glob("#{FIXTURES_DIR}/*.texy") do |texy_file|
         method_name = File.basename(texy_file).gsub('.texy', '')
 
-        # next unless method_name == 'references'
+#        next unless method_name == 'lists3'
 
         define_method "test_#{method_name}".to_sym do
             source = File.read texy_file
             expected = File.read texy_file.gsub('.texy', '.html')
 
+#             result_file = texy_file.gsub('.texy', '.html')
+#
+#             if File.readable? result_file
+#                 expected = File.read result_file
+#             else
+#                 expected = `/home/rane/bin/texy.php #{texy_file}`
+#             end
 
             assert_equal expected, @texy.process(source)
         end

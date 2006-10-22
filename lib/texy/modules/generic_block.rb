@@ -18,7 +18,7 @@ class Texy
                 str_blocks = if merge_mode
                     content.split /(\n{2,})/
                 else
-                    content.split /(\n(?! )|\n{2,})/
+                    content.split /(\n(?!\ )|\n{2,})/
                 end
 
                 str_blocks.each do |str|
@@ -46,13 +46,13 @@ class Texy
                 #  ...  => \n
                 m_content = (m_content.to_s + m_content2.to_s).strip
                 if texy.merge_lines
-                   m_content.gsub! /\n (\S)/, " \r\\1"
-                   m_content.tr! "\n\r", " \n"
+                    m_content.gsub! /\n (\S)/, " \r\\1"
+                    m_content.tr! "\n\r", " \n"
                 end
 
                 el = GenericBlockElement.new(texy)
                 el.modifier.set_properties(*mods)
-                el.parse m_content
+                el.parse(m_content)
 
                 # specify tag
                 if el.content_type == DomElement::CONTENT_TEXTUAL
