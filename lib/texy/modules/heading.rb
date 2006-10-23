@@ -13,18 +13,20 @@ class Texy
 
             attr_accessor :balancing
 
-            LEVELS = { # when balancing = :fixed
-                '#' => 0,
-                '*' => 1,
-                '=' => 2,
-                '-' => 3,
-            }
+            # when balancing = :fixed
+            attr_accessor :levels
 
             def initialize(texy)
                 super
 
                 self.top = 1
                 self.balancing = :dynamic
+                self.levels = {
+                    '#' => 0,
+                    '*' => 1,
+                    '=' => 2,
+                    '-' => 3,
+                }
 
                 self.allowed = {
                     :surrounded => true,
@@ -69,7 +71,7 @@ class Texy
                 m_content, m_line = matches.values_at(1, -1)
 
                 el = Texy::HeadingElement.new(texy)
-                el.level = LEVELS[m_line]
+                el.level = levels[m_line]
 
                 @elements_underline << el if balancing == :dynamic
 

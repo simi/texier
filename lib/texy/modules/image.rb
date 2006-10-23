@@ -32,17 +32,13 @@ class Texy
                 self.left_class = nil
                 self.right_class = nil
                 self.default_alt = ''
-
-#                 if (isset($_SERVER['SCRIPT_NAME'])) {
-#                     $this->rootPrefix = dirname($_SERVER['SCRIPT_NAME']).'/'; // physical location on server
-#                 }
             end
 
 
             # Module initialization.
             def init
                 # [*image*]:LINK    where LINK is:   url | [ref] | [*image*]
-                texy.register_line_pattern(method(:process_line), /#{PATTERN_IMAGE}#{PATTERN_LINK_N}??()/)
+                texy.register_line_pattern(method(:process_line), /#{PATTERN_IMAGE}#{PATTERN_LINK_N}?()/)
             end
 
 

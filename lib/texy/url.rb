@@ -30,7 +30,7 @@ class Texy
         #   is_image::  image indicator (user usage)
         def set(value, root = '', is_image = false)
             self.value = value.to_s.strip
-            @root = root.gsub(/[\/\\]/, '') + '/' if root
+            @root = root.gsub(/[\/\\]\Z/, '') + '/' if root
 
             # will be completed on demand
             @url = nil

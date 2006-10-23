@@ -75,17 +75,16 @@ class Texy
                     m_attr.scan(/([a-z0-9:-]+)\s*(?:=\s*('[^']*'|"[^"]*"|[^'"\s]+))?()/im) do |key, value|
                         key.downcase!
 
-                        next if allowed_attrs.kind_of?(Hash) && !allowed_attrs.include?(key)
+                        next if allowed_attrs.kind_of?(Array) && !allowed_attrs.include?(key)
 
                         if value.nil?
                             value = key
                         elsif value[0] == ?' || value[0] == ?"
-                            value.slice(1..-2)
+                            value = value[1..-2]
                         end
 
                         attrs[key] = value
                     end
-
 
                     # apply allowed_classes & allowed_styles
                     modifier = Modifier.new(texy)
@@ -136,7 +135,7 @@ class Texy
 
 
             def trust_mode(only_valid_tags = true)
-                texy.allowed_tags = only_valid_tags ? Html::VALID : :all
+                texy.allowed_tags = only_valid_tags ? Texy::Html::VALID : :all
             end
 
             def safe_mode(allow_safe_tags = true)

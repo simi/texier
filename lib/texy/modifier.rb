@@ -70,8 +70,8 @@ class Texy
                 return unfiltered_attrs if allowed_attrs == :all
 
                 if allowed_attrs.kind_of?(Array) && !allowed_attrs.empty?
-                    attrs = unfiltered_attrs.select do |key|
-                        allowed_attrs.include? key
+                    unfiltered_attrs.each do |key, value|
+                        attrs[key] = value if allowed_attrs.include?(key)
                     end
                 end
             end
