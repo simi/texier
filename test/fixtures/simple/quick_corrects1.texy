@@ -1,0 +1,8 @@
+- "české" 'typografické' uvozovky
+- pomlčka vs. spojovník: 10-15 vs. česko-slovenský
+- pomlčka: jedna -- dvě
+- typografický křížek u rozměrů 10 x 20
+- šipky <- a -> a <->
+- tři tečky...
+- zachování HTML entit &amp;
+- náhrady(TM) nebo(R) za příslušné entity(C)

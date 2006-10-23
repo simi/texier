@@ -12,24 +12,30 @@ class TexyTest < Test::Unit::TestCase
     end
 
     # Generate one test method for each fixture found.
-    Dir.glob("#{FIXTURES_DIR}/*.texy") do |texy_file|
+    #
+    # Add file foo.texy and foo.html to directory
+    # fixtures/simple to create new test case that will assert
+    # that content of foo.html is equal to texy-ized content of
+    # foo.texy.
+    Dir.glob("#{FIXTURES_DIR}/simple/*.texy") do |texy_file|
         method_name = File.basename(texy_file).gsub('.texy', '')
 
-#        next unless method_name == 'lists3'
+        # next unless method_name == 'tables5'
 
         define_method "test_#{method_name}".to_sym do
             source = File.read texy_file
             expected = File.read texy_file.gsub('.texy', '.html')
 
-#             result_file = texy_file.gsub('.texy', '.html')
-#
-#             if File.readable? result_file
-#                 expected = File.read result_file
-#             else
-#                 expected = `/home/rane/bin/texy.php #{texy_file}`
-#             end
-
             assert_equal expected, @texy.process(source)
         end
+    end
+
+    def test_dynamic_headings
+        source = File.read "#{FIXTURES_DIR}/headings.texy"
+
+        @texy.heading_module.top = 2
+        @texy.heading_module.balancing = :dynamic
+
+        assert_equal File.read("#{FIXTURES_DIR}/headings_dynamic.html"), @texy.process(source)
     end
 end

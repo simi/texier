@@ -33,20 +33,12 @@ class Texy
             #    | aa  | bb  | cc  |
             #
             def process_block(parser, matches)
-
                 el = TableElement.new(texy)
                 el.modifier.set_properties(*matches[1..-1])
 
                 parser.move_backward
 
-                if matches = parser.receive_next(/^\|(#|\=){2,}(?!\1)(.*?)\1*\|?\ *#{PATTERN_MODIFIER_H}?()$/)
-#                     list(, $mChar, $mContent, $mMod1, $mMod2, $mMod3, $mMod4) = $matches;
-#                     //    [1] => # / =
-#                     //    [2] => ....
-#                     //    [3] => (title)
-#                     //    [4] => [class]
-#                     //    [5] => {style}
-#                     //    [6] => >
+                if matches = parser.receive_next(/\A\|(#|\=){2,}(?!\1)(.*?)\1*\|?\ *#{PATTERN_MODIFIER_H}?()$/)
                     m_content = matches[2]
 
                     el.caption = TextualElement.new(texy)
@@ -61,7 +53,7 @@ class Texy
                 @row = 0
 
                 while true
-                    if matches = parser.receive_next(/^\|\-{3,}?$/)
+                    if parser.receive_next(/\A\|\-{3,}$/)
                         @head = !@head
                         next
                     end
@@ -89,7 +81,7 @@ class Texy
             protected
                 def process_row(parser)
 
-                    return false unless matches = parser.receive_next(/^\|(.*?)(?:|\|\ *#{PATTERN_MODIFIER_HV}?)()$/)
+                    return false unless matches = parser.receive_next(/\A\|(.*?)(?:|\|\ *#{PATTERN_MODIFIER_HV}?)()$/)
 
                     m_content = matches[1]
 
