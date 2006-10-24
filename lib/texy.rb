@@ -1,6 +1,6 @@
 ##########################################################################################
 #
-# Texier is a ruby port of Texy! - universal text to html converter by David Grudl (dgx).
+# TexieR is a ruby port of Texy! - universal text to html converter by David Grudl (dgx).
 #
 # == Author
 #
@@ -29,12 +29,7 @@
 #
 ##########################################################################################
 
-$KCODE = 'u'
-
 $:.unshift(File.dirname(__FILE__) + '/texy')
-
-# require_once TEXY_DIR.'libs/url.php';            // object encapsulate of URL
-
 
 require File.dirname(__FILE__) + '/core_extensions'
 require 'constants'
@@ -336,7 +331,7 @@ class Texy
 end
 
 
-# Command line usage.
+# TexieR can be used from command line.
 if $0 == __FILE__
     texy = Texy.new
     texy.formatter_module.line_wrap = 0

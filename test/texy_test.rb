@@ -1,3 +1,5 @@
+$KCODE = 'u'
+
 require 'test/unit'
 require File.dirname(__FILE__) + '/../lib/texy'
 
@@ -183,5 +185,22 @@ class TexyTest < Test::Unit::TestCase
     def test_complex
         source = File.read "#{FIXTURES_DIR}/complex.texy"
         assert_equal File.read("#{FIXTURES_DIR}/complex.html"), @texy.process(source)
+    end
+
+    def test_well_form
+        assert_equal(
+            "\n<p><strong><em>hello</em></strong><em>world</em></p>\n",
+            @texy.process('<strong><em>hello</strong>world</em>')
+        )
+
+        assert_equal(
+            "\n<div><img src=\"foo.png\" /></div>\n",
+            @texy.process('<img src="foo.png">')
+        )
+
+        assert_equal(
+            "\n<div><strong>hello</strong></div>\n\n<div>world</div>\n",
+            @texy.process('<div><strong>hello</div><div>world</strong>')
+        )
     end
 end
