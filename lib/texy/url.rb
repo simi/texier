@@ -28,8 +28,8 @@ class Texy
         #   value::     text written in document
         #   root::      root, for relative URL's
         #   is_image::  image indicator (user usage)
-        def set(value, root = '', is_image = false)
-            self.value = value.to_s.strip
+        def set(value, root = nil, is_image = false)
+            self.value = value.strip if value
             @root = root.gsub(/[\/\\]\Z/, '') + '/' if root
 
             # will be completed on demand
@@ -72,7 +72,7 @@ class Texy
         def as_url
             # output is cached
             return @url if @url
-            return @url = value if value.empty?
+            return @url = '' if value.to_s.empty?
 
             # email URL
             if email?
@@ -101,7 +101,7 @@ class Texy
 
                 @url = value
             else # relative URL
-                @url = @root + value
+                @url = @root.to_s + value
             end
         end
 

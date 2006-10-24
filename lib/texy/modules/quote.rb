@@ -75,7 +75,7 @@ class Texy
                         content += m_content.to_s + "\n"
                     end
 
-                    if matches = parser.receive_next(/^>(?:|(\ {1,#{spaces}}|:)(.*))()$/)
+                    if matches = parser.receive_next(/\A>(?:|(\ {1,#{spaces}}|:)(.*))()$/)
                         m_spaces, m_content = matches[1..2]
                     else
                         break

@@ -37,7 +37,6 @@ class Texy
                 self.force_no_follow = false
                 self.image_on_click = 'return !popupImage(this.href)'
                 self.popup_on_click = 'return !popup(this.href)'
-                self.root = ''
             end
 
 
@@ -164,6 +163,7 @@ class Texy
         def initialize(texy, url = nil, label = nil)
             self.modifier = Modifier.new(texy)
 
+            url = url.to_s
             url = url[1..-2] if url.length > 1 && (url[0] == ?' || url[0] == ?")
 
             self.url = url.strip
@@ -191,7 +191,7 @@ class Texy
                 el_ref = texy.link_module.reference(link[1..-2])
 
                 if el_ref
-                    self.modifier = el_ref.modifier.dup # $this->modifier->copyFrom($elRef->modifier);
+                    self.modifier = el_ref.modifier.dup
                     link = el_ref.url + el_ref.query
                     link.gsub!('%s', CGI.escape(Texy.wash(text)))
                 else
@@ -270,9 +270,7 @@ class Texy
 
             # prevent cycling
             return false if @@callstack[low_name]
-
-            el_ref = texy.link_module.reference(ref_name)
-            return false unless el_ref
+            return false unless el_ref = texy.link_module.reference(ref_name)
 
             el_link = LinkElement.new(texy)
             el_link.set_link_raw(ref_raw)

@@ -93,15 +93,11 @@ class Texy
 
 
 
-        # (rane) In original code, there was method copyFrom, but i think dup can be used instead (clone in php)
-
-
-
         def parse_classes(string)
             return if string.to_s.empty?
 
             # little speed-up trick
-            tmp = if @texy.allowed_classes.kind_of? Array
+            class_hash = if @texy.allowed_classes.kind_of? Array
                 @texy.allowed_classes.to_hash.invert
             else
                 {}
@@ -111,13 +107,10 @@ class Texy
                 next if value.empty?
 
                 if value[0] == ?#
-                    # (rane) Original code had little wtf here (imho): It assigned the value
-                    # to  classes array under the key "id" and then in the method setProperties()
-                    # extracted it back and assigned to attribute id.
-                    self.id = value[1..-1]
+                    self.id = value[1..-1] if @texy.allowed_classes == :all || class_hash[value]
                 else
                     unfiltered_classes << value
-                    classes << value if @texy.allowed_classes == :all || tmp[value]
+                    classes << value if @texy.allowed_classes == :all || class_hash[value]
                 end
             end
         end

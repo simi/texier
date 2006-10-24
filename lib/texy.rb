@@ -260,6 +260,30 @@ class Texy
 
 
 
+    # Switch Texy and default modules to safe mode
+    #
+    # Suitable for "comments" and other usages, where attacker may insert input text.
+    def safe_mode
+        self.allowed_classes = false # no class or ID are allowed
+        self.allowed_styles = false # style modifiers are disabled
+        html_module.safe_mode # only HTML tags and attributes specified in $safeTags array are allowed
+        image_module.allowed = false # disable images
+        link_module.force_no_follow = true # force rel="nofollow"
+    end
+
+
+
+    # Switch Texy and default modules to (default) trust mode
+    def trust_mode
+        self.allowed_classes = :all # classes and id are allowed
+        self.allowed_styles = :all # inline styles are allowed
+        html_module.trust_mode # full support for HTML tags
+        image_module.allowed = true # enable images
+        link_module.force_no_follow = true # disable automatic rel="nofollow"
+    end
+
+
+
     # Translate all white spaces (\t \n \r space) to meta-spaces \x15-\x18
     # which are ignored by some formatting functions
     def self.freeze_spaces(string)
@@ -309,4 +333,13 @@ class Texy
         @notice_shown ||= false
         @notice_shown
     end
+end
+
+
+# Command line usage.
+if $0 == __FILE__
+    texy = Texy.new
+    texy.formatter_module.line_wrap = 0
+
+    puts texy.process($ARGV[0] ? File.read($ARGV[0]) : $stdin.read)
 end

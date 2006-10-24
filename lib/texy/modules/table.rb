@@ -114,7 +114,7 @@ class Texy
                             end
                         end
 
-                        next unless matches = /\A(\*?)\ *#{PATTERN_MODIFIER_HV}?(.*?)#{PATTERN_MODIFIER_HV}?()$/.match(field)
+                        next unless matches = /\A(\*?)\ *?#{PATTERN_MODIFIER_HV}?(.*?)#{PATTERN_MODIFIER_HV}?()$/.match(field)
 
                         m_head, m_content = matches.values_at(1, 7)
                         col_mods = matches[2..6]

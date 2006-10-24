@@ -96,7 +96,7 @@ class Texy
                     el.delta_level = delta
                 end
 
-                delta = @range_surround[0] + (@range_underline[1] ? (@range_underline[1] - @range_underline[0] + 1) : 0);
+                delta = -@range_surround[0] + (@range_underline[1] ? (@range_underline[1] - @range_underline[0] + 1) : 0);
                 @elements_surround.each do |el|
                     el.delta_level = delta
                 end

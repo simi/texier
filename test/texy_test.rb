@@ -133,4 +133,55 @@ class TexyTest < Test::Unit::TestCase
 
         assert_equal File.read("#{FIXTURES_DIR}/modifiers_none.html"), @texy.process(source)
     end
+
+    def test_modifiers_custom
+        source = File.read "#{FIXTURES_DIR}/modifiers.texy"
+
+        @texy.allowed_classes = ['one', '#id']
+        @texy.allowed_styles = ['color']
+
+        assert_equal File.read("#{FIXTURES_DIR}/modifiers_custom.html"), @texy.process(source)
+    end
+
+    def test_smilies
+        source = File.read "#{FIXTURES_DIR}/smilies.texy"
+
+        @texy.smilies_module.allowed = true
+        @texy.smilies_module.root = 'images/'
+        @texy.smilies_module.icon_class = 'smilie'
+        @texy.smilies_module.icons[':oops:'] = 'redface.gif'
+
+        assert_equal File.read("#{FIXTURES_DIR}/smilies.html"), @texy.process(source)
+    end
+
+    def test_references
+        source = File.read "#{FIXTURES_DIR}/references.texy"
+
+        @texy.reference_handler = proc do |ref_name, texy|
+            names = {'0' => 'Me', '1' => 'Punkrats', '2' => 'Serwhats', '3' => 'Bonnyfats'}
+
+            return false unless names[ref_name]
+
+            name = names[ref_name]
+
+            el_ref = Texy::LinkReference.new(texy)
+
+            el_ref.url = '#comm-' + ref_name
+            el_ref.label = "[#{ref_name}] **#{name}**"
+            el_ref.modifier.classes << 'comment'
+
+            # to enable rel="nofollow", set this:   $elRef->modifier->classes[] = 'nofollow';
+
+            el_ref
+        end
+
+        @texy.safe_mode
+
+        assert_equal File.read("#{FIXTURES_DIR}/references.html"), @texy.process(source)
+    end
+
+    def test_complex
+        source = File.read "#{FIXTURES_DIR}/complex.texy"
+        assert_equal File.read("#{FIXTURES_DIR}/complex.html"), @texy.process(source)
+    end
 end
