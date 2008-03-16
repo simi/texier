@@ -1,3 +1,0 @@
-.(people)
-| .{color: green} first col | second col      .>| third col | .{font-style:italic}
-| Adam                      | Eva .{color: blue}| Franta
