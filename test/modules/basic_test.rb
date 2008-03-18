@@ -3,14 +3,22 @@ require 'processor'
 
 # Test case for Texier::Modules::Basic class
 class BasicTest < Test::Unit::TestCase
-  def test_empty_input_should_produce_dom_with_empty_root_element
+  def test_parser_should_be_properly_initialized
+    processor = stub('processor')
+    
+    basic = Texier::Modules::Basic.new(processor)
+    parser = Texier::Parser.new
+    
+    basic.initialize_parser(parser)   
+    
+    assert parser.has_rule?(:document)
+  end
+  
+  def test_empty_input_should_produce_empty_dom
     processor = Texier::Processor.new
     processor.process('')
     
-    dom = processor.dom
-    
-    assert_equal :document, dom.name
-    assert_nil dom.content
+    assert_equal [], processor.dom
   end
 
   def test_empty_input_should_produce_empty_output
@@ -19,5 +27,12 @@ class BasicTest < Test::Unit::TestCase
   
   def test_single_paragraph
     assert_equal '<p>hello world</p>', Texier.process('hello world')
+  end
+  
+  def test_two_paragraphs
+    assert_equal(
+      '<p>hello world</p><p>hello another paragraph</p>',
+      Texier::process("hello world\n\nhello another paragraph")
+    )
   end
 end

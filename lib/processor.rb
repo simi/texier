@@ -56,9 +56,9 @@ module Texier
     def parse(input)
       parser = Parser.new
        
-      #      @modules.each do |mod|
-      #        mod.initialize_parser(parser)
-      #      end
+      @modules.each do |mod|
+        mod.initialize_parser(parser)
+      end
        
       @dom = parser.parse(input)
     end

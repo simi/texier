@@ -1,3 +1,5 @@
+require "#{File.dirname(__FILE__)}/element"
+
 module Texier
   # The features of Texier processor are separated into self-contained modules.
   # These modules can then be added to/removed from Texier processor according
@@ -18,7 +20,11 @@ module Texier
     
     # Add rules to parser.
     def initialize_parser(parser)
-      
+      parser.define(&@@parser_initializer) if @@parser_initializer
+    end
+    
+    def self.parser(&block)
+      @@parser_initializer = block
     end
     
   end
