@@ -8,4 +8,13 @@ class ProcessorTest < Test::Unit::TestCase
     
     assert_nil processor.dom
   end
+  
+  def test_access_to_modules
+    processor = Texier::Processor.new
+    
+    assert_nothing_raised do
+      mod = processor.basic_module
+      assert_kind_of Texier::Module, mod
+    end
+  end
 end

@@ -11,7 +11,6 @@ require 'processor'
 class Test::Unit::TestCase
   # Assert that Texier produces expected output from given input.
   def assert_output(expected, input)
-    processor = Texier::Processor.new    
-    assert_equal expected, processor.process(input)
+    assert_equal expected, (@processor || Texier::Processor.new).process(input)
   end
 end

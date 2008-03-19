@@ -4,9 +4,7 @@ require 'processor'
 # Test case for Texier::Modules::Basic class
 class BasicTest < Test::Unit::TestCase
   def test_parser_should_be_properly_initialized
-    processor = stub('processor')
-    
-    basic = Texier::Modules::Basic.new(processor)
+    basic = Texier::Modules::Basic.new
     parser = Texier::Parser.new
     
     basic.initialize_parser(parser)   
@@ -15,10 +13,9 @@ class BasicTest < Test::Unit::TestCase
   end
   
   def test_empty_input_should_produce_empty_dom
-    processor = Texier::Processor.new
-    processor.process('')
+    @processor.process('')
     
-    assert_equal [], processor.dom
+    assert_equal [], @processor.dom
   end
 
   def test_empty_input_should_produce_empty_output

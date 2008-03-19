@@ -24,10 +24,7 @@ module Texier
     attr_reader :dom
     
     def initialize
-      @modules = []
-      
-      @modules << Modules::Basic.new(self)
-      @modules << Modules::Heading.new(self)
+      load_modules
     end
     
     # Process input string in Texy format and produce output in HTML format.
@@ -38,7 +35,24 @@ module Texier
       render
     end
     
+    def add_module(mod)
+      @modules ||= []
+      @modules << mod
+      
+      mod.processor = self
+
+      # Dynamicaly define singleton method with the name of added module, so it
+      # can be accessed from outside as foo_module (this is advanced ruby
+      # magic).
+      (class << self; self; end).send(:define_method, mod.name) {mod}
+    end
+    
     protected
+    
+    def load_modules      
+      add_module Modules::Basic.new
+      add_module Modules::Heading.new
+    end
     
     # This is called before parsing. Here the input document can be modified as
     # neccessary.
@@ -61,7 +75,10 @@ module Texier
     
     # This is called after parsing. Here the dom tree can be traversed and
     # modified.
-    def after_parse      
+    def after_parse
+      @modules.each do |mod|
+        mod.after_parse(@dom)
+      end
     end
     
     # Traverse dom tree and create output HTML document.

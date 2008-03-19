@@ -43,11 +43,6 @@ module Texier
         result
       end
       
-      # Creates empty expression, that does not match anything.
-      def empty
-        Expressions::Empty
-      end
-
       # Creates expression that matches everything from current position up to
       # position where another expression matches.
       def everything_up_to(expression)
@@ -110,14 +105,6 @@ module Texier
         end
       end
       
-      # Empty expression that never matches anything.
-      Empty = Expression.new
-      class << Empty
-        def parse(scanner)
-          nil
-        end
-      end
-
       class Mapper < Expression
         def initialize(expression, &block)
           @expression = create(expression)
@@ -160,13 +147,36 @@ module Texier
       
       # Ordered choice.
       class Choice < Expression
-        def initialize(first, second)
-          @first = create(first)
-          @second = create(second)
+        def initialize(*expressions)
+          @expressions = expressions.map do |expression|
+            create(expression)
+          end
         end
       
         def parse(scanner)
-          @first.parse(scanner) || @second.parse(scanner)
+          @expressions.each do |expression|
+            if result = expression.parse(scanner)
+              return result
+            end
+          end
+          
+          nil
+        end
+        
+        def << (other)
+          @expressions << other
+        end
+      end
+      
+      # TODO: describe what is this good for.
+      class ChoiceWithDefault < Choice
+        def << (other)
+          if @expressions.empty?
+            @expressions << other
+          else
+            last = @expressions.pop
+            @expressions << other << last          
+          end
         end
       end
 

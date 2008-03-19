@@ -38,13 +38,6 @@ class ParserTest < Test::Unit::TestCase
     end
   end
   
-  def test_empty_expression_should_not_match_anything
-    @parser[:document] = empty
-    
-    assert_nil @parser.parse('')
-    assert_nil @parser.parse('hello world')
-  end
-  
   def test_string_expression_should_match_only_that_string
     @parser[:document] = expression('hello world')
     

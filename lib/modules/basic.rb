@@ -4,9 +4,8 @@ module Texier::Modules
   # This modules provides the most basic features of Texier processor.
   class Basic < Texier::Module
     parser do
-      # These elements are meant to be extended by other modules.
-      block_element = empty
-      inline_element = empty
+      block_element = Texier::Parser::Expressions::ChoiceWithDefault.new
+      inline_element = Texier::Parser::Expressions::ChoiceWithDefault.new
 
       # One line.
       line = everything_up_to(/$/)
@@ -15,11 +14,13 @@ module Texier::Modules
       paragraph = one_or_more(line).separated_by("\n").map do |*lines|
         Texier::Element.new(:p, lines)
       end
+      
+      block_element << paragraph
         
       # Root element / starting symbol.
-      document = zero_or_more(block_element | paragraph).separated_by(/\n{2,}/)
+      document = zero_or_more(block_element).separated_by(/\n{2,}/)
         
-      # Export some symbols.
+      # Export these expressions.
       parser[:document] = document
       parser[:block_element] = block_element
       parser[:inline_element] = inline_element

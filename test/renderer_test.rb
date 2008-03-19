@@ -27,4 +27,10 @@ class RendererTest < Test::Unit::TestCase
     
     assert_equal '<foo>hello world</foo>', @renderer.render(element)
   end
+  
+  def test_element_with_simple_attribute
+    element = Texier::Element.new(:foo, 'hello', :class => 'bar')
+    
+    assert_equal '<foo class="bar">hello</foo>', @renderer.render(element)
+  end
 end
