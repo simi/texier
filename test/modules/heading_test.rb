@@ -68,6 +68,25 @@ class HeadingTest < Test::Unit::TestCase
     assert_output '<h3>hello</h3>', '####### hello'
   end
   
+  def test_more_means_higher
+    @processor.heading_module.more_means_higher = true
+    assert_output(
+      '<h1>level 1</h1><h2>level 2</h2>',
+      "####### level 1\n\n###### level 2"
+    )
+    
+    @processor.heading_module.more_means_higher = false    
+    assert_output(
+      '<h1>level 1</h1><h2>level 2</h2>',
+      "###### level 1\n\n####### level 2"
+    )
+  end
+  
+  def test_fixed_balancing
+    @processor.heading_module.balancing = :fixed
+    assert_output '<h4>hello</h4>', '#### hello'
+  end
+  
   def test_generate_id
     @processor.heading_module.generate_id = true
     assert_output(
@@ -89,4 +108,19 @@ class HeadingTest < Test::Unit::TestCase
       "####### hello\n\n###### hello"
     )
   end
+  
+  def test_single_underlined_heading
+    assert_output(
+      '<h1>hello world</h1>',
+      "hello world\n######"
+    )    
+  end
+  
+  def test_two_underlined_headings
+    assert_output(
+      '<h1>level 1</h1><h2>level 2</h2>',
+      "level 1\n####\n\nlevel 2\n****"
+    )
+  end
+  
 end

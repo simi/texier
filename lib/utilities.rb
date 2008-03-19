@@ -5,8 +5,7 @@ module Texier::Utilities
     string.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^\-+|\-+$/, '')
   end
   
-  # Add number 2 to the end of a string. If there is already a number, increment
-  # it.
+  # Add number to the end of a string or increment it if it is there already.
   def self.sequel(string, separator = '-')
     if /(\d+)$/ =~ string
       "#{$`}#{$1.to_i + 1}"

@@ -7,7 +7,7 @@ module Texier::Modules
     attr_reader :title
     
     # Generated table of contents.
-    attr_accessor :toc
+    attr_reader :toc
     
     options(
       # Autogenerate id's of heading
@@ -20,29 +20,63 @@ module Texier::Modules
       :top => 1,
       
       # For surrounded headings: more #### means higher level.
-      :more_means_higher => true
+      :more_means_higher => true,
+      
+      # Balancing mode. TODO: explain this.
+      :balancing => :dynamic,
+      
+      # Styles of underlined headings.
+      :levels => {
+        '#' => 0,
+        '*' => 1,
+        '=' => 2,
+        '-' => 3
+      }
     )
     
     parser do      
       # Surrounded headings
       marker = expression(/ *(\#{2,}|={2,}) +/) do |line|
         # Calculate relative level of heading according to length of the marker.
-        7 - [line.strip.length, 7].min
+        level = [line.strip.length, 7].min
+        level = 7 - level if more_means_higher
+        level
       end
       tail = expression(/ *(\#{2,}|={2,})? *$/)
       
       content = everything_up_to(tail)
-      # TODO: support inline elements inside heading's content.
-      # content = one_or_more(inline_element).up_to(tail)
+      # TODO: support inline elements inside content. content =
+      # one_or_more(inline_element).up_to(tail)
       
-      heading = (marker & content & tail).map do |level, content, _|
-        element = Texier::Element.new(:h, content, :level => level)
-        element[:id] ||= auto_id(content)
+      surrounded_heading = (marker & content & tail).map do |level, content, _| 
+        [level, content]
+      end
+      
+      # Underlined headings
+      underline = empty
+      levels.each do |char, value|
+        underline << expression(/ *#{Regexp.quote(char)}{3,} */) {value}
+      end
+      
+      content = everything_up_to(/$/)
+      # TODO: support inline elements inside content.
+      
+      underlined_heading = (content & "\n" & underline).map do 
+        |content, _, level|
+        [level, content]
+      end
+      
+      
+      
+      heading = surrounded_heading | underlined_heading
+      heading = heading.map do |level, content|
+        h = Texier::Element.new(:"h#{level + 1}", content, :level => level)
+        h[:id] ||= auto_id(content)
           
-        toc << element
-        @title ||= element.content.to_s
+        toc << h
+        @title ||= h.content.to_s
         
-        element
+        h
       end
       
       block_element << heading
@@ -56,26 +90,32 @@ module Texier::Modules
       input
     end
     
-    def after_parse(dom)
-      # Find highest heading level, then second highest, and so on. Then create
-      # mapping table, where the highest level will be mapped to level 1, second
-      # highest to level 2, and so on. Then modify levels of headings according
-      # to this table.
+    def after_parse(dom)      
+      if balancing == :dynamic
+        # Find highest heading level, then second highest, and so on. Then
+        # create mapping table, where the highest level will be mapped to level
+        # 1, second highest to level 2, and so on. Then modify levels of
+        # headings according to this table.
+        
+        mapping = {}
+        used_levels = {}
+        toc.each do |element|
+          used_levels[element[:level]] = true
+        end
       
-      mapping = {}
-      used_levels = {}
-      toc.each do |element|
-        used_levels[element[:level]] = true
+        used_levels = used_levels.keys.sort
+        used_levels.each_with_index do |level, index|
+          mapping[level] = [index + top, 6].min
+        end
+      
+        # Assign new levels.
+        toc.each do |element|
+          element.name = "h#{mapping[element[:level]]}"
+        end
       end
       
-      used_levels = used_levels.keys.sort
-      used_levels.each_with_index do |level, index|
-        mapping[level] = [index + top, 6].min
-      end
-      
-      # Assign dynamic levels
+      # Remove "level" attributes.
       toc.each do |element|
-        element.name = "h#{mapping[element[:level]]}"
         element[:level] = nil
       end
     end

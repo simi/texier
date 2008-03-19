@@ -43,6 +43,13 @@ module Texier
         result
       end
       
+      # Create empty expression that never matches anything.
+      # It is actualy Choice, so other expression can be added to it later
+      # using << operator.
+      def empty
+        Expressions::Choice.new
+      end
+      
       # Creates expression that matches everything from current position up to
       # position where another expression matches.
       def everything_up_to(expression)
