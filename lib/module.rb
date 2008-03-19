@@ -1,3 +1,4 @@
+require "#{File.dirname(__FILE__)}/parser"
 require "#{File.dirname(__FILE__)}/element"
 
 module Texier
@@ -11,21 +12,40 @@ module Texier
     def initialize(processor)
       @processor = processor
     end
-    
-    # Preprocess the input string before parsing starts. This method should be
-    # overriden in derived classes if preprocessing is needed.
-    def preprocess(input)
+  
+    # This method is called before parsing. Derived classes should override it
+    # if they need to preprocessing the input document.
+    def before_parse(input)
       input
     end
     
-    # Add rules to parser.
+    # This method is called after parsing. Derived classeas should override it
+    # if they need to do something with dom tree.
+    def after_parse(dom)      
+    end
+    
     def initialize_parser(parser)
-      parser.define(&@@parser_initializer) if @@parser_initializer
+      @parser = parser
+      instance_eval(&self.class.parser_initializer)
+      @parser = nil
     end
-    
+  
+    # Call this class method on derived classes to define parsing rules.
     def self.parser(&block)
-      @@parser_initializer = block
+      @parser_initializer = block
     end
     
+    protected
+
+    # Helper methods for generating parser rules.
+    include Parser::Generators
+    
+    def parser
+      @parser
+    end
+    
+    def self.parser_initializer
+      @parser_initializer
+    end
   end
 end

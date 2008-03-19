@@ -1,6 +1,8 @@
 require 'parser'
 require 'renderer'
+
 require 'modules/basic'
+require 'modules/heading'
 
 module Texier
   # The main class of Texier. You process Texy files by calling method +process+
@@ -25,34 +27,28 @@ module Texier
       @modules = []
       
       @modules << Modules::Basic.new(self)
+      @modules << Modules::Heading.new(self)
     end
     
-    # Process input string in Texy format and produce output (by default in HTML
-    #   format).
+    # Process input string in Texy format and produce output in HTML format.
     def process(input)
-      # Processing consist of 3 phases:
-      # 
-      # 1. preprocessing
-      # 2. parsing
-      # 3. rendering
-      
-      input = preprocess(input)
+      input = before_parse(input)
       parse(input)
+      after_parse
       render
     end
     
     protected
     
-    # Preprocessing of input document. Each module can do it's own
-    # preprocessing, if neccessary. An example can be the sanitization of HTML
-    # tags.
-    def preprocess(input)
+    # This is called before parsing. Here the input document can be modified as
+    # neccessary.
+    def before_parse(input)
       @modules.inject(input) do |string, mod|
-        mod.preprocess(string)
+        mod.before_parse(string)
       end
     end
 
-    # Parse the input document and create it's Document Object Model (dom).
+    # Parse the input document and create Document Object Model (dom).
     def parse(input)
       parser = Parser.new
        
@@ -63,12 +59,16 @@ module Texier
       @dom = parser.parse(input)
     end
     
-    # Traverse dom and create resulting HTML document.
+    # This is called after parsing. Here the dom tree can be traversed and
+    # modified.
+    def after_parse      
+    end
+    
+    # Traverse dom tree and create output HTML document.
     # 
     # NOTE: should i bother adding support for other output formats?
     def render
-      renderer = Renderer.new
-      
+      renderer = Renderer.new      
       renderer.render(@dom)
     end
   end

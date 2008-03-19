@@ -18,7 +18,7 @@ class RendererTest < Test::Unit::TestCase
     assert_equal 'hello world', @renderer.render('hello world')
   end
   
-  def test_array_should_be_rendered_as_concatenation_of_renderings_of_its_elements
+  def test_array_should_be_rendered_as_concatenation_of_renderings_of_its_items
     assert_equal 'foobar', @renderer.render(['foo', 'bar'])
   end
   
