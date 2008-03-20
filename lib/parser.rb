@@ -4,10 +4,11 @@ require "#{File.dirname(__FILE__)}/element"
 require "#{File.dirname(__FILE__)}/error"
 
 module Texier
-  # Parser based on theory of Parsing Expression Grammars (PEG)
+  # Parser generator based on theory of Parsing Expression Grammars (PEG). TODO:
+  # describe it in more detail.
   class Parser
     def initialize
-      @rules = {}
+      @rules = {}      
     end
     
     # Access to exported expressions.
@@ -22,7 +23,7 @@ module Texier
     end
     
     def has_expression?(name)
-      @rules.has_key?(name)
+      @rules.has_key?(name)      
     end
     
     # Parse the string.
@@ -171,15 +172,6 @@ module Texier
         
         def << (expression)
           @expressions << expression
-        end
-        
-        def prepend_before_last(expression)
-          if @expressions.empty?
-            @expressions << expression
-          else
-            last = @expressions.pop
-            @expressions << expression << last          
-          end
         end
       end
       

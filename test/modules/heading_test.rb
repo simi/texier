@@ -121,5 +121,11 @@ class HeadingTest < Test::Unit::TestCase
       "level 1\n####\n\nlevel 2\n****"
     )
   end
-  
+
+  def test_heading_and_paragraph
+    assert_output(
+      '<h1>heading</h1><p>hello world</p>',
+      "####### heading\n\nhello world"
+    )
+  end
 end

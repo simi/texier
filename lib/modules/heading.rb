@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../module"
 
-module Texier::Modules
+module Texier::Modules    
   # This module provides headings.
   class Heading < Texier::Module
     # Content of the first heading.
@@ -34,7 +34,7 @@ module Texier::Modules
       }
     )
 
-    block_element(:surrounded) do
+    block_element('surrounded') do
       # Surrounded headings
       marker = expression(/ *(\#{2,}|={2,}) +/) do |line|
         # Calculate relative level of heading according to length of the marker.
@@ -52,8 +52,8 @@ module Texier::Modules
         create_element(level, content)
       end
     end
-
-    block_element(:underlined) do
+    
+    block_element('underlined') do
       # Underlined headings
       underline = empty
       levels.each do |char, value|
@@ -97,7 +97,7 @@ module Texier::Modules
         # Assign new levels.
         toc.each do |element|
           element.name = "h#{mapping[element[:level]]}"
-        end
+        end        
       end
 
       # Remove "level" attributes.

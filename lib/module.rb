@@ -27,7 +27,7 @@ module Texier
       @parser = parser
       parser_initializers.each do |type, blocks|
         blocks.each do |block|
-          parser[type].prepend_before_last(instance_eval(&block))
+          parser[:"#{type}_slot"] << instance_eval(&block)
         end
       end
       @parser = nil

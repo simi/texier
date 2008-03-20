@@ -3,6 +3,7 @@ require 'renderer'
 
 require 'modules/basic'
 require 'modules/heading'
+require 'modules/phrase'
 
 module Texier
   # The main class of Texier. You process Texy files by calling method +process+
@@ -50,9 +51,12 @@ module Texier
     
     protected
     
-    def load_modules      
+    def load_modules
+      # The Basic module has to be loaded first.
       add_module Modules::Basic.new
+      
       add_module Modules::Heading.new
+      add_module Modules::Phrase.new
     end
     
     def default_module_name(mod)
