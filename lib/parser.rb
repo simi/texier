@@ -43,9 +43,8 @@ module Texier
         result
       end
       
-      # Create empty expression that never matches anything.
-      # It is actualy Choice, so other expression can be added to it later
-      # using << operator.
+      # Create empty expression that never matches anything. It is actualy
+      # Choice, so other expression can be added to it later using << operator.
       def empty
         Expressions::Choice.new
       end
@@ -170,23 +169,20 @@ module Texier
           nil
         end
         
-        def << (other)
-          @expressions << other
+        def << (expression)
+          @expressions << expression
         end
-      end
-      
-      # TODO: describe what is this good for.
-      class ChoiceWithDefault < Choice
-        def << (other)
+        
+        def prepend_before_last(expression)
           if @expressions.empty?
-            @expressions << other
+            @expressions << expression
           else
             last = @expressions.pop
-            @expressions << other << last          
+            @expressions << expression << last          
           end
         end
       end
-
+      
       # Sequence of expressions
       class Sequence < Expression
         def initialize(*expressions)

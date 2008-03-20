@@ -40,11 +40,12 @@ module Texier
       @modules << mod
       
       mod.processor = self
-
+      name = default_module_name(mod)
+      
       # Dynamicaly define singleton method with the name of added module, so it
       # can be accessed from outside as foo_module (this is advanced ruby
       # magic).
-      (class << self; self; end).send(:define_method, mod.name) {mod}
+      (class << self; self; end).send(:define_method, name) {mod}
     end
     
     protected
@@ -52,6 +53,14 @@ module Texier
     def load_modules      
       add_module Modules::Basic.new
       add_module Modules::Heading.new
+    end
+    
+    def default_module_name(mod)
+      name = mod.class.name
+      name.sub!(/^(.*::)?/, '')
+      name.downcase!
+      name += '_module'
+      name.to_sym
     end
     
     # This is called before parsing. Here the input document can be modified as

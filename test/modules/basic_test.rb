@@ -1,5 +1,4 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
-require 'processor'
 
 # Test case for Texier::Modules::Basic class
 class BasicTest < Test::Unit::TestCase
@@ -13,9 +12,10 @@ class BasicTest < Test::Unit::TestCase
   end
   
   def test_empty_input_should_produce_empty_dom
-    @processor.process('')
+    processor = Texier::Processor.new
+    processor.process('')
     
-    assert_equal [], @processor.dom
+    assert_equal [], processor.dom
   end
 
   def test_empty_input_should_produce_empty_output

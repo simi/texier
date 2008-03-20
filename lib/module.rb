@@ -1,5 +1,5 @@
-require "#{File.dirname(__FILE__)}/parser"
 require "#{File.dirname(__FILE__)}/element"
+require "#{File.dirname(__FILE__)}/parser"
 require "#{File.dirname(__FILE__)}/utilities"
 
 module Texier
@@ -12,17 +12,8 @@ module Texier
   class Module
     attr_accessor :processor
     
-    # Name of the module. This is by default derived from it's class name.
-    def name
-      name = self.class.name # take class name
-      name.sub!(/^(.*::)?/, '') # strip module names
-      name.downcase!
-      name += '_module'
-      name.to_sym # convert to symbol
-    end
-  
     # This method is called before parsing. Derived classes should override it
-    # if they need to preprocessing the input document.
+    # if they need to preprocess the input document.
     def before_parse(input)
       input
     end
@@ -34,7 +25,11 @@ module Texier
     
     def initialize_parser(parser)
       @parser = parser
-      instance_eval(&self.class.parser_initializer)
+      parser_initializers.each do |type, blocks|
+        blocks.each do |block|
+          parser[type].prepend_before_last(instance_eval(&block))
+        end
+      end
       @parser = nil
     end
   
@@ -54,31 +49,42 @@ module Texier
         end
       end
     end
-
-    # Define parsing rules.
-    def self.parser(&block)
-      @parser_initializer = block
+    
+    @@parser_initializers = {}
+    
+    def self.define_element(type, &block)
+      @@parser_initializers[self] ||= {}
+      @@parser_initializers[self][type] ||= []
+      @@parser_initializers[self][type] << block
+    end
+    
+    # Define new inline element.
+    def self.inline_element(name, &block)
+      define_element(:inline_element, &block)
+    end
+    
+    # Define new block element.
+    def self.block_element(name, &block)
+      define_element(:block_element, &block)
+    end
+    
+    def parser_initializers
+      @@parser_initializers[self.class]
     end
 
+    
+    
     # Helper methods for generating parser rules.
     include Parser::Generators
     
-    def parser
-      @parser
-    end
-    
     # Shortcut access to block_element.
     def block_element
-      parser[:block_element]
+      @parser[:block_element]
     end
     
     # Shortcut access to inline_element.
     def inline_element
-      parser[:inline_element]
-    end
-    
-    def self.parser_initializer
-      @parser_initializer
+      @parser[:inline_element]
     end
   end
 end
