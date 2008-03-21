@@ -43,6 +43,13 @@ module Texier::Modules
         Texier::Element.new(:acronym, acronym, :title => meaning)
       end
     end
+    
+    # Quick links (blah:www.metatribe.org)
+    inline_element('quicklink') do
+      (e(/[^\s:]+/) & link).map do |content, url|
+        Texier::Element.new(:a, content, :href => url)
+      end
+    end
 
     protected
 
@@ -55,10 +62,20 @@ module Texier::Modules
       marks = [marks[0], marks[0]] if marks.size < 2
 
       # Phrase expression.
-      (marks[0] & everything_up_to(marks[1]) & marks[1]).map do |_, content, _|
-        [*tags].reverse.inject(content) do |element, tag|
+      (marks[0] & everything_up_to(marks[1]) & marks[1] & optional(link)).map do |_, content, _, url|
+        element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
+        element = Texier::Element.new(:a, element, :href => url) unless url.empty?
+        element
+      end
+    end
+    
+    # Expression that matches link.
+    def link
+      @link ||= e(/:(\[[^\]\n]+\])|(\S*[^:);,.!?\s])/).map do |url|
+        # TODO: sanitize the url
+        url.gsub(/^:\[?|\]$/, '')
       end
     end
   end

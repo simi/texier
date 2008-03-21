@@ -70,4 +70,23 @@ class PhraseTest < Test::Unit::TestCase
   def test_acronym_should_be_recognized_only_if_it_has_at_least_two_letters
     assert_output '<p>F((Foo))</p>', 'F((Foo))'
   end
+  
+  def test_phrase_with_link
+    assert_output(
+      '<p><a href="http://metatribe.org"><em>hello world</em></a></p>',
+      '*hello world*:http://metatribe.org'
+    )
+    
+    assert_output(
+      '<p><a href="http://metatribe.org/weird-stuff?"><em>hello world</em></a></p>',
+      '*hello world*:[http://metatribe.org/weird-stuff?]'
+    )
+  end
+  
+  def test_quick_link
+    assert_output(
+      '<p><a href="http://metatribe.org">hello</a></p>',
+      'hello:http://metatribe.org'
+    )
+  end
 end

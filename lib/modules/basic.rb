@@ -10,6 +10,7 @@ module Texier::Modules
       inline_element_slot = empty
 
       # Plain text is default inline element.
+      # TODO: support all unicode letters and numbers.
       plain_text = e(/[a-zA-Z0-9]+/)
       inline_element = inline_element_slot | plain_text | e(/[^\n]/)
       

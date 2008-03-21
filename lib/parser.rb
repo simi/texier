@@ -60,15 +60,18 @@ module Texier
 
       # Creates expression that matches zero or more occurences of another
       # expression.
-      def zero_or_more(rule)
-        Expressions::Repetition.new(rule, 0)
+      def zero_or_more(expression)
+        Expressions::Repetition.new(expression, 0)
       end
     
       
-      def one_or_more(rule)
-        Expressions::Repetition.new(rule, 1)
+      def one_or_more(expression)
+        Expressions::Repetition.new(expression, 1)
       end
-      
+  
+      def optional(expression)
+        Expressions::Optional.new(expression)
+      end
     end
     
     # Expression classes.
@@ -203,6 +206,17 @@ module Texier
         
         def & (other)
           self.class.new(*(@expressions + [other]))
+        end
+      end
+      
+      # Expression is optional.
+      class Optional < Expression
+        def initialize(expression)
+          @expression = create(expression)
+        end
+        
+        def parse(scanner)
+          @expression.parse(scanner) || ''
         end
       end
 

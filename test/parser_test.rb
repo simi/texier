@@ -81,6 +81,13 @@ class ParserTest < Test::Unit::TestCase
     assert_equal ['a', 'b', 'c'], @parser.parse('abc')
   end
   
+  def test_optional
+    @parser[:document] = optional('foo')
+    
+    assert_equal '', @parser.parse('')
+    assert_equal 'foo', @parser.parse('foo')
+  end
+  
   def test_zero_or_more_repetition
     @parser[:document] = zero_or_more('foo')
 
