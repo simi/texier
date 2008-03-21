@@ -2,12 +2,12 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Phrase class
 class PhraseTest < Test::Unit::TestCase
-  def test_emphasis
+  def test_em
     assert_output '<p><em>hello world</em></p>', '*hello world*'
     assert_output '<p><em>hello world</em></p>', '//hello world//'
   end
 
-  def test_emphasis_and_plain_text
+  def test_em_and_plain_text
     assert_output '<p>hello <em>world</em> again</p>', 'hello *world* again'
   end
 
@@ -15,7 +15,7 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p><strong>hello world</strong></p>', '**hello world**'
   end
 
-  def test_strong_emphasis
+  def test_strong_em
     assert_output(
       '<p><strong><em>hello</em></strong></p>',
       '***hello***'
@@ -30,4 +30,44 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p><code>def test_code</code></p>', '`def test_code`'
   end
   
+  def test_ins
+    assert_output '<p><ins>hello world</ins></p>', '++hello world++'
+  end
+
+  def test_del
+    assert_output '<p><del>hello world</del></p>', '--hello world--'
+  end
+  
+  def test_sup
+    assert_output '<p>x<sup>2</sup></p>', 'x^^2^^'
+
+    assert_output '<p>x<sup>2</sup></p>', 'x^2'
+    # TODO: assert_output '<p>x ^2</p>', 'x ^2'
+  end
+
+  def test_sub
+    assert_output '<p>x<sub>2</sub></p>', 'x__2__'
+    
+    assert_output '<p>x<sub>2</sub></p>', 'x_2'
+  end
+  
+  def test_cite
+    assert_output '<p><cite>hello world</cite></p>', '~~hello world~~'
+  end
+  
+  def test_acronym
+    assert_output(
+      '<p><acronym title="don\'t repeat yourself">DRY</acronym></p>',
+      'DRY((don\'t repeat yourself))'
+    )
+    
+    assert_output(
+      '<p><acronym title="and others">et. al</acronym></p>',
+      '"et. al"((and others))'
+    )
+  end
+  
+  def test_acronym_should_be_recognized_only_if_it_has_at_least_two_letters
+    assert_output '<p>F((Foo))</p>', 'F((Foo))'
+  end
 end

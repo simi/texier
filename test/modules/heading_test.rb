@@ -128,4 +128,16 @@ class HeadingTest < Test::Unit::TestCase
       "####### heading\n\nhello world"
     )
   end
+  
+  def test_heading_containing_inline_elements
+    assert_output(
+      '<h1>hello <em>world</em></h1>',
+      '####### hello *world*'
+    )
+    
+    assert_output(
+      '<h1>hello <em>world</em></h1>',
+      "hello *world*\n####"
+    )
+  end
 end

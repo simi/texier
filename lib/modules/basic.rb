@@ -10,8 +10,8 @@ module Texier::Modules
       inline_element_slot = empty
 
       # Plain text is default inline element.
-      plain_text = everything_up_to(inline_element_slot | /$/)      
-      inline_element = inline_element_slot | plain_text
+      plain_text = e(/[a-zA-Z0-9]+/)
+      inline_element = inline_element_slot | plain_text | e(/[^\n]/)
       
       line = one_or_more(inline_element)
       

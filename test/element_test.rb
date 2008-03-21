@@ -38,4 +38,11 @@ class ElementTest < Test::Unit::TestCase
     
     assert element.has_children?
   end
+  
+  def test_array_or_strings_assigned_as_content_should_be_joined_into_single_string
+    element = Texier::Element.new(:foo)
+    element.content = ['hello', ' ', 'world']
+    
+    assert_equal 'hello world', element.content
+  end
 end

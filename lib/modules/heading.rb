@@ -36,17 +36,15 @@ module Texier::Modules
 
     block_element('surrounded') do
       # Surrounded headings
-      marker = expression(/ *(\#{2,}|={2,}) +/) do |line|
+      marker = e(/ *(\#{2,}|={2,}) +/) do |line|
         # Calculate relative level of heading according to length of the marker.
         level = [line.strip.length, 7].min
         level = 7 - level if more_means_higher
         level
       end
-      tail = expression(/ *(\#{2,}|={2,})? *$/)
+      tail = e(/ *(\#{2,}|={2,})? *$/)
 
-      content = everything_up_to(tail)
-      # TODO: support inline elements inside content. content =
-      # one_or_more(inline_element).up_to(tail)
+      content = one_or_more(inline_element).up_to(tail)
 
       (marker & content & tail).map do |level, content, _|
         create_element(level, content)
@@ -57,11 +55,10 @@ module Texier::Modules
       # Underlined headings
       underline = empty
       levels.each do |char, value|
-        underline << expression(/ *#{Regexp.quote(char)}{3,} */) {value}
+        underline << e(/ *#{Regexp.quote(char)}{3,} */) {value}
       end
 
-      content = everything_up_to(/$/)
-      # TODO: support inline elements inside content.
+      content = one_or_more(inline_element)
 
       (content & "\n" & underline).map do |content, _, level|
         create_element(level, content)
@@ -124,7 +121,7 @@ module Texier::Modules
     def auto_id(content)
       return nil unless generate_id
 
-      id = id_prefix + Texier::Utilities.webalize(content)
+      id = id_prefix + Texier::Utilities.webalize(content.to_s)
       id = Texier::Utilities.sequel(id) while @used_ids[id]
 
       @used_ids[id] = true

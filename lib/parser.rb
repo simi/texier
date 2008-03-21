@@ -44,6 +44,8 @@ module Texier
         result
       end
       
+      alias_method :e, :expression
+      
       # Create empty expression that never matches anything. It is actualy
       # Choice, so other expression can be added to it later using << operator.
       def empty
@@ -229,6 +231,10 @@ module Texier
         def separated_by(separator)
           RepetitionWithSeparator.new(@expression, separator, @min)
         end
+        
+        def up_to(stop)
+          RepetitionUpTo.new(@expression, stop, @min)
+        end
       end
 
       class RepetitionWithSeparator < Expression
@@ -286,18 +292,43 @@ module Texier
           end        
         end
       end
+      
+      class RepetitionUpTo < Expression
+        def initialize(expression, up_to, min)
+          @expression = create(expression)
+          @up_to = create(up_to)
+          @min = min
+        end
+        
+        def parse(scanner)
+          previous_pos = scanner.pos
+          results = []
+          
+          until @up_to.peek(scanner)
+            return nil unless result = @expression.parse(scanner)
+            results << result
+          end
+          
+          if results.size >= @min
+            results
+          else
+            scanner.pos = previous_pos
+            nil
+          end
+        end
+      end
 
       # This expression matches everything from current position up to position
       # where another expression matches.
       class EverythingUpTo < Expression
-        def initialize(expression)
-          @expression = create(expression)
+        def initialize(up_to)
+          @up_to = create(up_to)
         end
       
         def parse(scanner)
           result = nil
         
-          until @expression.peek(scanner)
+          until @up_to.peek(scanner)
             return nil unless char = scanner.getch
           
             result ||= ''

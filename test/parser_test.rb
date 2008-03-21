@@ -17,29 +17,29 @@ class ParserTest < Test::Unit::TestCase
   
   def test_create_expression_from_string
     assert_nothing_raised do 
-      created = expression('foo')
+      created = e('foo')
       assert_kind_of Texier::Parser::Expressions::String, created
     end
   end
   
   def test_create_expression_from_regexp
     assert_nothing_raised do 
-      created = expression(/foo|bar/)
+      created = e(/foo|bar/)
       assert_kind_of Texier::Parser::Expressions::Regexp, created
     end
   end
   
   def test_create_expression_from_expression
-    original = expression('foo')
+    original = e('foo')
     
     assert_nothing_raised do 
-      created = expression(original)      
+      created = e(original)      
       assert_same original, created 
     end
   end
   
   def test_string_expression_should_match_only_that_string
-    @parser[:document] = expression('hello world')
+    @parser[:document] = e('hello world')
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('goodbye world')    
@@ -47,7 +47,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_regexp_expression_should_match_when_its_regexp_matches
-    @parser[:document] = expression(/hello.*world/)
+    @parser[:document] = e(/hello.*world/)
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('goodby world')
@@ -56,7 +56,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_choice
-    @parser[:document] = expression('foo') | expression('bar')
+    @parser[:document] = e('foo') | e('bar')
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('hello world')
@@ -66,7 +66,7 @@ class ParserTest < Test::Unit::TestCase
   end
     
   def test_sequence
-    @parser[:document] = expression('foo') & expression('bar')
+    @parser[:document] = e('foo') & e('bar')
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('gaz')
@@ -76,7 +76,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_sequence_should_return_result_as_flat_array
-    @parser[:document] = expression('a') & expression('b') & expression('c')
+    @parser[:document] = e('a') & e('b') & e('c')
     
     assert_equal ['a', 'b', 'c'], @parser.parse('abc')
   end
@@ -113,7 +113,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_mapper
-    @parser[:document] = expression('foo') do
+    @parser[:document] = e('foo') do
       'bar'
     end
     
@@ -129,5 +129,15 @@ class ParserTest < Test::Unit::TestCase
     assert_nil @parser.parse('foo')
     assert_nil @parser.parse('bar')
     assert_equal 'foo', @parser.parse('foobar')
+  end
+  
+  def test_one_or_more_up_to
+    @parser[:document] = one_or_more(/[a-z]{3}/).up_to('foo') & e('foo')
+    
+    assert_nil @parser.parse('')
+    assert_nil @parser.parse('barbarbar')
+    assert_nil @parser.parse('foo')
+    
+    assert_equal [['bar', 'gaz'], 'foo'], @parser.parse('bargazfoo')
   end
 end
