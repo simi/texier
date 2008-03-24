@@ -55,23 +55,28 @@ module Texier
       
       # Creates expression that matches everything from current position up to
       # position where another expression matches.
-      def everything_up_to(expression)
-        Expressions::EverythingUpTo.new(expression)
+      def everything_up_to(e)
+        Expressions::EverythingUpTo.new(e)
       end
 
       # Creates expression that matches zero or more occurences of another
       # expression.
-      def zero_or_more(expression)
-        Expressions::Repetition.new(expression, 0)
+      def zero_or_more(e)
+        Expressions::Repetition.new(e, 0)
       end
     
       
-      def one_or_more(expression)
-        Expressions::Repetition.new(expression, 1)
+      def one_or_more(e)
+        Expressions::Repetition.new(e, 1)
       end
   
-      def optional(expression)
-        Expressions::Optional.new(expression)
+      def optional(e)
+        Expressions::Optional.new(e)
+      end
+      
+      # Match expression, but discard the result.
+      def discard(e)
+        expression(e).map {[]}
       end
     end
     
@@ -104,8 +109,14 @@ module Texier
           end
         end
         
+        # TODO: describe this
         def map(&block)
           Mapper.new(self, &block)
+        end
+      
+        # TODO: describe this
+        def group
+          map {|*results| [results]}
         end
         
         def create(something)
@@ -132,7 +143,7 @@ module Texier
       
         def parse(scanner)
           if result = @expression.parse(scanner)
-            @block.call(*result)
+            [*@block.call(*result)]
           end
         end
       end      
@@ -146,7 +157,7 @@ module Texier
         def parse(scanner)
           if scanner.peek(@string.length) == @string
             scanner.pos += @string.length
-            @string
+            [@string]
           else
             nil
           end
@@ -160,7 +171,8 @@ module Texier
         end
       
         def parse(scanner)
-          scanner.scan(@regexp)
+          result = scanner.scan(@regexp)
+          result ? [result] : nil
         end
       end
       
@@ -205,7 +217,7 @@ module Texier
         
           @expressions.each do |expression|
             if result = expression.parse(scanner)
-              results << result
+              results.concat(result)
             else
               scanner.pos = previous_pos
               return nil
@@ -227,7 +239,7 @@ module Texier
         end
         
         def parse(scanner)
-          @expression.parse(scanner) || ''
+          @expression.parse(scanner) || [nil]
         end
       end
 
@@ -243,7 +255,7 @@ module Texier
           results = []
         
           while result = @expression.parse(scanner)
-            results << result
+            results.concat(result)
           end
         
           if results.size >= @min
@@ -288,7 +300,7 @@ module Texier
           # succeeds, i save the result to results array, if not, i just
           # continue anyway.
           result = @expression.parse(scanner)
-          results << result if result
+          results.concat(result) if result
         
           # Now in this loop i try to parse pairs [",", "foo"] until there are
           # no more left. It can happen that the separator is matched, but "foo"
@@ -301,7 +313,7 @@ module Texier
                     
             if result = @expression.parse(scanner)
               # If it matches, store only the "foo" and ignore separator.
-              results << result
+              results.concat(result)
             else
               # If not, return position before last separator and end the loop.
               scanner.pos = pos_before_separator
@@ -334,7 +346,7 @@ module Texier
           
           until @up_to.peek(scanner)
             return nil unless result = @expression.parse(scanner)
-            results << result
+            results.concat(result)
           end
           
           if results.size >= @min
@@ -354,16 +366,14 @@ module Texier
         end
       
         def parse(scanner)
-          result = nil
+          result = ''
         
           until @up_to.peek(scanner)
             return nil unless char = scanner.getch
-          
-            result ||= ''
             result << char
           end
         
-          result
+          result.empty? ? nil : [result]
         end
       end
       

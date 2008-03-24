@@ -19,13 +19,8 @@ module Texier::Modules
       line = one_or_more(inline_element)
       
       # Paragraph is default block element.
-      paragraph = one_or_more(line).separated_by("\n").map do |*lines|
-        # Put one newline between each two lines.
-        content = lines.inject([]) {|content, line| content + [line, "\n"]}
-        content.pop
-        content.flatten!
-        
-        Texier::Element.new(:p, content)
+      paragraph = (line & zero_or_more(e("\n") & line)).map do |*lines|
+        Texier::Element.new(:p, lines)
       end
       block_element = block_element_slot | paragraph
 

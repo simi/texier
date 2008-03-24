@@ -3,6 +3,7 @@ require 'renderer'
 
 require 'modules/basic'
 require 'modules/heading'
+require 'modules/modifier'
 require 'modules/phrase'
 
 module Texier
@@ -52,8 +53,9 @@ module Texier
     protected
     
     def load_modules
-      # The Basic module has to be loaded first.
+      # These modules have to be loaded first.
       add_module Modules::Basic.new
+      add_module Modules::Modifier.new
       
       add_module Modules::Heading.new
       add_module Modules::Phrase.new

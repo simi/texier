@@ -43,7 +43,7 @@ class ParserTest < Test::Unit::TestCase
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('goodbye world')    
-    assert_equal 'hello world', @parser.parse('hello world')
+    assert_equal ['hello world'], @parser.parse('hello world')
   end
   
   def test_regexp_expression_should_match_when_its_regexp_matches
@@ -51,8 +51,8 @@ class ParserTest < Test::Unit::TestCase
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('goodby world')
-    assert_equal 'hello world', @parser.parse('hello world')
-    assert_equal 'hello---world', @parser.parse('hello---world')
+    assert_equal ['hello world'], @parser.parse('hello world')
+    assert_equal ['hello---world'], @parser.parse('hello---world')
   end
   
   def test_choice
@@ -61,8 +61,8 @@ class ParserTest < Test::Unit::TestCase
     assert_nil @parser.parse('')
     assert_nil @parser.parse('hello world')
     
-    assert_equal 'foo', @parser.parse('foo')
-    assert_equal 'bar', @parser.parse('bar')
+    assert_equal ['foo'], @parser.parse('foo')
+    assert_equal ['bar'], @parser.parse('bar')
   end
     
   def test_sequence
@@ -83,13 +83,14 @@ class ParserTest < Test::Unit::TestCase
 
   def test_sequence_of_sequences
     @parser[:document] = e('a') & (e('b') & e('c'))
+    assert_equal ['a', 'b', 'c'], @parser.parse('abc')
   end
   
   def test_optional
     @parser[:document] = optional('foo')
     
-    assert_equal '', @parser.parse('')
-    assert_equal 'foo', @parser.parse('foo')
+    assert_equal [nil], @parser.parse('')
+    assert_equal ['foo'], @parser.parse('foo')
   end
   
   def test_zero_or_more_repetition
@@ -119,8 +120,8 @@ class ParserTest < Test::Unit::TestCase
   def test_repetition_with_separator_should_not_consume_last_separator
     @parser[:document] = zero_or_more('foo').separated_by('-') & '-bar'
 
-    assert_equal [[], '-bar'], @parser.parse('-bar')
-    assert_equal [['foo'], '-bar'], @parser.parse('foo-bar')
+    assert_equal ['-bar'], @parser.parse('-bar')
+    assert_equal ['foo', '-bar'], @parser.parse('foo-bar')
   end
   
   def test_mapper
@@ -130,7 +131,7 @@ class ParserTest < Test::Unit::TestCase
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('bar')
-    assert_equal 'bar', @parser.parse('foo')
+    assert_equal ['bar'], @parser.parse('foo')
   end
   
   def test_everything_up_to
@@ -139,7 +140,7 @@ class ParserTest < Test::Unit::TestCase
     assert_nil @parser.parse('')
     assert_nil @parser.parse('foo')
     assert_nil @parser.parse('bar')
-    assert_equal 'foo', @parser.parse('foobar')
+    assert_equal ['foo'], @parser.parse('foobar')
   end
   
   def test_one_or_more_up_to
@@ -149,6 +150,20 @@ class ParserTest < Test::Unit::TestCase
     assert_nil @parser.parse('barbarbar')
     assert_nil @parser.parse('foo')
     
-    assert_equal [['bar', 'gaz'], 'foo'], @parser.parse('bargazfoo')
+    assert_equal ['bar', 'gaz', 'foo'], @parser.parse('bargazfoo')
+  end
+  
+  def test_group
+    @parser[:document] = (e('a') & e('b')).group & e('c')
+    
+    assert_equal [['a', 'b'], 'c'], @parser.parse('abc')
+  end
+  
+  def test_discard
+    @parser[:document] = discard('foo')
+    
+    assert_nil @parser.parse('')
+    assert_nil @parser.parse('bar')
+    assert_equal [], @parser.parse('foo')
   end
 end

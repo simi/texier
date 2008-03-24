@@ -77,14 +77,10 @@ module Texier
     # Helper methods for generating parser rules.
     include Parser::Generators
     
-    # Shortcut access to block_element.
-    def block_element
-      @parser[:block_element]
-    end
-    
-    # Shortcut access to inline_element.
-    def inline_element
-      @parser[:inline_element]
+    # Access exported parser expressions as ordinary methods.
+    def method_missing(name, *args, &block)
+      super unless @parser && @parser.has_expression?(name)
+      @parser[name]
     end
   end
 end

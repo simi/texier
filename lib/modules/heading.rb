@@ -71,11 +71,11 @@ module Texier::Modules
         level = 7 - level if more_means_higher
         level
       end
-      tail = e(/ *(\#{2,}|={2,})? *$/)
+      tail = discard(/ *(\#{2,}|={2,})? *$/)
 
-      content = one_or_more(inline_element).up_to(tail)
+      content = one_or_more(inline_element).up_to(tail).group
 
-      (marker & content & tail).map do |level, content, _|
+      (marker & content & tail).map do |level, content|
         create_element(level, content)
       end
     end
@@ -87,7 +87,7 @@ module Texier::Modules
         underline << e(/ *#{Regexp.quote(char)}{3,} */) {value}
       end
 
-      content = one_or_more(inline_element)
+      content = one_or_more(inline_element).group
 
       (content & "\n" & underline).map do |content, _, level|
         create_element(level, content)

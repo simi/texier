@@ -78,12 +78,13 @@ module Texier::Modules
       marks = [marks[0], marks[0]] if marks.size < 2
 
       # Phrase expression.
-      (marks[0] & everything_up_to(marks[1]) & marks[1] & optional(link)).map do |_, content, _, url|
+      phrase = marks[0] & everything_up_to(modifier & marks[1]) & modifier & marks[1] & optional(link)
+      phrase = phrase.map do |_, content, modifier, _, url|
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
-        element = Texier::Element.new(:a, element, :href => url) unless url.empty?
-        element
+        element = Texier::Element.new(:a, element, :href => url) if url
+        modifier.call(element)
       end
     end
     
