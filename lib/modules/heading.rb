@@ -1,7 +1,36 @@
 require "#{File.dirname(__FILE__)}/../module"
 
-module Texier::Modules    
+module Texier::Modules
   # This module provides headings.
+  #
+  # How are the heading levels computed?
+  #
+  # The final heading level (h1, h2, ..., h6) of each heading depends on several
+  # things:
+  #
+  # 1. It's relative level. This is determined by what character is used to
+  #   underline the heading (in case of underlined style), or how many "#" or
+  #   "=" characters are in front of it (in case of surrounded style).
+  #
+  #   Relative levels of underlined headings are determined by the "levels"
+  #   option, which is a hash, where each character is maped to corresponding
+  #   level.
+  #
+  #   Relative level of surrouned headings depends on the "more_means_higher"
+  #   option. If it is true, then more characters in front of heading means
+  #   higher relative level, otherwise, more characters means lower level.
+  #
+  # 2. The balancing mode (determined by the "balancing" option). If it is set
+  #   to :fixed, no further calculations are performed. If it is set to :dynamic
+  #   (which is default), Then the heading(s) with highest relative level (among
+  #   all headings in he whole document) will be assigned level 1, the heading
+  #   with second highest level 2, and so on. For example, if there are two
+  #   headings in the document, one has relative level 2 and the other 4, then
+  #   their final levels will be 1 and 2.
+  #
+  # 3. The value of the "top" option. This value is added to the levels at the
+  #   end. Using this, the level of topmost heading can be set (by default, it
+  #   is 1)
   class Heading < Texier::Module
     # Content of the first heading.
     attr_reader :title
@@ -22,7 +51,7 @@ module Texier::Modules
       # For surrounded headings: more #### means higher level.
       :more_means_higher => true,
 
-      # Balancing mode. TODO: explain this.
+      # Balancing mode (:dynamic or :fixed).
       :balancing => :dynamic,
 
       # Styles of underlined headings.
@@ -50,7 +79,7 @@ module Texier::Modules
         create_element(level, content)
       end
     end
-    
+
     block_element('underlined') do
       # Underlined headings
       underline = empty
@@ -94,7 +123,7 @@ module Texier::Modules
         # Assign new levels.
         toc.each do |element|
           element.name = "h#{mapping[element[:level]]}"
-        end        
+        end
       end
 
       # Remove "level" attributes.
@@ -110,8 +139,7 @@ module Texier::Modules
       heading = Texier::Element.new(:"h#{level + 1}", content, :level => level)
       heading[:id] ||= auto_id(content)
 
-      # TODO: Handle also the case when content is an array of Element's.
-      @title ||= heading.content.to_s
+      @title ||= Texier::Renderer.new.render_text(heading)
       @toc << heading
 
       heading

@@ -80,6 +80,10 @@ class ParserTest < Test::Unit::TestCase
     
     assert_equal ['a', 'b', 'c'], @parser.parse('abc')
   end
+
+  def test_sequence_of_sequences
+    @parser[:document] = e('a') & (e('b') & e('c'))
+  end
   
   def test_optional
     @parser[:document] = optional('foo')

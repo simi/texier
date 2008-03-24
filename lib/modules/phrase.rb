@@ -19,14 +19,11 @@ module Texier::Modules
     simple_phrase('sub', '__', :sub)
     simple_phrase('cite', '~~', :cite)
 
-    # TODO: span and span-alt
-
     # Alternative syntax for subscripts and superscripts
     def self.subscript_or_superscript(name, mark, tag)
       inline_element(name) do
-        # TODO: match only if there is [a-z0-9] before the mark
-        (e(mark) & e(/-?\d+(?!\w)/)).map do |_, content|
-          Texier::Element.new(tag, content)
+        (e(/[a-z0-9]/) & e(mark) & e(/-?\d+(?!\w)/)).map do |a, _, b|
+          [a, Texier::Element.new(tag, b)]
         end
       end
     end
@@ -44,13 +41,26 @@ module Texier::Modules
       end
     end
     
+    # Span
+    inline_element('span') do
+      (e('"') & everything_up_to('"') & e('"') & link).map do |_, text, _, url|
+        Texier::Element.new(:a, text, :href => url)
+      end
+    end
+    
+    inline_element('span-alt') do
+      (e('~') & everything_up_to('~') & e('~') & link).map do |_, text, _, url|
+        Texier::Element.new(:a, text, :href => url)
+      end
+    end
+
     # Quick links (blah:www.metatribe.org)
     inline_element('quicklink') do
       (e(/[^\s:]+/) & link).map do |content, url|
         Texier::Element.new(:a, content, :href => url)
       end
     end
-
+    
     protected
 
     # Build expression that matches a phrase element.
@@ -74,7 +84,6 @@ module Texier::Modules
     # Expression that matches link.
     def link
       @link ||= e(/:(\[[^\]\n]+\])|(\S*[^:);,.!?\s])/).map do |url|
-        # TODO: sanitize the url
         url.gsub(/^:\[?|\]$/, '')
       end
     end

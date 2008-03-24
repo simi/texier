@@ -55,8 +55,12 @@ class HeadingTest < Test::Unit::TestCase
   end
   
   def test_title
-    @processor.process('####### hello world')
-    
+    @processor.process('####### hello world')    
+    assert_equal 'hello world', @processor.heading_module.title
+  end
+  
+  def test_title_when_first_heading_contains_inline_element
+    @processor.process('####### hello *world*')
     assert_equal 'hello world', @processor.heading_module.title
   end
   

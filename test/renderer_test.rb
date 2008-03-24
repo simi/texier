@@ -33,4 +33,31 @@ class RendererTest < Test::Unit::TestCase
     
     assert_equal '<foo class="bar">hello</foo>', @renderer.render(element)
   end
+  
+  def test_attribute_values_should_be_sanitized
+    element = Texier::Element.new(:foo, :name => '"hello <world>"')
+    assert_equal(
+      '<foo name="&quot;hello &lt;world&gt;&quot;"></foo>',
+      @renderer.render(element)
+    )
+  end
+  
+  def test_attribute_with_empty_nil_or_false_value_should_be_ignored
+    element = Texier::Element.new(:foo, :name => nil)
+    assert_equal('<foo></foo>', @renderer.render(element))
+    
+    element = Texier::Element.new(:foo, :name => false)
+    assert_equal('<foo></foo>', @renderer.render(element))
+    
+    element = Texier::Element.new(:foo, :name => '')
+    assert_equal('<foo></foo>', @renderer.render(element))
+  end
+  
+  def test_render_text
+    element = Texier::Element.new(:foo, 'hello', :class => 'bar')    
+    assert_equal 'hello', @renderer.render_text(element)
+    
+    element = Texier::Element.new(:foo, Texier::Element.new(:bar, 'hello'))
+    assert_equal 'hello', @renderer.render_text(element)
+  end
 end

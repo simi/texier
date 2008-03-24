@@ -3,22 +3,29 @@ require "#{File.dirname(__FILE__)}/../module"
 module Texier::Modules
   # This modules provides the most basic features of Texier processor.
   class Basic < Texier::Module
+    SPECIAL_CHARS = " \n`~!@\#$%^&*()-_=+\\|[{]};:'\",<.>/?"
+    
+    options :tab_width => 4
+    
     def initialize_parser(parser)
       # These two elements are used to extend the Texier parser with custom 
       # expressions in modules.
       block_element_slot = empty
       inline_element_slot = empty
 
-      # Plain text is default inline element.
-      # TODO: support all unicode letters and numbers.
-      plain_text = e(/[a-zA-Z0-9]+/)
+      plain_text = e(/[^#{Regexp.quote(SPECIAL_CHARS)}]+/)
       inline_element = inline_element_slot | plain_text | e(/[^\n]/)
       
       line = one_or_more(inline_element)
       
       # Paragraph is default block element.
       paragraph = one_or_more(line).separated_by("\n").map do |*lines|
-        Texier::Element.new(:p, lines)
+        # Put one newline between each two lines.
+        content = lines.inject([]) {|content, line| content + [line, "\n"]}
+        content.pop
+        content.flatten!
+        
+        Texier::Element.new(:p, content)
       end
       block_element = block_element_slot | paragraph
 
@@ -34,11 +41,17 @@ module Texier::Modules
     end
 
     def before_parse(input)
-      # TODO: Normalize newlines from various platforms.
+      input = input.dup
+      
+      # Standardize line endings to unix style.
+      input.gsub!("\r\n", "\n") # DOS/Windows style
+      input.gsub!("\r", "\n") # Mac style
 
-      # TODO: Convert tabs to spaces.
+      # Convert tabs to spaces.
+      input.gsub!(/^(.*)\t/) do
+        "#{$1}#{' ' * (tab_width - $1.length % tab_width)}"
+      end
 
-      # etc...
       input
     end
   end

@@ -4,8 +4,9 @@ require "#{File.dirname(__FILE__)}/element"
 require "#{File.dirname(__FILE__)}/error"
 
 module Texier
-  # Parser generator based on theory of Parsing Expression Grammars (PEG). TODO:
-  # describe it in more detail.
+  # Parser generator based on the theory of Parsing Expression Grammars (PEG).
+  # 
+  # TODO: describe it in more detail.
   class Parser
     def initialize
       @rules = {}      
@@ -13,7 +14,7 @@ module Texier
     
     # Access to exported expressions.
     def [](name)
-      # TODO: raise exception if expression not defined.
+      raise Error, 'Expression "#{name}" not defined.' unless @rules.has_key?(name)
       @rules[name]
     end
     
@@ -28,7 +29,7 @@ module Texier
     
     # Parse the string.
     def parse(input)
-      raise Error unless @rules[:document]
+      raise Error, 'Starting expression not defined.' unless @rules[:document]
       
       scanner = StringScanner.new(input)      
       @rules[:document].parse(scanner)
@@ -77,9 +78,6 @@ module Texier
     # Expression classes.
     module Expressions
       class Expression
-        def parse(scanner)
-        end
-      
         def peek(scanner)
           previous_pos = scanner.pos
           result = parse(scanner)
@@ -90,12 +88,20 @@ module Texier
         
         # Ordered choice
         def | (other)
-          Choice.new(self, other)
+          if other.is_a?(Choice)
+            Choice.new(self, *other.expressions)
+          else
+            Choice.new(self, other)
+          end
         end
         
         # Sequence
         def & (other)
-          Sequence.new(self, other)
+          if other.is_a?(Sequence)
+            Sequence.new(self, *other.expressions)
+          else
+            Sequence.new(self, other)
+          end
         end
         
         def map(&block)
@@ -116,7 +122,8 @@ module Texier
           end
         end
       end
-      
+    
+      # TODO: describe this
       class Mapper < Expression
         def initialize(expression, &block)
           @expression = create(expression)
@@ -159,6 +166,8 @@ module Texier
       
       # Ordered choice.
       class Choice < Expression
+        attr_reader :expressions
+        
         def initialize(*expressions)
           @expressions = expressions.map do |expression|
             create(expression)
@@ -182,6 +191,8 @@ module Texier
       
       # Sequence of expressions
       class Sequence < Expression
+        attr_reader :expressions
+        
         def initialize(*expressions)
           @expressions = expressions.map do |expression|
             create(expression)
@@ -220,6 +231,7 @@ module Texier
         end
       end
 
+      # TODO: describe this
       class Repetition < Expression
         def initialize(expression, min)
           @expression = create(expression)
@@ -251,6 +263,7 @@ module Texier
         end
       end
 
+      # TODO: describe this
       class RepetitionWithSeparator < Expression
         def initialize(rule, separator, min)
           @expression = self.class.create(rule)
@@ -307,6 +320,7 @@ module Texier
         end
       end
       
+      # TODO: describe this
       class RepetitionUpTo < Expression
         def initialize(expression, up_to, min)
           @expression = create(expression)

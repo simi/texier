@@ -37,4 +37,16 @@ class BasicTest < Test::Unit::TestCase
     assert_output '<p>hello world</p>', "\n\n\nhello world"
     assert_output '<p>hello world</p>', "hello world\n\n\n"
   end
+  
+  def test_newlines_should_be_standardized
+    assert_output(
+      "<p>windows/dos\nmac\nunix\nhello world</p>",
+      "windows/dos\r\nmac\runix\nhello world"
+    )
+  end
+  
+  def test_tabs_should_be_converted_to_spaces
+    assert_output '<p>    hello</p>', "\thello"
+    assert_output "<p>    first\n2:  second</p>", "\tfirst\n2:\tsecond"
+  end
 end

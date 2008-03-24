@@ -2,10 +2,6 @@ module Texier
   # This class is used to generate html output from the document object model of
   # the input document.
   class Renderer
-    def initialize
-      
-    end
-    
     # Render a dom element.
     def render(element)
       case element
@@ -26,11 +22,33 @@ module Texier
       end
     end
     
+    def render_text(element)
+      case element
+      when Array
+        element.inject('') do |result, element|
+          result + render_text(element)
+        end
+      when Element
+        render_text(element.content)
+      else
+        element.to_s
+      end
+    end
+    
     protected
     
     def render_attributes(attributes)
-      # TODO: sanitize attribute values.
+      # Ignore nil, false and empty values.
+      attributes = attributes.reject do |key, value| 
+        !value || value.to_s.empty?
+      end
+      
       attributes.inject('') do |output, (name, value)|
+        # Sanitize values
+        value = value.gsub('"', '&quot;')
+        value = value.gsub('<', '&lt;')
+        value = value.gsub('>', '&gt;')
+        
         "#{output} #{name}=\"#{value}\""
       end
     end

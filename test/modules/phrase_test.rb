@@ -42,7 +42,7 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p>x<sup>2</sup></p>', 'x^^2^^'
 
     assert_output '<p>x<sup>2</sup></p>', 'x^2'
-    # TODO: assert_output '<p>x ^2</p>', 'x ^2'
+    assert_output '<p>x ^2</p>', 'x ^2'
   end
 
   def test_sub
@@ -88,5 +88,22 @@ class PhraseTest < Test::Unit::TestCase
       '<p><a href="http://metatribe.org">hello</a></p>',
       'hello:http://metatribe.org'
     )
+  end
+  
+  def test_span_with_link
+    assert_output(
+      '<p><a href="http://metatribe.org">hello</a></p>',
+      '"hello":http://metatribe.org'
+    )
+    
+    assert_output(
+      '<p><a href="http://metatribe.org">hello</a></p>',
+      '~hello~:http://metatribe.org'
+    )
+  end
+  
+  def test_span_without_link_should_be_ignored
+    assert_output '<p>"hello"</p>', '"hello"'
+    assert_output '<p>~hello~</p>', '~hello~'
   end
 end

@@ -15,7 +15,17 @@ module Texier
         @attributes = attributes
       end
     end
-
+    
+    # TODO: create two accessors: children and text. Children will return
+    # array of children, if this element has children. Text will return
+    # textual content.
+    
+    # TODO: consecutive string children should be concatenated into one.
+    
+    # TODO: attributes as dynamic methods.
+    
+    # TODO: dom builder
+    
     def name=(value)
       @name = value.to_sym
     end
