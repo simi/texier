@@ -61,6 +61,12 @@ module Texier::Modules
       end
     end
     
+    inline_element('notexy') do
+      (e("''") & everything_up_to("''") & e("''")).map do |_, text, _| 
+        Texier::Utilities.escape_html(text)
+      end
+    end
+    
     protected
 
     # Build expression that matches a phrase element.

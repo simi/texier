@@ -4,6 +4,11 @@ module Texier::Utilities
     # TODO: transliterate
     string.downcase.gsub(/[^a-z0-9]+/, '-').gsub(/^\-+|\-+$/, '')
   end
+
+  # Escape <, > and &
+  def self.escape_html(string)
+    string.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;')
+  end
   
   # Add number to the end of a string or increment it if it is there already.
   def self.sequel(string, separator = '-')

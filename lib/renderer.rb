@@ -45,9 +45,8 @@ module Texier
       
       attributes.inject('') do |output, (name, value)|
         # Sanitize values
+        value = Texier::Utilities.escape_html(value)
         value = value.gsub('"', '&quot;')
-        value = value.gsub('<', '&lt;')
-        value = value.gsub('>', '&gt;')
         
         "#{output} #{name}=\"#{value}\""
       end

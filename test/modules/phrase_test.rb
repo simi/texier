@@ -106,4 +106,9 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p>"hello"</p>', '"hello"'
     assert_output '<p>~hello~</p>', '~hello~'
   end
+  
+  def test_notexy
+    assert_output '<p>*hello*</p>', "''*hello*''"
+    assert_output '<p>&lt;em&gt;hello&lt;/em&gt;</p>', "''<em>hello</em>''"
+  end
 end
