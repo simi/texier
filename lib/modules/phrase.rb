@@ -3,6 +3,9 @@ require "#{File.dirname(__FILE__)}/../module"
 module Texier::Modules
   # This module defines inline phrase elements, like emphases or simple links.
   class Phrase < Texier::Module
+    # Are links allowed?
+    options :links_allowed => true
+    
     # Shortcut for defining parsing expression for simple phrases.
     def self.simple_phrase(name, mark, tags)
       inline_element(name) {build_simple_phrase(mark, tags)}
@@ -102,8 +105,12 @@ module Texier::Modules
     
     # Expression that matches link.
     def link
-      @link ||= e(/:(\[[^\]\n]+\])|(\S*[^:);,.!?\s])/).map do |url|
-        url.gsub(/^:\[?|\]$/, '')
+      @link ||= if links_allowed?
+        e(/:(\[[^\]\n]+\])|(\S*[^:);,.!?\s])/).map do |url|
+          url.gsub(/^:\[?|\]$/, '')
+        end
+      else
+        empty
       end
     end
   end

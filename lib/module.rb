@@ -49,6 +49,9 @@ module Texier
             default_value
           end
         end
+        
+        # Create method with question mark at the end.
+        alias_method "#{name}?", name if [true, false].include?(default_value)
       end
     end
     

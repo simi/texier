@@ -149,4 +149,24 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p>*hello*</p>', "''*hello*''"
     assert_output '<p>&lt;em&gt;hello&lt;/em&gt;</p>', "''<em>hello</em>''"
   end
+  
+  def test_links_allowed_set_to_false
+    @processor = Texier::Processor.new
+    @processor.phrase_module.links_allowed = false
+    
+    assert_output(
+      '<p><em>hello</em>:http://metatribe.org</p>', 
+      '*hello*:http://metatribe.org'
+    )
+  end
+  
+  def test_when_links_are_disabled_span_with_link_and_no_modifier_should_be_ignored
+    @processor = Texier::Processor.new
+    @processor.phrase_module.links_allowed = false
+
+    assert_output(
+      '<p>"hello":http://metatribe.org</p>',
+      '"hello":http://metatribe.org'
+    )
+  end
 end
