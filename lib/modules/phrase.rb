@@ -109,6 +109,7 @@ module Texier::Modules
       
       phrase = mark & everything_up_to(optional(modifier) & mark) & optional(link)
       phrase = phrase.map do |content, modifier, url|
+        content = Texier::Utilities.escape_html(content)
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end

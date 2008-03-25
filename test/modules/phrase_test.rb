@@ -48,6 +48,10 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p><code>def test_code</code></p>', '`def test_code`'
   end
   
+  def test_content_of_code_should_be_escaped
+    assert_output '<p><code>if x &lt; y</code></p>', '`if x < y`'
+  end
+  
   def test_ins
     @processor.allowed['phrase/ins'] = true
     assert_output '<p><ins>hello world</ins></p>', '++hello world++'
