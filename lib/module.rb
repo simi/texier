@@ -30,6 +30,7 @@ module Texier
           parser[:"#{type}_slot"] << instance_eval(&block)
         end
       end
+    ensure
       @parser = nil
     end
   

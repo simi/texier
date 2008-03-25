@@ -56,8 +56,8 @@ module Texier
     
     def load_modules
       # These modules have to be loaded first.
-      add_module Modules::Basic.new
       add_module Modules::Modifier.new
+      add_module Modules::Basic.new
       
       add_module Modules::Heading.new
       add_module Modules::Phrase.new
@@ -82,7 +82,7 @@ module Texier
     # Parse the input document and create Document Object Model (dom).
     def parse(input)
       parser = Parser.new
-       
+      
       @modules.each do |mod|
         mod.initialize_parser(parser)
       end

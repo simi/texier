@@ -19,8 +19,10 @@ module Texier::Modules
       line = one_or_more(inline_element)
       
       # Paragraph is default block element.
-      paragraph = (line & zero_or_more(e("\n") & line)).map do |*lines|
-        Texier::Element.new(:p, lines)
+      paragraph = optional(parser[:modifier] & discard(/ *\n/)) \
+        & (line & zero_or_more(e("\n") & line))
+      paragraph = paragraph.map do |modifier, *lines|
+        Texier::Element.new(:p, lines).modify!(modifier)
       end
       block_element = block_element_slot | paragraph
 

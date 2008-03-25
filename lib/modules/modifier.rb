@@ -3,6 +3,13 @@ require "#{File.dirname(__FILE__)}/../module"
 module Texier::Modules
   # TODO: describe various modifiers
   class Modifier < Texier::Module
+    HORIZONTAL_ALIGN = {
+      '<>' => 'center', 
+      '<' => 'left', 
+      '>' => 'right',
+      '=' => 'justify'
+    }
+    
     def initialize_parser(parser)
       # .(hello world)
       title_modifier = quoted_text('(', ')').map do |value|
@@ -50,8 +57,20 @@ module Texier::Modules
         end
       end
       
-      parser[:modifier] = discard(/ *\./) \
-        & one_or_more(title_modifier | class_modifier | style_modifier).group
+      
+      # .> or .< or .<> or .=
+      horizontal_align_modifier = e(/<>|<|>|=/) do |value|
+        proc do |element|
+          # TODO: it should be configurable if styles or classes will be used.
+          element[:style] ||= {}
+          element[:style]['text-align'] = HORIZONTAL_ALIGN[value]
+        end
+      end
+      
+      parser[:modifier] = discard(/ *\./) & one_or_more(
+        title_modifier | class_modifier | style_modifier | 
+        horizontal_align_modifier
+      ).group
     end
   end
 end

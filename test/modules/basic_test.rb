@@ -2,15 +2,6 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Basic class
 class BasicTest < Test::Unit::TestCase
-  def test_parser_should_be_properly_initialized
-    basic = Texier::Modules::Basic.new
-    parser = Texier::Parser.new
-    
-    basic.initialize_parser(parser)   
-    
-    assert parser.has_expression?(:document)
-  end
-  
   def test_empty_input_should_produce_empty_dom
     processor = Texier::Processor.new
     processor.process('')
@@ -36,6 +27,13 @@ class BasicTest < Test::Unit::TestCase
   def test_one_paragraph_with_some_newlines_before_or_after_it
     assert_output '<p>hello world</p>', "\n\n\nhello world"
     assert_output '<p>hello world</p>', "hello world\n\n\n"
+  end
+  
+  def test_paragraph_with_modifier
+    assert_output(
+      '<p class="foo">hello world</p>',
+      ".[foo]\nhello world"
+    )
   end
   
   def test_newlines_should_be_standardized

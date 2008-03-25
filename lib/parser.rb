@@ -9,30 +9,30 @@ module Texier
   # TODO: describe it in more detail.
   class Parser
     def initialize
-      @rules = {}      
+      @expressions = {}      
     end
     
     # Access to exported expressions.
     def [](name)
-      raise Error, 'Expression "#{name}" not defined.' unless @rules.has_key?(name)
-      @rules[name]
+      raise Error, "Expression \"#{name}\" not defined." unless @expressions.has_key?(name)
+      @expressions[name]
     end
     
     # Add expression to exported expressions
     def []=(name, value)
-      @rules[name] = value
+      @expressions[name] = value
     end
     
     def has_expression?(name)
-      @rules.has_key?(name)      
+      @expressions.has_key?(name)      
     end
     
     # Parse the string.
     def parse(input)
-      raise Error, 'Starting expression not defined.' unless @rules[:document]
+      raise Error, 'Starting expression not defined.' unless @expressions[:document]
       
       scanner = StringScanner.new(input)      
-      @rules[:document].parse(scanner)
+      @expressions[:document].parse(scanner)
     end
     
     # Helper method to generate various types of parsing expressions.

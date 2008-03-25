@@ -39,6 +39,13 @@ class ModifierTest < Test::Unit::TestCase
     )
   end
   
+  def test_horizontal_align
+    assert_output(
+      '<p style="text-align: left">hello world</p>',
+      ".<\nhello world"
+    )
+  end
+  
   def test_many_modifiers
     assert_output(
       '<p><em class="foo" title="blah">hello</em></p>',
