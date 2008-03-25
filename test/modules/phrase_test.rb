@@ -2,6 +2,10 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Phrase class
 class PhraseTest < Test::Unit::TestCase
+  def setup
+    @processor = Texier::Processor.new
+  end
+  
   def test_em
     assert_output '<p><em>hello world</em></p>', '*hello world*'
     assert_output '<p><em>hello world</em></p>', '//hello world//'
@@ -45,28 +49,53 @@ class PhraseTest < Test::Unit::TestCase
   end
   
   def test_ins
+    @processor.allowed['phrase/ins'] = true
     assert_output '<p><ins>hello world</ins></p>', '++hello world++'
+  end
+  
+  def test_ins_should_be_disabled_by_default
+    assert_output '<p>++hello world++</p>', '++hello world++'
   end
 
   def test_del
+    @processor.allowed['phrase/del'] = true
     assert_output '<p><del>hello world</del></p>', '--hello world--'
+  end
+
+  def test_del_should_be_disabled_by_default
+    assert_output '<p>--hello world--</p>', '--hello world--'
   end
   
   def test_sup
+    @processor.allowed['phrase/sup'] = true
     assert_output '<p>x<sup>2</sup></p>', 'x^^2^^'
 
     assert_output '<p>x<sup>2</sup></p>', 'x^2'
     assert_output '<p>x ^2</p>', 'x ^2'
   end
 
+  def test_sup_should_be_disabled_by_default
+    assert_output '<p>x^^2^^</p>', 'x^^2^^'
+  end
+
   def test_sub
+    @processor.allowed['phrase/sub'] = true
     assert_output '<p>x<sub>2</sub></p>', 'x__2__'
     
     assert_output '<p>x<sub>2</sub></p>', 'x_2'
   end
+
+  def test_sub_should_be_disabled_by_default
+    assert_output '<p>x__2__</p>', 'x__2__'
+  end
   
   def test_cite
+    @processor.allowed['phrase/cite'] = true
     assert_output '<p><cite>hello world</cite></p>', '~~hello world~~'
+  end
+
+  def test_cite_should_be_disabled_by_default
+    assert_output '<p>~~hello world~~</p>', '~~hello world~~'
   end
   
   def test_acronym
@@ -151,7 +180,6 @@ class PhraseTest < Test::Unit::TestCase
   end
   
   def test_links_allowed_set_to_false
-    @processor = Texier::Processor.new
     @processor.phrase_module.links_allowed = false
     
     assert_output(
@@ -161,7 +189,6 @@ class PhraseTest < Test::Unit::TestCase
   end
   
   def test_when_links_are_disabled_span_with_link_and_no_modifier_should_be_ignored
-    @processor = Texier::Processor.new
     @processor.phrase_module.links_allowed = false
 
     assert_output(

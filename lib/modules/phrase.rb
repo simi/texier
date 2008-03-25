@@ -86,6 +86,17 @@ module Texier::Modules
     inline_element('notexy') do
       quoted_text("''").map(&Texier::Utilities.method(:escape_html))
     end
+
+    def processor=(processor)
+      super
+      
+      # Disable these by default.
+      processor.allowed['phrase/ins'] = false
+      processor.allowed['phrase/del'] = false
+      processor.allowed['phrase/sup'] = false
+      processor.allowed['phrase/sub'] = false
+      processor.allowed['phrase/cite'] = false
+    end
     
     protected
 
@@ -106,7 +117,7 @@ module Texier::Modules
     # Expression that matches link.
     def link
       @link ||= if links_allowed?
-        e(/:(\[[^\]\n]+\])|(\S*[^:);,.!?\s])/).map do |url|
+        e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
           url.gsub(/^:\[?|\]$/, '')
         end
       else
