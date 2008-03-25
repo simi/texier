@@ -63,5 +63,11 @@ module Texier
         @attributes[name] = value
       end
     end
+    
+    # Apply modifier.
+    def modify!(modifier)
+      modifier.call(self) if modifier
+      self
+    end
   end
 end

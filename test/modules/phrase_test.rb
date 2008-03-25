@@ -10,6 +10,13 @@ class PhraseTest < Test::Unit::TestCase
   def test_em_and_plain_text
     assert_output '<p>hello <em>world</em> again</p>', 'hello *world* again'
   end
+  
+  def test_em_with_modifier
+    assert_output(
+      '<p><em class="foo">hello world</em></p>',
+      '*hello world .[foo]*'
+    )
+  end
 
   def test_strong
     assert_output '<p><strong>hello world</strong></p>', '**hello world**'
@@ -24,6 +31,13 @@ class PhraseTest < Test::Unit::TestCase
 
   def test_quote
     assert_output '<p><q>hello world</q></p>', '>>hello world<<'
+  end
+  
+  def test_quote_with_cite
+    assert_output(
+      '<p><q cite="http://metatribe.org">hello world</q></p>',
+      '>>hello world<<:http://metatribe.org'
+    )
   end
   
   def test_code
@@ -102,7 +116,31 @@ class PhraseTest < Test::Unit::TestCase
     )
   end
   
-  def test_span_without_link_should_be_ignored
+  def test_span_with_modifier
+    assert_output(
+      '<p><span class="foo">hello</span></p>',
+      '"hello .[foo]"'
+    )
+    
+    assert_output(
+      '<p><span class="foo">hello</span></p>',
+      '~hello .[foo]~'
+    )
+  end
+  
+  def test_span_with_link_and_modifier
+    assert_output(
+      '<p><a class="foo" href="http://metatribe.org">hello</a></p>',
+      '"hello .[foo]":http://metatribe.org'
+    )
+    
+    assert_output(
+      '<p><a class="foo" href="http://metatribe.org">hello</a></p>',
+      '~hello .[foo]~:http://metatribe.org'
+    )
+  end
+  
+  def test_span_without_link_or_modifier_should_be_ignored
     assert_output '<p>"hello"</p>', '"hello"'
     assert_output '<p>~hello~</p>', '~hello~'
   end

@@ -2,12 +2,9 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Modifier class
 class ModifierTest < Test::Unit::TestCase
-  def test_modifier_should_be_optional
-    assert_output '<p><em>hello</em></p>', '*hello*'
-  end
-  
   def test_title
     assert_output '<p><em title="foo">hello</em></p>', '*hello .(foo)*'
+    assert_output '<p><em title="foo">hello</em></p>', '*hello .( foo  )*'
   end
   
   def test_class

@@ -11,7 +11,6 @@ module Texier::Modules
     simple_phrase('em-alt', '//', :em)
     simple_phrase('strong', '**', :strong)
     simple_phrase('strong+em', '***', [:strong, :em])
-    simple_phrase('quote', ['>>', '<<'], :q) # TODO: support "cite" links
     simple_phrase('code', '`', :code)
     simple_phrase('ins', '++', :ins)
     simple_phrase('del', '--', :del)
@@ -19,6 +18,16 @@ module Texier::Modules
     simple_phrase('sub', '__', :sub)
     simple_phrase('cite', '~~', :cite)
 
+    # Quote
+    inline_element('quote') do
+      quote = discard('>>') \
+        & everything_up_to(optional(modifier) & e('<<')) \
+        & optional(modifier) & discard('<<') & optional(link)
+      quote = quote.map do |content, modifier, url|
+        Texier::Element.new(:q, content, :cite => url).modify!(modifier)
+      end
+    end
+    
     # Alternative syntax for subscripts and superscripts
     def self.subscript_or_superscript(name, mark, tag)
       inline_element(name) do
@@ -41,18 +50,32 @@ module Texier::Modules
     end
     
     # Span
-    inline_element('span') do
-      (quoted_text('"') & link).map do |text, url|
-        Texier::Element.new(:a, text, :href => url)
+    def self.span(name, mark)
+      inline_element(name) do
+        # Span with link and optional modifier.
+        span_with_link = discard(mark) \
+          & everything_up_to(optional(modifier) & e(mark)) \
+          & optional(modifier) & discard(mark) & link
+        span_with_link = span_with_link.map do |text, modifier, url|
+          element = Texier::Element.new(:a, text, :href => url)
+          element.modify!(modifier)
+        end
+      
+        # Span with modifier.
+        span_with_modifier = discard(mark) \
+          & everything_up_to(modifier & e(mark)) \
+          & modifier & discard(mark)
+        span_with_modifier = span_with_modifier.map do |text, modifier|
+          Texier::Element.new(:span, text).modify!(modifier)
+        end
+      
+        span_with_link | span_with_modifier
       end
     end
     
-    inline_element('span-alt') do
-      (quoted_text('~') & link).map do |text, url|
-        Texier::Element.new(:a, text, :href => url)
-      end
-    end
-
+    span('span', '"')
+    span('span-alt', '~')
+    
     # Quick links (blah:www.metatribe.org)
     inline_element('quicklink') do
       (e(/[^\s:]+/) & link).map do |content, url|
@@ -61,31 +84,24 @@ module Texier::Modules
     end
     
     inline_element('notexy') do
-      quoted_text("''").map do |text| 
-        Texier::Utilities.escape_html(text)
-      end
+      quoted_text("''").map(&Texier::Utilities.method(:escape_html))
     end
     
     protected
 
     # Build expression that matches a phrase element.
-    def build_simple_phrase(marks, tags)
-      # Expressions for opening and closing marks.
-      marks = [*marks].map do |mark|
-        e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/)
-      end
-      marks = [marks[0], marks[0]] if marks.size < 2
+    def build_simple_phrase(mark, tags)
+      mark = e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/)
       
-      # Phrase expression.
       phrase = 
-        marks[0] & everything_up_to(modifier & marks[1]) \
-        & modifier & marks[1] & optional(link)
+        mark & everything_up_to(optional(modifier) & mark) \
+        & optional(modifier) & mark & optional(link)
       phrase = phrase.map do |_, content, modifier, _, url|
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
         element = Texier::Element.new(:a, element, :href => url) if url
-        modifier.call(element)
+        element.modify!(modifier)
       end
     end
     

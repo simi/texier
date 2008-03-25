@@ -1,3 +1,5 @@
+# TODO: add header comment (with name, author, licence, ...) to every file.
+
 require 'parser'
 require 'renderer'
 
