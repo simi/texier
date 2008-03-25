@@ -166,4 +166,19 @@ class ParserTest < Test::Unit::TestCase
     assert_nil @parser.parse('bar')
     assert_equal [], @parser.parse('foo')
   end
+  
+  def test_quoted_text
+    @parser[:document] = quoted_text('"')
+    
+    assert_nil @parser.parse('')
+    assert_nil @parser.parse('foo')
+    
+    assert_equal ['foo'], @parser.parse('"foo"')
+  end
+  
+  def test_quoted_text_with_different_opening_and_closing_quotes
+    @parser[:document] = quoted_text('[', ']')
+    
+    assert_equal ['foo'], @parser.parse('[foo]')
+  end
 end

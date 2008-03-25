@@ -58,6 +58,11 @@ module Texier
       def everything_up_to(e)
         Expressions::EverythingUpTo.new(e)
       end
+      
+      # Expression that matches text inside quotes.
+      def quoted_text(opening, closing = opening)
+        discard(opening) & everything_up_to(closing) & discard(closing)
+      end
 
       # Creates expression that matches zero or more occurences of another
       # expression.

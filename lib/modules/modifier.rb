@@ -8,7 +8,7 @@ module Texier::Modules
     
     def initialize_parser(parser)
       # .(hello world)
-      title_modifier = (e('(') & everything_up_to(')') & e(')')).map do |_, value, _|
+      title_modifier = quoted_text('(', ')').map do |value|
         proc do |element|
           # TODO: if it is <img> (and possibly some other), use alt instead of
           # title.
@@ -18,7 +18,7 @@ module Texier::Modules
       end
       
       # .[class #id]
-      class_modifier = (e('[') & everything_up_to(']') & e(']')).map do |_, values, _|
+      class_modifier = quoted_text('[', ']').map do |values|
         proc do |element|
           classes = []
           values.split(/ +/).each do |value|

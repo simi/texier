@@ -35,21 +35,20 @@ module Texier::Modules
     inline_element('acronym') do
       content = e(/\w{2,}|(\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
       
-      acronym = content & e('((') & everything_up_to('))') & e('))')
-      acronym = acronym.map do |acronym, _, meaning, _|
+      (content & quoted_text('((', '))')).map do |acronym, meaning|
         Texier::Element.new(:acronym, acronym, :title => meaning)
       end
     end
     
     # Span
     inline_element('span') do
-      (e('"') & everything_up_to('"') & e('"') & link).map do |_, text, _, url|
+      (quoted_text('"') & link).map do |text, url|
         Texier::Element.new(:a, text, :href => url)
       end
     end
     
     inline_element('span-alt') do
-      (e('~') & everything_up_to('~') & e('~') & link).map do |_, text, _, url|
+      (quoted_text('~') & link).map do |text, url|
         Texier::Element.new(:a, text, :href => url)
       end
     end
@@ -62,7 +61,7 @@ module Texier::Modules
     end
     
     inline_element('notexy') do
-      (e("''") & everything_up_to("''") & e("''")).map do |_, text, _| 
+      quoted_text("''").map do |text| 
         Texier::Utilities.escape_html(text)
       end
     end
@@ -76,9 +75,11 @@ module Texier::Modules
         e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/)
       end
       marks = [marks[0], marks[0]] if marks.size < 2
-
+      
       # Phrase expression.
-      phrase = marks[0] & everything_up_to(modifier & marks[1]) & modifier & marks[1] & optional(link)
+      phrase = 
+        marks[0] & everything_up_to(modifier & marks[1]) \
+        & modifier & marks[1] & optional(link)
       phrase = phrase.map do |_, content, modifier, _, url|
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
