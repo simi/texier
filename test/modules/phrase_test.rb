@@ -89,6 +89,11 @@ class PhraseTest < Test::Unit::TestCase
     assert_output '<p>x__2__</p>', 'x__2__'
   end
   
+  def test_alternative_sup_and_sub_with_negative_number
+    assert_output "<p>x<sup>\xE2\x88\x922</sup></p>", 'x^-2'
+    assert_output "<p>x<sub>\xE2\x88\x922</sub></p>", 'x_-2'
+  end
+  
   def test_cite
     @processor.allowed['phrase/cite'] = true
     assert_output '<p><cite>hello world</cite></p>', '~~hello world~~'

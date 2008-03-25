@@ -1,0 +1,3 @@
+- Implement all functionaliy of Texy!
+- Optimize by implementing Pacrat parsing (but first do some benchmarks to see 
+  if this is neccessary)

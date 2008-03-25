@@ -3,6 +3,9 @@ require "#{File.dirname(__FILE__)}/../module"
 module Texier::Modules
   # This module defines inline phrase elements, like emphases or simple links.
   class Phrase < Texier::Module
+    # Unicode character for minus (codepoint U+2212)
+    MINUS = "\xE2\x88\x92"
+    
     # Are links allowed?
     options :links_allowed => true
     
@@ -34,7 +37,7 @@ module Texier::Modules
     def self.subscript_or_superscript(name, mark, tag)
       inline_element(name) do
         (e(/[a-z0-9]/) & e(mark) & e(/-?\d+(?!\w)/)).map do |a, _, b|
-          [a, Texier::Element.new(tag, b)]
+          [a, Texier::Element.new(tag, b.gsub('-', MINUS))]
         end
       end
     end
