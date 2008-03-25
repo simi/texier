@@ -43,7 +43,7 @@ module Texier
         !value || value.empty?
       end
       
-      attributes.inject('') do |output, (name, value)|
+      attributes.inject([]) do |output, (name, value)|
         case value
         when Array
           # TODO: sanitize values
@@ -59,8 +59,9 @@ module Texier
           value = value.gsub('"', '&quot;')
         end
         
-        "#{output} #{name}=\"#{value}\""
-      end
+        output << " #{name}=\"#{value}\""
+        output
+      end.sort.join
     end
   end
 end

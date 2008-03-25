@@ -66,7 +66,7 @@ module Texier
     
     # Apply modifier.
     def modify!(modifier)
-      modifier.call(self) if modifier
+      modifier.each {|m| m.call(self)} if modifier
       self
     end
   end

@@ -38,4 +38,33 @@ class ModifierTest < Test::Unit::TestCase
       '*hello .{font-family: sans-serif; color: green}*'
     )
   end
+  
+  def test_many_modifiers
+    assert_output(
+      '<p><em class="foo" title="blah">hello</em></p>',
+      '*hello .[foo](blah)*'
+    )
+  end
+  
+  def test_when_there_is_more_than_one_title_modifier_only_the_last_one_should_be_applied
+    assert_output(
+      '<p><em title="bar">hello</em></p>',
+      '*hello .(foo)(bar)*'
+    )
+  end
+  
+  def test_when_there_is_more_than_one_class_modifier_they_should_be_concatenated
+    assert_output(
+      '<p><em class="foo bar">hello</em></p>',
+      '*hello .[foo][bar]*'
+    )
+  end
+  
+  def test_when_there_is_more_than_one_style_modifier_they_should_be_merged
+    assert_output(
+      '<p><em style="font-family: sans-serif; color: black">hello</em></p>',
+      '*hello .{font-family: sans-serif}{color: black}*'
+    )
+  end
+  
 end

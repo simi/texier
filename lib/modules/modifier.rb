@@ -50,10 +50,8 @@ module Texier::Modules
         end
       end
       
-      modifier = discard(/ *\./) \
-        & (title_modifier | class_modifier | style_modifier)
-      
-      parser[:modifier] = modifier
+      parser[:modifier] = discard(/ *\./) \
+        & one_or_more(title_modifier | class_modifier | style_modifier).group
     end
   end
 end
