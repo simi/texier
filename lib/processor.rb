@@ -27,6 +27,11 @@ module Texier
     # set allowed[feature_name] to false. Features and their names are defined
     # in modules.
     attr_reader :allowed
+
+    # CSS classes for align modifiers. You can specify these modifiers:
+    # :left, :right, :center, :justify, :top, :middle, :bottom
+    attr_reader :align_classes
+    
     
     # Document Object Model of last parsed document. You must call method
     #   +process+ before this attribute is set.
@@ -34,6 +39,7 @@ module Texier
     
     def initialize
       @allowed = Hash.new(true)
+      @align_classes = {}
       
       load_modules
     end

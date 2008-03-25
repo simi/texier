@@ -3,11 +3,11 @@ require "#{File.dirname(__FILE__)}/../module"
 module Texier::Modules
   # TODO: describe various modifiers
   class Modifier < Texier::Module
-    ALIGN = {
-      '<>' => 'center', 
-      '<' => 'left', 
-      '>' => 'right',
-      '=' => 'justify'
+    ALIGNS = {
+      '<>' => :center, 
+      '<' => :left, 
+      '>' => :right,
+      '=' => :justify
     }
     
     def initialize_parser(parser)
@@ -65,17 +65,21 @@ module Texier::Modules
       
       
       # .> or .< or .<> or .=
-      horizontal_align_modifier = e(/<>|<|>|=/) do |value|
+      align_modifier = e(/<>|<|>|=/) do |value|
         proc do |element|
-          # TODO: it should be configurable whether styles or classes are used.
-          element[:style] ||= {}
-          element[:style]['text-align'] = ALIGN[value]
+          align = ALIGNS[value]
+          if align_class = processor.align_classes[align]
+            element[:class] ||= []
+            element[:class] << align_class
+          else
+            element[:style] ||= {}
+            element[:style]['text-align'] = align.to_s
+          end
         end
       end
       
       parser[:modifier] = discard(/ *\./) & one_or_more(
-        title_modifier | class_modifier | style_modifier | 
-        horizontal_align_modifier
+        title_modifier | class_modifier | style_modifier | align_modifier
       ).group
     end
   end
