@@ -74,4 +74,10 @@ class ModifierTest < Test::Unit::TestCase
     )
   end
   
+  def test_disallow_modifier
+    @processor = Texier::Processor.new
+    @processor.allowed['modifier'] = false
+    
+    assert_output '<p><em>hello .[foo]</em></p>', '*hello .[foo]*'
+  end
 end

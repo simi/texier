@@ -11,6 +11,7 @@ module Texier
   # This is the base class for all Texier modules.
   class Module
     attr_accessor :processor
+    attr_accessor :name
     
     # This method is called before parsing. Derived classes should override it
     # if they need to preprocess the input document.
@@ -25,8 +26,8 @@ module Texier
     
     def initialize_parser(parser)
       @parser = parser
-      parser_initializers.each do |type, blocks|
-        blocks.each do |block|
+      parser_initializers.each do |(type, name, block)|
+        if processor.allowed["#{self.name}/#{name}"]
           parser[:"#{type}_slot"] << instance_eval(&block)
         end
       end
@@ -36,7 +37,7 @@ module Texier
   
     protected
     
-    # Define module options. Options are defined as hash, where key is the names
+    # Define module options. Options are defined as hash, where key is the name
     # of the option and value is it's default value.
     def self.options(hash)
       hash.each do |name, default_value|
@@ -53,20 +54,19 @@ module Texier
     
     @@parser_initializers = {}
     
-    def self.define_element(type, &block)
-      @@parser_initializers[self] ||= {}
-      @@parser_initializers[self][type] ||= []
-      @@parser_initializers[self][type] << block
+    def self.define_element(type, name, &block)
+      @@parser_initializers[self] ||= []
+      @@parser_initializers[self] << [type, name, block]
     end
     
     # Define new inline element.
     def self.inline_element(name, &block)
-      define_element(:inline_element, &block)
+      define_element(:inline_element, name, &block)
     end
     
     # Define new block element.
     def self.block_element(name, &block)
-      define_element(:block_element, &block)
+      define_element(:block_element, name, &block)
     end
     
     def parser_initializers

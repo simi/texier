@@ -23,11 +23,18 @@ module Texier
   # This class also contain methods to configure Texier output or manage
   # Texier's modules.
   class Processor
+    # Configuration of Texier syntax. If you want to disable certain feature,
+    # set allowed[feature_name] to false. Features and their names are defined
+    # in modules.
+    attr_reader :allowed
+    
     # Document Object Model of last parsed document. You must call method
-    #   +process+ at least once to set this attribute.
+    #   +process+ before this attribute is set.
     attr_reader :dom
     
     def initialize
+      @allowed = Hash.new(true)
+      
       load_modules
     end
     
@@ -44,12 +51,13 @@ module Texier
       @modules << mod
       
       mod.processor = self
-      name = default_module_name(mod)
+      mod.name = default_module_name(mod)
       
       # Dynamicaly define singleton method with the name of added module, so it
       # can be accessed from outside as foo_module (this is advanced ruby
       # magic).
-      (class << self; self; end).send(:define_method, name) {mod}
+      method_name = "#{mod.name}_module"
+      (class << self; self; end).send(:define_method, method_name) {mod}
     end
     
     protected
@@ -58,17 +66,17 @@ module Texier
       # These modules have to be loaded first.
       add_module Modules::Modifier.new
       add_module Modules::Basic.new
-      
+
+      # These modules can be loaded in any order.
       add_module Modules::Heading.new
       add_module Modules::Phrase.new
     end
     
+    # Default name of module is derived from it's class name.
     def default_module_name(mod)
       name = mod.class.name
       name.sub!(/^(.*::)?/, '')
       name.downcase!
-      name += '_module'
-      name.to_sym
     end
     
     # This is called before parsing. Here the input document can be modified as
