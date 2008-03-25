@@ -28,8 +28,8 @@ module Texier
     # in modules.
     attr_reader :allowed
 
-    # CSS classes for align modifiers. You can specify these modifiers:
-    # :left, :right, :center, :justify, :top, :middle, :bottom
+    # CSS classes for align modifiers. You can specify classes for these 
+    # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
     attr_reader :align_classes
     
     

@@ -10,6 +10,20 @@ module Texier::Modules
       '=' => :justify
     }
     
+    # List of properties which are regarded as HTML attributes.
+    ATTRIBUTES = Texier::Utilities.presence_hash(
+      'abbr', 'accesskey', 'align', 'alt', 'archive', 'axis', 'bgcolor', 
+      'cellpadding', 'cellspacing', 'char', 'charoff', 'charset', 'cite',
+      'classid', 'codebase', 'codetype', 'colspan', 'compact', 'coords','data',
+      'datetime', 'declare', 'dir', 'face', 'frame', 'headers', 'href', 
+      'hreflang', 'hspace', 'ismap', 'lang', 'longdesc', 'name', 'noshade', 
+      'nowrap', 'onblur', 'onclick', 'ondblclick', 'onkeydown', 'onkeypress', 
+      'onkeyup', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 
+      'onmouseup', 'rel', 'rev', 'rowspan', 'rules', 'scope', 'shape', 'size', 
+      'span', 'src', 'standby', 'start', 'summary', 'tabindex', 'target', 
+      'title', 'type', 'usemap', 'valign', 'value', 'vspace'
+    )
+    
     def initialize_parser(parser)
       unless processor.allowed['modifier']
         parser[:modifier] = empty
@@ -21,6 +35,8 @@ module Texier::Modules
         proc do |element|
           # TODO: if it is <img> (and possibly some other), use alt instead of
           # title.
+          
+          # TODO: Apply typographic fixes (when Typography module is finished)
           element[:title] = value.strip
         end
       end
@@ -32,6 +48,7 @@ module Texier::Modules
       classes = one_or_more(class_value).separated_by(/ */)
       
       class_modifier = (discard('[') & classes & discard(']')).map do |*values|
+        # TODO: set only allowed classes and ids.
         proc do |element|
           element[:class] ||= []
           values.each do |value|
@@ -54,18 +71,23 @@ module Texier::Modules
       
       style_modifier = (discard('{') & styles & discard('}')).map do |values|
         proc do |element|
-          # TODO: if style name is valid attribute name, assign attribute
-          # instead
-          
-          element[:style] ||= {}
-          element[:style].merge!(values)
+          values.each do |name, value|
+            if ATTRIBUTES[name]
+              # TODO: set only allowed attributes
+              element[name.to_sym] = value
+            else
+              # TODO: set only allowed styles
+              element[:style] ||= {}
+              element[:style][name] = value
+            end
+          end
         end
       end
       
       
       
       # .> or .< or .<> or .=
-      align_modifier = e(/<>|<|>|=/) do |value|
+      horizontal_align_modifier = e(/<>|<|>|=/) do |value|
         proc do |element|
           align = ALIGNS[value]
           if align_class = processor.align_classes[align]
@@ -79,7 +101,8 @@ module Texier::Modules
       end
       
       parser[:modifier] = discard(/ *\./) & one_or_more(
-        title_modifier | class_modifier | style_modifier | align_modifier
+        title_modifier | class_modifier | style_modifier | 
+        horizontal_align_modifier
       ).group
     end
   end

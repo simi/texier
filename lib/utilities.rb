@@ -18,4 +18,11 @@ module Texier::Utilities
       "#{string}#{separator}2"
     end
   end
+  
+  # Turn array [a, b, c, ...] into hash {a => true, b => true, ...}. This hash
+  # can then be used for quickly determining if certain element was present in
+  # the array. (hash[foo] is much faster than array.include?(foo))
+  def self.presence_hash(*attr)
+    Hash[*attr.zip(Array.new(attr.size, true)).flatten]
+  end
 end

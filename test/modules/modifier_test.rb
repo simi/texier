@@ -42,15 +42,22 @@ class ModifierTest < Test::Unit::TestCase
       '*hello .{font-family: sans-serif; color: green}*'
     )
   end
+  
+  def test_when_style_name_is_valid_attribute_name_it_should_be_used_as_attribute
+    assert_output(
+      '<p><em onclick="hello()">hello</em></p>',
+      '*hello .{onclick: hello()}*'
+    )
+  end
 
-  def test_align
+  def test_horizontal_align
     assert_output(
       '<p style="text-align: left">hello world</p>',
       ".<\nhello world"
     )
   end
 
-  def test_align_with_specified_align_class
+  def test_horizontal_align_with_specified_align_class
     @processor.align_classes[:left] = 'foo'
     
     assert_output(
