@@ -29,4 +29,16 @@ class ModifierTest < Test::Unit::TestCase
       '*hello .[foo #bar]*'
     )
   end
+  
+  def test_styles
+    assert_output(
+      '<p><em style="font-family: sans-serif">hello</em></p>',
+      '*hello .{font-family: sans-serif}*'
+    )
+    
+    assert_output(
+      '<p><em style="font-family: sans-serif; color: green">hello</em></p>',
+      '*hello .{font-family: sans-serif; color: green}*'
+    )
+  end
 end

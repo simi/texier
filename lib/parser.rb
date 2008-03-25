@@ -148,7 +148,8 @@ module Texier
       
         def parse(scanner)
           if result = @expression.parse(scanner)
-            [*@block.call(*result)]
+            result = @block.call(*result)
+            result.is_a?(Array) ? result : [result]
           end
         end
       end      

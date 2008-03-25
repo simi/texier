@@ -134,6 +134,14 @@ class ParserTest < Test::Unit::TestCase
     assert_equal ['bar'], @parser.parse('foo')
   end
   
+  def test_mapper_returing_hash
+    @parser[:document] = e('foo') do
+      {:foo => :bar}
+    end
+    
+    assert_equal [{:foo => :bar}], @parser.parse('foo')
+  end
+  
   def test_everything_up_to
     @parser[:document] = everything_up_to('bar')
     

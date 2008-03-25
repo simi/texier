@@ -53,6 +53,24 @@ class RendererTest < Test::Unit::TestCase
     assert_equal('<foo></foo>', @renderer.render(element))
   end
   
+  def test_array_attribute
+    element = Texier::Element.new(:foo, :class => ['foo', 'bar'])
+    
+    assert_equal '<foo class="foo bar"></foo>', @renderer.render(element)
+  end
+  
+  def test_hash_attribute
+    element = Texier::Element.new(:foo, :style => {
+        'font-family' => 'sans-serif', 
+        'color' => 'red'
+      })
+    
+    assert_equal(
+      '<foo style="font-family: sans-serif; color: red"></foo>',
+      @renderer.render(element)
+    )
+  end
+  
   def test_render_text
     element = Texier::Element.new(:foo, 'hello', :class => 'bar')    
     assert_equal 'hello', @renderer.render_text(element)

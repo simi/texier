@@ -40,13 +40,24 @@ module Texier
     def render_attributes(attributes)
       # Ignore nil, false and empty values.
       attributes = attributes.reject do |key, value| 
-        !value || value.to_s.empty?
+        !value || value.empty?
       end
       
       attributes.inject('') do |output, (name, value)|
-        # Sanitize values
-        value = Texier::Utilities.escape_html(value)
-        value = value.gsub('"', '&quot;')
+        case value
+        when Array
+          # TODO: sanitize values
+          value = value.join(' ')
+        when Hash
+          # TODO: sanitize names and values
+          value = value.inject([]) do |value, (hash_name, hash_value)|
+            value + ["#{hash_name}: #{hash_value}"]
+          end.join('; ')
+        else        
+          # Sanitize values
+          value = Texier::Utilities.escape_html(value)
+          value = value.gsub('"', '&quot;')
+        end
         
         "#{output} #{name}=\"#{value}\""
       end
