@@ -112,6 +112,15 @@ class HeadingTest < Test::Unit::TestCase
     )
   end
   
+  def test_generate_id_when_heading_contains_inline_element
+    @processor.heading_module.generate_id = true
+    
+    assert_output(
+      '<h1 id="toc-hello-world">hello <em>world</em></h1>',
+      '####### hello *world*'
+    )
+  end
+  
   def test_single_underlined_heading
     assert_output(
       '<h1>hello world</h1>',
@@ -142,6 +151,28 @@ class HeadingTest < Test::Unit::TestCase
     assert_output(
       '<h1>hello <em>world</em></h1>',
       "hello *world*\n####"
+    )
+  end
+  
+  def test_surrounded_heading_with_modifier
+    assert_output(
+      '<h1 class="foo">hello world</h1>',
+      '####### hello world .[foo]'
+    )
+  end
+  
+  def test_underlined_heading_with_modifier
+    assert_output(
+      '<h1 class="foo">hello world</h1>',
+      "hello world .[foo]\n####"
+    )
+  end
+  
+  def test_id_in_modifier_should_have_precedence_over_generated_id
+    @processor.heading_module.generate_id = true
+    assert_output(
+      '<h1 id="foo">hello world</h1>',
+      '####### hello world .[#foo]'
     )
   end
 end

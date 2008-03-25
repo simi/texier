@@ -152,13 +152,13 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_one_or_more_up_to
-    @parser[:document] = one_or_more(/[a-z]{3}/).up_to('foo') & e('foo')
+    @parser[:document] = one_or_more(/[a-z]{3}/).up_to('foo')
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('barbarbar')
     assert_nil @parser.parse('foo')
     
-    assert_equal ['bar', 'gaz', 'foo'], @parser.parse('bargazfoo')
+    assert_equal [['bar', 'gaz'], 'foo'], @parser.parse('bargazfoo')
   end
   
   def test_group

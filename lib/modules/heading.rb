@@ -71,12 +71,12 @@ module Texier::Modules
         level = 7 - level if more_means_higher
         level
       end
-      tail = discard(/ *(\#{2,}|={2,})? *$/)
+      
+      tail = discard(/ *(\#{2,}|={2,})? */) & optional(modifier) & discard(/$/)
 
-      content = one_or_more(inline_element).up_to(tail).group
-
-      (marker & content & tail).map do |level, content|
-        create_element(level, content)
+      heading = marker & one_or_more(inline_element).up_to(tail)
+      heading.map do |level, content, modifier|
+        create_element(level, content, modifier)
       end
     end
 
@@ -86,11 +86,12 @@ module Texier::Modules
       levels.each do |char, value|
         underline << e(/ *#{Regexp.quote(char)}{3,} */) {value}
       end
+      
+      tail = optional(modifier) & discard("\n")
 
-      content = one_or_more(inline_element).group
-
-      (content & "\n" & underline).map do |content, _, level|
-        create_element(level, content)
+      heading = one_or_more(inline_element).up_to(tail) & underline
+      heading.map do |content, modifier, level|
+        create_element(level, content, modifier)
       end
     end
 
@@ -135,8 +136,9 @@ module Texier::Modules
     protected
 
     # Create Heading dom element
-    def create_element(level, content)
+    def create_element(level, content, modifier)
       heading = Texier::Element.new(:"h#{level + 1}", content, :level => level)
+      heading.modify!(modifier)
       heading[:id] ||= auto_id(content)
 
       @title ||= Texier::Renderer.new.render_text(heading)
@@ -149,7 +151,8 @@ module Texier::Modules
     def auto_id(content)
       return nil unless generate_id
 
-      id = id_prefix + Texier::Utilities.webalize(content.to_s)
+      id = Texier::Renderer.new.render_text(content)
+      id = id_prefix + Texier::Utilities.webalize(id)
       id = Texier::Utilities.sequel(id) while @used_ids[id]
 
       @used_ids[id] = true

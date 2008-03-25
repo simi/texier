@@ -351,13 +351,13 @@ module Texier
           previous_pos = scanner.pos
           results = []
           
-          until @up_to.peek(scanner)
+          until up_to = @up_to.parse(scanner)
             return nil unless result = @expression.parse(scanner)
             results.concat(result)
           end
           
           if results.size >= @min
-            results
+            [results] + up_to
           else
             scanner.pos = previous_pos
             nil
