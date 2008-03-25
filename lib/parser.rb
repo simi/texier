@@ -54,14 +54,15 @@ module Texier
       end
       
       # Creates expression that matches everything from current position up to
-      # position where another expression matches.
+      # position where another expression matches plus the result of that
+      # another expression.
       def everything_up_to(e)
         Expressions::EverythingUpTo.new(e)
       end
       
       # Expression that matches text inside quotes.
       def quoted_text(opening, closing = opening)
-        discard(opening) & everything_up_to(closing) & discard(closing)
+        discard(opening) & everything_up_to(discard(closing))
       end
 
       # Creates expression that matches zero or more occurences of another
@@ -364,22 +365,21 @@ module Texier
         end
       end
 
-      # This expression matches everything from current position up to position
-      # where another expression matches.
+      # TODO: describe this.
       class EverythingUpTo < Expression
         def initialize(up_to)
           @up_to = create(up_to)
         end
-      
+        
         def parse(scanner)
           result = ''
-        
-          until @up_to.peek(scanner)
+          
+          until up_to = @up_to.parse(scanner)
             return nil unless char = scanner.getch
             result << char
           end
         
-          result.empty? ? nil : [result]
+          result.empty? ? nil : [result] + up_to
         end
       end
       

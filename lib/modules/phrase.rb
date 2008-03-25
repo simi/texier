@@ -1,10 +1,11 @@
 require "#{File.dirname(__FILE__)}/../module"
 
 module Texier::Modules
+  # This module defines inline phrase elements, like emphases or simple links.
   class Phrase < Texier::Module
     # Shortcut for defining parsing expression for simple phrases.
-    def self.simple_phrase(name, marks, tags)
-      inline_element(name) {build_simple_phrase(marks, tags)}
+    def self.simple_phrase(name, mark, tags)
+      inline_element(name) {build_simple_phrase(mark, tags)}
     end
 
     simple_phrase('em', '*', :em)
@@ -20,9 +21,7 @@ module Texier::Modules
 
     # Quote
     inline_element('quote') do
-      quote = discard('>>') \
-        & everything_up_to(optional(modifier) & e('<<')) \
-        & optional(modifier) & discard('<<') & optional(link)
+      quote = discard('>>') & everything_up_to(optional(modifier) & discard('<<')) & optional(link)
       quote = quote.map do |content, modifier, url|
         Texier::Element.new(:q, content, :cite => url).modify!(modifier)
       end
@@ -52,19 +51,17 @@ module Texier::Modules
     # Span
     def self.span(name, mark)
       inline_element(name) do
+        mark = discard(mark)
+        
         # Span with link and optional modifier.
-        span_with_link = discard(mark) \
-          & everything_up_to(optional(modifier) & e(mark)) \
-          & optional(modifier) & discard(mark) & link
+        span_with_link = mark & everything_up_to(optional(modifier) & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
           element = Texier::Element.new(:a, text, :href => url)
           element.modify!(modifier)
         end
       
         # Span with modifier.
-        span_with_modifier = discard(mark) \
-          & everything_up_to(modifier & e(mark)) \
-          & modifier & discard(mark)
+        span_with_modifier = mark & everything_up_to(modifier & mark)
         span_with_modifier = span_with_modifier.map do |text, modifier|
           Texier::Element.new(:span, text).modify!(modifier)
         end
@@ -91,12 +88,10 @@ module Texier::Modules
 
     # Build expression that matches a phrase element.
     def build_simple_phrase(mark, tags)
-      mark = e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/)
+      mark = discard(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/)
       
-      phrase = 
-        mark & everything_up_to(optional(modifier) & mark) \
-        & optional(modifier) & mark & optional(link)
-      phrase = phrase.map do |_, content, modifier, _, url|
+      phrase = mark & everything_up_to(optional(modifier) & mark) & optional(link)
+      phrase = phrase.map do |content, modifier, url|
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
