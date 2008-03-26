@@ -30,6 +30,12 @@ class ModifierTest < Test::Unit::TestCase
   def test_id
     assert_output '<p><em id="foo">hello</em></p>', '*hello .[#foo]*'
   end
+  
+  def test_only_allowed_ids_should_be_used
+	@processor.allowed_classes = ['#foo']
+	assert_output '<p><em id="foo">hello</em></p>', '*hello .[#foo]*'
+	assert_output '<p><em>hello</em></p>', '*hello .[#bar]*'
+  end
 
   def test_class_and_id
     assert_output(
