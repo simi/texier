@@ -22,7 +22,7 @@ module Texier::Modules
       paragraph = optional(parser[:modifier] & discard(/ *\n/)) \
         & (line & zero_or_more(e("\n") & line))
       paragraph = paragraph.map do |modifier, *lines|
-        Texier::Element.new(:p, lines).modify!(modifier)
+        Texier::Element.new('p', lines).modify!(modifier)
       end
       block_element = block_element_slot | paragraph
 

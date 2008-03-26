@@ -16,18 +16,12 @@ module Texier
       end
     end
     
-    # TODO: create two accessors: children and text. Children will return
-    # array of children, if this element has children. Text will return
-    # textual content.
-    
     # TODO: consecutive string children should be concatenated into one.
-    
-    # TODO: attributes as dynamic methods.
     
     # TODO: dom builder
     
     def name=(value)
-      @name = value.to_sym
+      @name = value
     end
     
     def content=(value)
@@ -50,18 +44,41 @@ module Texier
       content.is_a?(Array) && content.size > 0
     end
 
-    # Access attribute.
-    def [](name)
-      @attributes[name]
-    end
+    # Access attributes using methods:
+    # 
+    # element.foo = 'bar' is the same as element.attributes['foo'] = 'bar'.
+    def method_missing(name, *args)
+	  return super unless name.to_s =~ /[a-z_]+=?/
 
-    # Assign attribute. If nil is assigned, attribute is deleted.
-    def []=(name, value)
-      if value.nil?
-        @attributes.delete(name)
+	  name = name.to_s
+	  if name[-1] == ?=
+		@attributes[name[0..-2]] = args.first
       else
-        @attributes[name] = value
+		@attributes[name]
       end
+    end
+	
+    # This is here just to suppress warning that foo.id is deprecated.
+	def id
+	  @attributes['id']
+    end
+	
+	def id=(value)
+	  @attributes['id'] = value
+    end
+	
+	def class_name=(value)
+	  @attributes['class'] = value
+    end
+	
+	def class_name
+	  @attributes['class']
+    end
+	
+    # Convenience method for adding class names.
+	def add_class_name(value)
+	  @attributes['class'] ||= []
+	  @attributes['class'] << value
     end
     
     # Apply modifier.

@@ -27,8 +27,11 @@ module Texier
     # set allowed[feature_name] to false. Features and their names are defined
     # in modules.
     attr_reader :allowed
+	
+    # Which HTML tags, and their corresponding attributes are allowed.
+	attr_accessor :allowed_tags
 
-    # CSS classes for align modifiers. You can specify classes for these 
+    # CSS classes for align modifiers. You can specify classes for these
     # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
     attr_reader :align_classes
     
@@ -39,6 +42,7 @@ module Texier
     
     def initialize
       @allowed = Hash.new(true)
+	  @allowed_tags = :all
       @align_classes = {}
       
       load_modules
@@ -64,6 +68,21 @@ module Texier
       # magic).
       method_name = "#{mod.name}_module"
       (class << self; self; end).send(:define_method, method_name) {mod}
+    end
+	
+    # Is tag allowed? Allowed tags can be specified in +allowed_tags+ property.
+	def tag_allowed?(tag_name)
+	  allowed_tags == :all || 
+		(allowed_tags.is_a?(Hash) && !allowed_tags[tag_name].nil?)
+    end
+	
+    # Is attribute of given tag alowed? Allowed attributes can be specified in
+	# +allowed_tags+ property.
+	def attribute_allowed?(tag_name, attribute_name)
+	  tag_allowed?(tag_name) &&
+		(allowed_tags == :all || 
+		  allowed_tags[tag_name] == :all || 
+		  allowed_tags[tag_name].include?(attribute_name))
     end
     
     protected

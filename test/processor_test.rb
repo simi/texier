@@ -28,4 +28,43 @@ class ProcessorTest < Test::Unit::TestCase
     @processor.allowed['phrase/em'] = false
     assert_equal '<p>*hello*</p>', @processor.process('*hello*')
   end
+  
+  def test_tag_allowed
+	@processor.allowed_tags = :all
+	assert @processor.tag_allowed?('strong')
+	
+	@processor.allowed_tags = {'strong' => :all}
+	assert @processor.tag_allowed?('strong')
+	assert !@processor.tag_allowed?('em')
+	
+	@processor.allowed_tags = {'strong' => ['title']}
+	assert @processor.tag_allowed?('strong')
+
+	@processor.allowed_tags = {'strong' => nil}
+	assert !@processor.tag_allowed?('strong')
+	
+	@processor.allowed_tags = nil
+	assert !@processor.tag_allowed?('strong')
+  end
+  
+  def test_attribute_allowed
+	@processor.allowed_tags = :all
+	assert @processor.attribute_allowed?('strong', 'onclick')
+	
+	@processor.allowed_tags = {'strong' => :all}
+	assert @processor.attribute_allowed?('strong', 'onclick')
+	
+	@processor.allowed_tags = {'strong' => ['onclick']}
+	assert @processor.attribute_allowed?('strong', 'onclick')
+	assert !@processor.attribute_allowed?('strong', 'onmouseover')
+	
+	@processor.allowed_tags = nil
+	assert !@processor.attribute_allowed?('strong', 'onclick')
+	
+	@processor.allowed_tags = {'strong' => nil}
+	assert !@processor.attribute_allowed?('strong', 'onclick')
+	
+	@processor.allowed_tags = {'strong' => []}
+	assert !@processor.attribute_allowed?('strong', 'onclick')
+  end
 end

@@ -49,6 +49,16 @@ class ModifierTest < Test::Unit::TestCase
       '*hello .{onclick: hello()}*'
     )
   end
+  
+  def test_only_allowed_attributes_should_be_used
+	@processor.allowed_tags = {'em' => ['onclick']}
+	
+	assert_output(
+	  '<p><em onclick="hello()">hello</em></p>', 
+	  '*hello .{onclick: hello()}*'
+	)
+	assert_output '<p><em>hello</em></p>', '*hello .{onmouseover: hello()}*'
+  end
 
   def test_horizontal_align
     assert_output(

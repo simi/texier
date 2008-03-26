@@ -14,22 +14,22 @@ module Texier::Modules
       inline_element(name) {build_simple_phrase(mark, tags)}
     end
 
-    simple_phrase('em', '*', :em)
-    simple_phrase('em-alt', '//', :em)
-    simple_phrase('strong', '**', :strong)
-    simple_phrase('strong+em', '***', [:strong, :em])
-    simple_phrase('code', '`', :code)
-    simple_phrase('ins', '++', :ins)
-    simple_phrase('del', '--', :del)
-    simple_phrase('sup', '^^', :sup)
-    simple_phrase('sub', '__', :sub)
-    simple_phrase('cite', '~~', :cite)
+    simple_phrase('em', '*', 'em')
+    simple_phrase('em-alt', '//', 'em')
+    simple_phrase('strong', '**', 'strong')
+    simple_phrase('strong+em', '***', ['strong', 'em'])
+    simple_phrase('code', '`', 'code')
+    simple_phrase('ins', '++', 'ins')
+    simple_phrase('del', '--', 'del')
+    simple_phrase('sup', '^^', 'sup')
+    simple_phrase('sub', '__', 'sub')
+    simple_phrase('cite', '~~', 'cite')
 
     # Quote
     inline_element('quote') do
       quote = discard('>>') & everything_up_to(optional(modifier) & discard('<<')) & optional(link)
       quote = quote.map do |content, modifier, url|
-        Texier::Element.new(:q, content, :cite => url).modify!(modifier)
+        Texier::Element.new('q', content, 'cite' => url).modify!(modifier)
       end
     end
     
@@ -42,15 +42,15 @@ module Texier::Modules
       end
     end
 
-    subscript_or_superscript('sup-alt', '^', :sup)
-    subscript_or_superscript('sub-alt', '_', :sub)
+    subscript_or_superscript('sup-alt', '^', 'sup')
+    subscript_or_superscript('sub-alt', '_', 'sub')
 
     # Acronym/abbreviation
     inline_element('acronym') do
       content = e(/\w{2,}|(\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
       
       (content & quoted_text('((', '))')).map do |acronym, meaning|
-        Texier::Element.new(:acronym, acronym, :title => meaning)
+        Texier::Element.new('acronym', acronym, 'title' => meaning)
       end
     end
     
@@ -62,14 +62,14 @@ module Texier::Modules
         # Span with link and optional modifier.
         span_with_link = mark & everything_up_to(optional(modifier) & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
-          element = Texier::Element.new(:a, text, :href => url)
+          element = Texier::Element.new('a', text, 'href' => url)
           element.modify!(modifier)
         end
       
         # Span with modifier.
         span_with_modifier = mark & everything_up_to(modifier & mark)
         span_with_modifier = span_with_modifier.map do |text, modifier|
-          Texier::Element.new(:span, text).modify!(modifier)
+          Texier::Element.new('span', text).modify!(modifier)
         end
       
         span_with_link | span_with_modifier
@@ -82,7 +82,7 @@ module Texier::Modules
     # Quick links (blah:www.metatribe.org)
     inline_element('quicklink') do
       (e(/[^\s:]+/) & link).map do |content, url|
-        Texier::Element.new(:a, content, :href => url)
+        Texier::Element.new('a', content, 'href' => url)
       end
     end
     
@@ -113,7 +113,7 @@ module Texier::Modules
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
-        element = Texier::Element.new(:a, element, :href => url) if url
+        element = Texier::Element.new('a', element, 'href' => url) if url
         element.modify!(modifier)
       end
     end
