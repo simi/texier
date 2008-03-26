@@ -101,6 +101,11 @@ class ModifierTest < Test::Unit::TestCase
       ".<\nhello world"
     )
   end
+  
+  def test_horizontal_align_should_be_used_only_if_text_align_style_is_allowed
+	@processor.allowed_styles = nil
+	assert_output '<p>hello</p>', ".<\nhello"
+  end
 
   def test_many_modifiers
     assert_output(

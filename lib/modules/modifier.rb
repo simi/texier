@@ -95,7 +95,7 @@ module Texier::Modules
 		  align = ALIGNS[value]
 		  if align_class = processor.align_classes[align]
 			element.add_class_name(align_class)
-		  else
+		  elsif processor.style_allowed?('text-align')
 			element.style ||= {}
 			element.style['text-align'] = align.to_s
 		  end
