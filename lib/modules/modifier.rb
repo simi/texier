@@ -51,6 +51,8 @@ module Texier::Modules
         # TODO: set only allowed classes and ids.
         proc do |element|
           values.each do |value|
+			next unless processor.class_allowed?(value)
+			
             if value[0] == ?#
               element.id = value[1..-1]
             else

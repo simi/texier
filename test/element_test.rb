@@ -46,7 +46,7 @@ class ElementTest < Test::Unit::TestCase
     assert_equal 'hello world', element.content
   end
   
-  def test_attributes_should_be_accessible_as_method_calls
+  def test_attributes_should_be_accessible_as_methods
 	element = Texier::Element.new('foo')	
 	assert_nil element.bar
 	

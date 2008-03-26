@@ -28,8 +28,11 @@ module Texier
     # in modules.
     attr_reader :allowed
 	
-    # Which HTML tags, and their corresponding attributes are allowed.
+    # Which HTML tags or their corresponding attributes are allowed.
 	attr_accessor :allowed_tags
+	
+	# Which CSS classes and id's are allowed.
+	attr_accessor :allowed_classes
 
     # CSS classes for align modifiers. You can specify classes for these
     # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
@@ -43,6 +46,7 @@ module Texier
     def initialize
       @allowed = Hash.new(true)
 	  @allowed_tags = :all
+	  @allowed_classes = :all
       @align_classes = {}
       
       load_modules
@@ -83,6 +87,12 @@ module Texier
 		(allowed_tags == :all || 
 		  allowed_tags[tag_name] == :all || 
 		  allowed_tags[tag_name].include?(attribute_name))
+    end
+	
+	# Is class allowed?
+	def class_allowed?(name)
+	  allowed_classes == :all || 
+		(allowed_classes.is_a?(Array) && allowed_classes.include?(name))
     end
     
     protected

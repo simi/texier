@@ -19,6 +19,13 @@ class ModifierTest < Test::Unit::TestCase
     assert_output '<p><em class="foo bar">hello</em></p>', '*hello .[foo bar]*'
     assert_output '<p><em class="foo bar">hello</em></p>', '*hello .[foo   bar]*'
   end
+  
+  def test_only_allowed_classes_should_be_used
+	@processor.allowed_classes = ['foo']
+	assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo]*'
+	assert_output '<p><em>hello</em></p>', '*hello .[bar]*'
+	assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo bar]*'
+  end
 
   def test_id
     assert_output '<p><em id="foo">hello</em></p>', '*hello .[#foo]*'

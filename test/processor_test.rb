@@ -67,4 +67,16 @@ class ProcessorTest < Test::Unit::TestCase
 	@processor.allowed_tags = {'strong' => []}
 	assert !@processor.attribute_allowed?('strong', 'onclick')
   end
+  
+  def test_class_allowed
+	@processor.allowed_classes = :all
+	assert @processor.class_allowed?('foo')
+	
+	@processor.allowed_classes = ['foo']
+	assert @processor.class_allowed?('foo')
+	assert !@processor.class_allowed?('bar')
+
+	@processor.allowed_classes = []
+	assert !@processor.class_allowed?('foo')
+  end
 end
