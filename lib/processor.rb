@@ -33,6 +33,9 @@ module Texier
 	
 	# Which CSS classes and id's are allowed.
 	attr_accessor :allowed_classes
+	
+	# Which inline CSS styles are allowed?
+	attr_accessor :allowed_styles
 
     # CSS classes for align modifiers. You can specify classes for these
     # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
@@ -47,6 +50,7 @@ module Texier
       @allowed = Hash.new(true)
 	  @allowed_tags = :all
 	  @allowed_classes = :all
+	  @allowed_styles = :all
       @align_classes = {}
       
       load_modules
@@ -90,9 +94,15 @@ module Texier
     end
 	
 	# Is class allowed?
-	def class_allowed?(name)
+	def class_allowed?(class_name)
 	  allowed_classes == :all || 
-		(allowed_classes.is_a?(Array) && allowed_classes.include?(name))
+		(allowed_classes.is_a?(Array) && allowed_classes.include?(class_name))
+    end
+	
+	# Is style allowed?
+	def style_allowed?(style_name)
+	  allowed_styles == :all || 
+		(allowed_styles.is_a?(Array) && allowed_styles.include?(style_name))
     end
     
     protected

@@ -56,6 +56,19 @@ class ModifierTest < Test::Unit::TestCase
     )
   end
   
+  def test_onle_allowed_styles_should_be_used
+	@processor.allowed_styles = ['font-size']
+	assert_output(
+	  '<p><em style="font-size: 20px">hello</em></p>', 
+	  '*hello .{font-size: 20px}*'
+	)
+	assert_output '<p><em>hello</em></p>', '*hello .{color: red}*'
+	assert_output(
+	  '<p><em style="font-size: 20px">hello</em></p>', 
+	  '*hello .{font-size: 20px; color: red}*'
+	)
+  end
+  
   def test_when_style_name_is_valid_attribute_name_it_should_be_used_as_attribute
     assert_output(
       '<p><em onclick="hello()">hello</em></p>',

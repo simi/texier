@@ -78,5 +78,23 @@ class ProcessorTest < Test::Unit::TestCase
 
 	@processor.allowed_classes = []
 	assert !@processor.class_allowed?('foo')
+	
+	@processor.allowed_classes = nil
+	assert !@processor.class_allowed?('foo')
+  end
+  
+  def test_style_allowed
+	@processor.allowed_styles = :all
+	assert @processor.style_allowed?('font-size')
+	
+	@processor.allowed_styles = ['font-size']
+	assert @processor.style_allowed?('font-size')
+	assert !@processor.style_allowed?('color')
+
+	@processor.allowed_styles = []
+	assert !@processor.style_allowed?('font-size')
+	
+	@processor.allowed_styles = nil
+	assert !@processor.style_allowed?('font-size')
   end
 end

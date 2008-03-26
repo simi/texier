@@ -78,9 +78,10 @@ module Texier::Modules
 				element.attributes[name] = value 
 			  end
 			else
-              # TODO: set only allowed styles
-			  element.style ||= {}
-			  element.style[name] = value
+              if processor.style_allowed?(name)
+				element.style ||= {}
+				element.style[name] = value
+			  end
 			end
 		  end
 		end
