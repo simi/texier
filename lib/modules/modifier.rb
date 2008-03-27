@@ -48,7 +48,6 @@ module Texier::Modules
       classes = one_or_more(class_value).separated_by(/ */)
 
       class_modifier = (discard('[') & classes & discard(']')).map do |*values|
-        # TODO: set only allowed classes and ids.
         proc do |element|
           values.each do |value|
 			next unless processor.class_allowed?(value)

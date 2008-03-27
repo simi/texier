@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-# Test case for Texier::Modules::Basic class
+# Test case for Texier::Modules::Heading class
 class HeadingTest < Test::Unit::TestCase
   def setup
     @processor = Texier::Processor.new
