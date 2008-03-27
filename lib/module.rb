@@ -89,12 +89,15 @@ module Texier
     
     # Each time this metod is called, it generates unique string token.
     def self.unique_token
+      # TODO: raise exception if there are no more tokens to generate.
       @@last_used_token ||= -1
       nth_token(@@last_used_token += 1)
     end
 
     # Helper method for +unique_token+
     def self.nth_token(number)
+      # This is first character from Unicode "noncharacter" range. There are
+      # about 32 such noncharacters. That should be enough for my purposes.
       number += 0xEFB790
       number.to_s(16).scan(/../).inject('') do |result, part|
         result + part.to_i(16).chr

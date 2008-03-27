@@ -17,6 +17,12 @@ module Texier::Modules
       result = ''
 
       input.each_line do |line|
+        # Skip empty lines
+        if line =~ /^ *$/
+          result << line
+          next
+        end
+
         current_indent = line[/^ */]
 
         while current_indent.length < indent_stack.last.length
@@ -24,13 +30,14 @@ module Texier::Modules
           indent_stack.pop
         end
 
-        if line =~ /^ *-/ # line begins with bullet
+        # Line begins with bullet.
+        if line =~ /^ *- +/
           result << LIST_ITEM_BEGIN
-          line.sub!(/^#{current_indent}/, '')
           indent_stack.push(current_indent + ' ')
-        else
-          line.sub!(/^#{indent_stack.last}/, '')
         end
+
+        # Remove indentation.
+        line.sub!(/^#{current_indent}/, '') if indent_stack.size > 1
 
         result << line
       end
@@ -40,13 +47,16 @@ module Texier::Modules
     end
 
     block_element('list') do
-      item_begin = discard(LIST_ITEM_BEGIN)
-      item_end = discard(LIST_ITEM_END)
-      
       bullet = discard(/- +/)
 
-      item = item_begin & bullet \
-        & one_or_more(inline_element).up_to(discard(optional("\n")) & item_end)
+      item_begin = discard(LIST_ITEM_BEGIN) & bullet
+      item_end = discard(optional("\n")) & discard(LIST_ITEM_END)
+
+      item =
+        (item_begin & one_or_more(inline_element) & item_end) | \
+        (item_begin & one_or_more(inline_element) \
+          & discard(/\n+/) & block_element & item_end)
+
       item = item.map do |*content|
         Texier::Element.new('li', content)
       end
@@ -55,12 +65,6 @@ module Texier::Modules
         Texier::Element.new('ul', items)
       end
     end
-    
-    # Remove unused tokens.
-    inline_element do
-      discard(/#{LIST_ITEM_BEGIN}|#{LIST_ITEM_END}/)
-    end
-    
 
     private
   end

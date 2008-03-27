@@ -189,4 +189,11 @@ class ParserTest < Test::Unit::TestCase
     
     assert_equal ['foo'], @parser.parse('[foo]')
   end
+  
+  def test_negative_lookahead
+    @parser[:document] = -e('foo') & e(/[a-z]+/)
+    
+    assert_nil @parser.parse('foobar')
+    assert_equal ['barbar'], @parser.parse('barbar')
+  end
 end

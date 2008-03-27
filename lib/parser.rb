@@ -115,6 +115,11 @@ module Texier
           end
         end
         
+        # Negative lookahead
+        def -@
+          NegativeLookahead.new(self)
+        end
+        
         # TODO: describe this
         def map(&block)
           Mapper.new(self, &block)
@@ -380,6 +385,17 @@ module Texier
           end
         
           result.empty? ? nil : [result] + up_to
+        end
+      end
+      
+      # TODO: describe this.
+      class NegativeLookahead < Expression
+        def initialize(expression)
+          @expression = expression
+        end
+        
+        def parse(scanner)
+          @expression.peek(scanner) ? nil : []
         end
       end
       
