@@ -133,7 +133,7 @@ module Texier::Modules
       end
     end
 
-    protected
+    private
 
     # Create Heading dom element
     def create_element(level, content, modifier)

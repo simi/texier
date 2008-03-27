@@ -17,11 +17,20 @@ class BasicTest < Test::Unit::TestCase
     assert_output '<p>hello world</p>', 'hello world'
   end
   
+  
   def test_two_paragraphs
     assert_output(
       '<p>hello world</p><p>hello another paragraph</p>',
       "hello world\n\nhello another paragraph"
     )
+  end
+  
+  def test_paragraph_with_newlines
+    assert_output "<p>one\ntwo\nthree</p>", "one\ntwo\nthree"
+  end
+  
+  def test_paragraph_with_newlines_starting_with_newline
+    assert_output "<p>one\ntwo\nthree</p>", "\none\ntwo\nthree"
   end
   
   def test_one_paragraph_with_some_newlines_before_or_after_it

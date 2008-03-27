@@ -5,6 +5,7 @@ require 'renderer'
 
 require 'modules/basic'
 require 'modules/heading'
+require 'modules/list'
 require 'modules/modifier'
 require 'modules/phrase'
 
@@ -29,13 +30,13 @@ module Texier
     attr_reader :allowed
 	
     # Which HTML tags or their corresponding attributes are allowed.
-	attr_accessor :allowed_tags
+    attr_accessor :allowed_tags
 	
-	# Which CSS classes and id's are allowed.
-	attr_accessor :allowed_classes
+    # Which CSS classes and id's are allowed.
+    attr_accessor :allowed_classes
 	
-	# Which inline CSS styles are allowed?
-	attr_accessor :allowed_styles
+    # Which inline CSS styles are allowed?
+    attr_accessor :allowed_styles
 
     # CSS classes for align modifiers. You can specify classes for these
     # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
@@ -48,9 +49,9 @@ module Texier
     
     def initialize
       @allowed = Hash.new(true)
-	  @allowed_tags = :all
-	  @allowed_classes = :all
-	  @allowed_styles = :all
+      @allowed_tags = :all
+      @allowed_classes = :all
+      @allowed_styles = :all
       @align_classes = {}
       
       load_modules
@@ -79,30 +80,30 @@ module Texier
     end
 	
     # Is tag allowed? Allowed tags can be specified in +allowed_tags+ property.
-	def tag_allowed?(tag_name)
-	  allowed_tags == :all || 
-		(allowed_tags.is_a?(Hash) && !allowed_tags[tag_name].nil?)
+    def tag_allowed?(tag_name)
+      allowed_tags == :all || 
+        (allowed_tags.is_a?(Hash) && !allowed_tags[tag_name].nil?)
     end
 	
     # Is attribute of given tag alowed? Allowed attributes can be specified in
-	# +allowed_tags+ property.
-	def attribute_allowed?(tag_name, attribute_name)
-	  tag_allowed?(tag_name) &&
-		(allowed_tags == :all || 
-		  allowed_tags[tag_name] == :all || 
-		  allowed_tags[tag_name].include?(attribute_name))
+    # +allowed_tags+ property.
+    def attribute_allowed?(tag_name, attribute_name)
+      tag_allowed?(tag_name) &&
+        (allowed_tags == :all || 
+          allowed_tags[tag_name] == :all || 
+          allowed_tags[tag_name].include?(attribute_name))
     end
 	
-	# Is class allowed?
-	def class_allowed?(class_name)
-	  allowed_classes == :all || 
-		(allowed_classes.is_a?(Array) && allowed_classes.include?(class_name))
+    # Is class allowed?
+    def class_allowed?(class_name)
+      allowed_classes == :all || 
+        (allowed_classes.is_a?(Array) && allowed_classes.include?(class_name))
     end
 	
-	# Is style allowed?
-	def style_allowed?(style_name)
-	  allowed_styles == :all || 
-		(allowed_styles.is_a?(Array) && allowed_styles.include?(style_name))
+    # Is style allowed?
+    def style_allowed?(style_name)
+      allowed_styles == :all || 
+        (allowed_styles.is_a?(Array) && allowed_styles.include?(style_name))
     end
     
     protected
@@ -114,6 +115,7 @@ module Texier
 
       # These modules can be loaded in any order.
       add_module Modules::Heading.new
+      add_module Modules::List.new
       add_module Modules::Phrase.new
     end
     
@@ -127,8 +129,8 @@ module Texier
     # This is called before parsing. Here the input document can be modified as
     # neccessary.
     def before_parse(input)
-      @modules.inject(input) do |string, mod|
-        mod.before_parse(string)
+      @modules.inject(input) do |input, mod|
+        mod.before_parse(input)
       end
     end
 

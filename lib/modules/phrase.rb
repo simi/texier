@@ -101,7 +101,7 @@ module Texier::Modules
       processor.allowed['phrase/cite'] = false
     end
     
-    protected
+    private
 
     # Build expression that matches a phrase element.
     def build_simple_phrase(mark, tags)

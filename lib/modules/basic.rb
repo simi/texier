@@ -27,7 +27,7 @@ module Texier::Modules
       block_element = block_element_slot | paragraph
 
       # Root element / starting symbol.
-      document = zero_or_more(block_element).separated_by(/\n{2,}/)
+      document = discard(/\n*/) & zero_or_more(block_element).separated_by(/\n{2,}/)
 
       # Export these expressions, so they can be used in other modules.
       parser[:document] = document      

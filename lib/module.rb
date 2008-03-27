@@ -73,7 +73,7 @@ module Texier
     end
     
     def parser_initializers
-      @@parser_initializers[self.class]
+      @@parser_initializers[self.class] || []
     end
 
     
