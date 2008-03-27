@@ -3,7 +3,8 @@ require "#{File.dirname(__FILE__)}/../module"
 module Texier::Modules
   # This modules provides the most basic features of Texier processor.
   class Basic < Texier::Module
-    SPECIAL_CHARS = " \n`~!@\#$%^&*()-_=+\\|[{]};:'\",<.>/?"
+    SPECIAL_CHARS = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?") +
+     "#{FIRST_TOKEN}-#{LAST_TOKEN}"
     
     options :tab_width => 4
     
@@ -13,7 +14,7 @@ module Texier::Modules
       block_element_slot = empty
       inline_element_slot = empty
 
-      plain_text = e(/[^#{Regexp.quote(SPECIAL_CHARS)}]+/)
+      plain_text = e(/[^#{SPECIAL_CHARS}]+/)
       inline_element = inline_element_slot | plain_text | e(/[^\n]/)
       
       line = one_or_more(inline_element)
