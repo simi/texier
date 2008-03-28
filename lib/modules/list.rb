@@ -23,6 +23,7 @@ module Texier::Modules
           next
         end
 
+        # Indentation of current line.
         current_indent = line[/^ */]
 
         while current_indent.length < indent_stack.last.length
@@ -54,8 +55,7 @@ module Texier::Modules
 
       item =
         (item_begin & one_or_more(inline_element) & item_end) | \
-        (item_begin & one_or_more(inline_element) \
-          & discard(/\n+/) & block_element & item_end)
+        (item_begin & document & item_end)
 
       item = item.map do |*content|
         Texier::Element.new('li', content)

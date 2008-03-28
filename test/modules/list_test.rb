@@ -12,21 +12,26 @@ class ListTest < Test::Unit::TestCase
     )
   end
   
-  def test_list_item_with_block_content
+  def test_list_item_with_one_block_content
     assert_output(
-      '<ul><li>inline content<p>block content</p></li><li>another inline content</li></ul>',
+      "<ul><li><p>first paragraph</p><p>second paragraph</p>" \
+        "<p>third paragraph\nthis one spans two lines</p></li>" \
+        "<li>inline content</li></ul>",
       
       '
-      - inline content
+      - first paragraph
 
-        block content
-      - another inline content'.unindent
+        second paragraph
+
+        third paragraph
+        this one spans two lines
+      - inline content'.unindent
     )
   end
   
   def test_nested_list
     assert_output(
-      '<ul><li>one</li><li>two<ul><li>two one</li><li>two two</li>' \
+      '<ul><li>one</li><li><p>two</p><ul><li>two one</li><li>two two</li>' \
         '<li>two three</li></ul></li><li>three</li></ul>',
 
       '
