@@ -31,7 +31,6 @@ module Texier::Modules
 
       # Export these expressions, so they can be used in other modules.
       parser[:document] = document      
-      parser[:line] = line
       parser[:block_element] = block_element
       parser[:block_element_slot] = block_element_slot      
       parser[:inline_element] = inline_element

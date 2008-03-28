@@ -1,3 +1,4 @@
+require 'set'
 require "#{File.dirname(__FILE__)}/../module"
 
 module Texier::Modules
@@ -11,7 +12,7 @@ module Texier::Modules
     }
 
     # List of properties which are regarded as HTML attributes.
-    ATTRIBUTES = Texier::Utilities.presence_hash(
+    ATTRIBUTES = [
       'abbr', 'accesskey', 'align', 'alt', 'archive', 'axis', 'bgcolor',
       'cellpadding', 'cellspacing', 'char', 'charoff', 'charset', 'cite',
       'classid', 'codebase', 'codetype', 'colspan', 'compact', 'coords','data',
@@ -22,7 +23,7 @@ module Texier::Modules
       'onmouseup', 'rel', 'rev', 'rowspan', 'rules', 'scope', 'shape', 'size',
       'span', 'src', 'standby', 'start', 'summary', 'tabindex', 'target',
       'title', 'type', 'usemap', 'valign', 'value', 'vspace'
-    )
+    ].to_set
 
     def initialize_parser(parser)
       unless processor.allowed['modifier']
@@ -50,7 +51,7 @@ module Texier::Modules
       class_modifier = (discard('[') & classes & discard(']')).map do |*values|
         proc do |element|
           values.each do |value|
-			next unless processor.class_allowed?(value)
+            next unless processor.class_allowed?(value)
 			
             if value[0] == ?#
               element.id = value[1..-1]
@@ -72,39 +73,39 @@ module Texier::Modules
       style_modifier = (discard('{') & styles & discard('}')).map do |values|
         proc do |element|
           values.each do |name, value|
-            if ATTRIBUTES[name]			  
-			  if processor.attribute_allowed?(element.name, name)
-				element.attributes[name] = value 
-			  end
-			else
+            if ATTRIBUTES.include?(name)
+              if processor.attribute_allowed?(element.name, name)
+                element.attributes[name] = value 
+              end
+            else
               if processor.style_allowed?(name)
-				element.style ||= {}
-				element.style[name] = value
-			  end
-			end
-		  end
-		end
-	  end
+                element.style ||= {}
+                element.style[name] = value
+              end
+            end
+          end
+        end
+      end
 
 
 
       # .> or .< or .<> or .=
-	  horizontal_align_modifier = e(/<>|<|>|=/) do |value|
-		proc do |element|
-		  align = ALIGNS[value]
-		  if align_class = processor.align_classes[align]
-			element.add_class_name(align_class)
-		  elsif processor.style_allowed?('text-align')
-			element.style ||= {}
-			element.style['text-align'] = align.to_s
-		  end
-		end
-	  end
+      horizontal_align_modifier = e(/<>|<|>|=/) do |value|
+        proc do |element|
+          align = ALIGNS[value]
+          if align_class = processor.align_classes[align]
+            element.add_class_name(align_class)
+          elsif processor.style_allowed?('text-align')
+            element.style ||= {}
+            element.style['text-align'] = align.to_s
+          end
+        end
+      end
 
-	  parser[:modifier] = discard(/ *\./) & one_or_more(
-		title_modifier | class_modifier | style_modifier |
-		horizontal_align_modifier
-	  ).group
-	end
+      parser[:modifier] = discard(/ *\./) & one_or_more(
+        title_modifier | class_modifier | style_modifier |
+        horizontal_align_modifier
+      ).group
+    end
   end
 end

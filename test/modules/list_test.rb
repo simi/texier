@@ -55,6 +55,18 @@ class ListTest < Test::Unit::TestCase
       '<ol style="list-style-type: upper-roman"><li>one</li><li>two</li></ol>',
       "I. one\nII. two"
     )
+    assert_output(
+      '<ol style="list-style-type: upper-roman"><li>one</li><li>two</li></ol>',
+      "I) one\nII) two"
+    )
+    assert_output(
+      '<ol style="list-style-type: lower-alpha"><li>one</li><li>two</li></ol>',
+      "a) one\nb) two"
+    )
+    assert_output(
+      '<ol style="list-style-type: upper-alpha"><li>one</li><li>two</li></ol>',
+      "A) one\nB) two"
+    )
   end
   
   def test_ordered_list_with_arabic_numeral_with_dot_style_should_start_with_number_one
@@ -64,5 +76,19 @@ class ListTest < Test::Unit::TestCase
   
   def test_list_item_styles_in_one_list_should_not_be_mixed
     assert_output '<ul><li>one</li></ul><ul><li>two</li></ul>', "- one\n+ two"
+  end
+  
+  def test_list_with_modifier
+    assert_output(
+      '<ul class="foo"><li>one</li><li>two</li></ul>',
+      ".[foo]\n- one\n- two"
+    )
+  end
+  
+  def test_list_item_with_modifiers
+    assert_output(
+      '<ul><li class="foo">one</li><li>two</li></ul>',
+      "-one .[foo]\n-two"
+    )
   end
 end
