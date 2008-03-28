@@ -14,7 +14,7 @@ class String
     first_line = lines.shift || ''
     
     spaces = lines.inject(length) do |spaces, line|
-      [spaces, line[/^ */].length].min
+      line =~ /^[\t ]*$/ ? spaces : [spaces, line[/^ */].length].min
     end
     
     lines.inject(first_line) do |result, line|

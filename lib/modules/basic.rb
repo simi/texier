@@ -4,7 +4,6 @@ module Texier::Modules
   # This modules provides the most basic features of Texier processor.
   class Basic < Texier::Module
     PUNCTUATION = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?")
-    TOKENS = "#{FIRST_TOKEN}-#{LAST_TOKEN}"
     
     options :tab_width => 4
     
@@ -14,8 +13,8 @@ module Texier::Modules
       block_element_slot = empty
       inline_element_slot = empty
 
-      plain_text = e(/[^#{PUNCTUATION}#{TOKENS}]+/)
-      inline_element = inline_element_slot | plain_text | e(/[^\n#{TOKENS}]/)
+      plain_text = e(/[^#{PUNCTUATION}]+/)
+      inline_element = inline_element_slot | plain_text | e(/[^\n]/)
       
       line = one_or_more(inline_element)
       
@@ -28,10 +27,11 @@ module Texier::Modules
       block_element = block_element_slot | paragraph
 
       # Root element / starting symbol.
-      document = discard(/\n*/) & zero_or_more(block_element).separated_by(/\n+/)
+      document = discard(/\s*/) & zero_or_more(block_element).separated_by(/\s*/)
 
       # Export these expressions, so they can be used in other modules.
       parser[:document] = document      
+      parser[:line] = line
       parser[:block_element] = block_element
       parser[:block_element_slot] = block_element_slot      
       parser[:inline_element] = inline_element

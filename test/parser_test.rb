@@ -190,10 +190,17 @@ class ParserTest < Test::Unit::TestCase
     assert_equal ['foo'], @parser.parse('[foo]')
   end
   
-  def test_negative_lookahead
-    @parser[:document] = -e('foo') & e(/[a-z]+/)
+  def test_indented
+    @parser[:document] = e("foo\n") & indented("bar\n") & e('gaz')
     
-    assert_nil @parser.parse('foobar')
-    assert_equal ['barbar'], @parser.parse('barbar')
+    assert_nil @parser.parse("foo\nbar\ngaz")
+    assert_equal ["foo\n", "bar\n", 'gaz'], @parser.parse("foo\n bar\ngaz")
+    assert_equal ["foo\n", "bar\n", 'gaz'], @parser.parse("foo\n  bar\ngaz")
+  end
+  
+  def test_indented_should_accept_also_unindented_empty_line
+    @parser[:document] = indented(one_or_more(/[a-z]*\n/))
+    
+    assert_equal ["foo\n", "\n", "bar\n"], @parser.parse(" foo\n\n bar\n")
   end
 end

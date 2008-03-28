@@ -53,7 +53,7 @@ class BasicTest < Test::Unit::TestCase
   end
   
   def test_tabs_should_be_converted_to_spaces
-    assert_output '<p>    hello</p>', "\thello"
-    assert_output "<p>    first\n2:  second</p>", "\tfirst\n2:\tsecond"
+    assert_output "<p>hello\n    world</p>", "hello\n\tworld"
+    assert_output "<p>first\n    second\n3:  third</p>", "first\n\tsecond\n3:\tthird"
   end
 end

@@ -27,7 +27,7 @@ module Texier
     def initialize_parser(parser)
       @parser = parser
       parser_initializers.each do |(type, name, block)|
-        if name.nil? || processor.allowed["#{self.name}/#{name}"]
+        if processor.allowed["#{self.name}/#{name}"]
           parser[:"#{type}_slot"] << instance_eval(&block)
         end
       end
@@ -57,26 +57,24 @@ module Texier
     
     @@parser_initializers = {}
     
-    def self.define_element(type, name = nil, &block)
+    def self.define_element(type, name, &block)
       @@parser_initializers[self] ||= []
       @@parser_initializers[self] << [type, name, block]
     end
     
     # Define new inline element.
-    def self.inline_element(name = nil, &block)
+    def self.inline_element(name, &block)
       define_element(:inline_element, name, &block)
     end
     
     # Define new block element.
-    def self.block_element(name = nil, &block)
+    def self.block_element(name, &block)
       define_element(:block_element, name, &block)
     end
     
     def parser_initializers
       @@parser_initializers[self.class] || []
     end
-
-    
     
     # Helper methods for generating parser rules.
     include Parser::Generators
@@ -86,25 +84,5 @@ module Texier
       super unless @parser && @parser.has_expression?(name)
       @parser[name]
     end
-    
-    # Each time this metod is called, it generates unique string token.
-    def self.unique_token
-      # TODO: raise exception if there are no more tokens to generate.
-      @@last_used_token ||= -1
-      nth_token(@@last_used_token += 1)
-    end
-
-    # Helper method for +unique_token+
-    def self.nth_token(number)
-      # This is first character from Unicode "noncharacter" range. There are
-      # about 32 such noncharacters. That should be enough for my purposes.
-      number += 0xEFB790
-      number.to_s(16).scan(/../).inject('') do |result, part|
-        result + part.to_i(16).chr
-      end
-    end
-    
-    FIRST_TOKEN = nth_token(0)
-    LAST_TOKEN = nth_token(20)
   end
 end
