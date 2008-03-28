@@ -6,7 +6,9 @@ module Texier::Modules
       [/\* +/,        false],
       [/-(?![>-])/,   false],
       [/\+ +/,        false],
-      [/1\. +/,       true, nil, /\d{1,3}\. +/]
+      [/1\. +/,       true, nil, /\d{1,3}\. +/],
+      [/\d{1,3}\) +/, true],
+      [/I\. +/,       true, 'upper-roman', /[IVX]{1,4}\. +/]
     ]
 
     block_element('list') do
@@ -26,7 +28,14 @@ module Texier::Modules
       end
       
       list.map do |*items|
-        Texier::Element.new(style[1] ? 'ol' : 'ul', items)
+        element = Texier::Element.new(style[1] ? 'ol' : 'ul', items)
+        
+        if style[2]
+          element.style ||= {}
+          element.style['list-style-type'] = style[2]
+        end
+        
+        element
       end
     end
     

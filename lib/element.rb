@@ -48,37 +48,38 @@ module Texier
     # 
     # element.foo = 'bar' is the same as element.attributes['foo'] = 'bar'.
     def method_missing(name, *args)
-	  return super unless name.to_s =~ /[a-z_]+=?/
+      return super unless name.to_s =~ /[a-z_]+=?/
 
-	  name = name.to_s
-	  if name[-1] == ?=
-		@attributes[name[0..-2]] = args.first
+      name = name.to_s
+      if name[-1] == ?=
+        @attributes[name[0..-2]] = args.first
       else
-		@attributes[name]
+        @attributes[name]
       end
     end
 	
     # This is here just to suppress warning that foo.id is deprecated.
-	def id
-	  @attributes['id']
+    def id
+      @attributes['id']
     end
 	
-	def id=(value)
-	  @attributes['id'] = value
+    def id=(value)
+      @attributes['id'] = value
     end
 	
-	def class_name=(value)
-	  @attributes['class'] = value
+    def class_name=(value)
+      @attributes['class'] = value
     end
 	
-	def class_name
-	  @attributes['class']
+    def class_name
+      @attributes['class']
     end
 	
     # Convenience method for adding class names.
-	def add_class_name(value)
-	  @attributes['class'] ||= []
-	  @attributes['class'] << value
+    def add_class_name(value)
+      @attributes['class'] ||= []
+      @attributes['class'] << value
+      self
     end
     
     # Apply modifier.

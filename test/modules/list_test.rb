@@ -50,6 +50,11 @@ class ListTest < Test::Unit::TestCase
   
   def test_ordered_list_styles
     assert_output '<ol><li>one</li><li>two</li></ol>', "1. one\n2. two"
+    assert_output '<ol><li>one</li><li>two</li></ol>', "1) one\n2) two"
+    assert_output(
+      '<ol style="list-style-type: upper-roman"><li>one</li><li>two</li></ol>',
+      "I. one\nII. two"
+    )
   end
   
   def test_ordered_list_with_arabic_numeral_with_dot_style_should_start_with_number_one
