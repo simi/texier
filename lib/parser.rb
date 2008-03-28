@@ -7,6 +7,8 @@ module Texier
   # Parser generator based on the theory of Parsing Expression Grammars (PEG).
   #
   # TODO: describe it in more detail.
+  # 
+  # OPTIMIZE: using packrat parsing.
   class Parser
     def initialize
       @expressions = {}

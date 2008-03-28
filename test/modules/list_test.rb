@@ -85,10 +85,31 @@ class ListTest < Test::Unit::TestCase
     )
   end
   
-  def test_list_item_with_modifiers
+  def test_list_item_with_modifier
     assert_output(
       '<ul><li class="foo">one</li><li>two</li></ul>',
       "-one .[foo]\n-two"
+    )
+  end
+  
+  def test_definition_list
+    assert_output(
+      '<dl><dt>metasyntactic variables</dt><dd>foo</dd><dd>bar</dd></dl>',
+      "metasyntactic variables:\n - foo\n - bar"
+    )
+  end
+  
+  def test_definition_list_with_modifier
+    assert_output(
+      '<dl class="foo"><dt>numbers</dt><dd>one</dd><dd>two</dd></dl>',
+      "numbers: .[foo]\n - one\n - two"
+    )
+  end
+  
+  def test_definition_list_definition_with_modifier
+    assert_output(
+      '<dl><dt>numbers</dt><dd class="foo">one</dd><dd>two</dd></dl>',
+      "numbers:\n - one .[foo]\n - two"
     )
   end
 end

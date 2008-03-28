@@ -16,18 +16,34 @@ module Texier::Modules
       [/[A-Z]\) +/,    true,         'upper-alpha']
     ]
 
+    # Ordered and unordered lists.
     block_element('list') do
       bullets.inject(empty) {|list, style| list | build_list(style)}
+    end
+    
+    # Definition lists.
+    block_element('definition') do
+      term = one_or_more(inline_element).up_to(discard(":")).map do |content|
+        Texier::Element.new('dt', content)
+      end
+      
+      definition = build_item(/-(?![>-])/, 'dd')
+      definitions = indented(one_or_more(definition).separated_by(/\n+/))
+      
+      list = term & optional(modifier) & discard("\n") & definitions
+      list.map do |term, modifier, *definitions|
+        Texier::Element.new('dl', [term] + definitions).modify!(modifier)
+      end
     end
 
     private
     
     # Build expression that matches list.
     def build_list(style)
-      item = build_item(style[0])
+      item = build_item(style[0], 'li')
       
       if style[3]
-        next_item = build_item(style[3])
+        next_item = build_item(style[3], 'li')
         items = item & discard("\n") & one_or_more(next_item).separated_by("\n")
       else
         items = one_or_more(item).separated_by("\n")
@@ -47,14 +63,14 @@ module Texier::Modules
     end
     
     # Build expression that matches list item.
-    def build_item(pattern)
+    def build_item(pattern, tag)
       bullet = discard(/(#{pattern}) */)
       first_line = one_or_more(inline_element).up_to(optional(modifier) & discard(/$/))
       blocks = indented(one_or_more(block_element).separated_by(/\n*/))
       
       item = bullet & first_line & optional(discard(/\n+/) & blocks)
       item.map do |first, modifier, *rest|
-        Texier::Element.new('li', first + rest).modify!(modifier)
+        Texier::Element.new(tag, first + rest).modify!(modifier)
       end
     end
   end
