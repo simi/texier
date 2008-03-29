@@ -6,9 +6,10 @@ module Texier::Modules
     block_element('blockquote') do
       block_quote = one_or_more(block_element).separated_by(/\n+/)
       block_quote = indented(block_quote, /^>( |$)/)
+      block_quote = optional(modifier & discard("\n")) & block_quote
       
-      block_quote.map do |*content|
-        Texier::Element.new('blockquote', content)
+      block_quote.map do |modifier, *content|
+        Texier::Element.new('blockquote', content).modify!(modifier)
       end
     end
   end

@@ -37,4 +37,11 @@ class BlockQuoteTest < Test::Unit::TestCase
       > last paragraph'.unindent
     )
   end
+  
+  def test_block_quote_with_modifier
+    assert_output(
+      '<blockquote class="foo"><p>hello world</p></blockquote>',
+      ".[foo]\n> hello world"
+    )
+  end
 end
