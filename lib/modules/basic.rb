@@ -24,7 +24,7 @@ module Texier::Modules
 
       # Paragraph is default block element.
       paragraph = optional(parser[:modifier] & discard(/ *\n/)) \
-          & discard(/ */) & first_line & next_lines
+        & discard(/ */) & first_line & next_lines
         
       paragraph = paragraph.map do |modifier, *lines|
         Texier::Element.new('p', lines).modify!(modifier)
@@ -34,6 +34,15 @@ module Texier::Modules
 
       # Root element / starting symbol.
       document = discard(/\s*/) & zero_or_more(block_element).separated_by(/\n+/)
+      
+          
+      # Expression that matches link.
+      # 
+      # TODO: this is just temporary. When Link module is finished, it will be
+      # moved there.
+      link = e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
+        url.gsub(/^:\[?|\]$/, '')
+      end
 
       # Export these expressions, so they can be used in other modules.
       parser[:document] = document
@@ -41,6 +50,7 @@ module Texier::Modules
       parser[:block_element_slot] = block_element_slot
       parser[:inline_element] = inline_element
       parser[:inline_element_slot] = inline_element_slot
+      parser[:link] = link
     end
 
     def before_parse(input)

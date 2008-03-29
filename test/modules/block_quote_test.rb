@@ -44,4 +44,11 @@ class BlockQuoteTest < Test::Unit::TestCase
       ".[foo]\n> hello world"
     )
   end
+  
+  def test_block_quote_with_cite_link
+    assert_output(
+      '<blockquote cite="http://metatribe.org"><p>hello world</p></blockquote>',
+      "> hello world\n>:http://metatribe.org"
+    )
+  end
 end

@@ -102,6 +102,10 @@ module Texier::Modules
     end
     
     private
+    
+    def link
+      @link ||= links_allowed? ? super : empty
+    end
 
     # Build expression that matches a phrase element.
     def build_simple_phrase(mark, tags)
@@ -115,17 +119,6 @@ module Texier::Modules
         end
         element = Texier::Element.new('a', element, 'href' => url) if url
         element.modify!(modifier)
-      end
-    end
-    
-    # Expression that matches link.
-    def link
-      @link ||= if links_allowed?
-        e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
-          url.gsub(/^:\[?|\]$/, '')
-        end
-      else
-        empty
       end
     end
   end
