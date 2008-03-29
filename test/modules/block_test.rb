@@ -34,4 +34,12 @@ class BlockTest < Test::Unit::TestCase
       "/-- code ruby\nputs \"hello world\"\n\\--"
     )
   end
+  
+  def test_html_block
+    assert_output 'hello <em>world</em>', "/-- html\nhello <em>world</em>\n\\--"
+  end
+  
+#  def test_div_block
+#    assert_output '<div><p>hello world</p></div>', "/-- div\nhello world\n\\--"
+#  end
 end
