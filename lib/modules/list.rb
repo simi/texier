@@ -1,5 +1,3 @@
-require "#{File.dirname(__FILE__)}/../module"
-
 module Texier::Modules
   class List < Texier::Module
     options :bullets => [

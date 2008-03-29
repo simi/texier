@@ -1,5 +1,3 @@
-require "#{File.dirname(__FILE__)}/../module"
-
 module Texier::Modules
   # This module defines inline phrase elements, like emphases or simple links.
   class Phrase < Texier::Module

@@ -1,9 +1,15 @@
 # TODO: add header comment (with name, author, licence, ...) to every file.
+require 'set'
 
+require 'element'
+require 'error'
 require 'parser'
 require 'renderer'
+require 'utilities'
 
+require 'module'
 require 'modules/basic'
+require 'modules/block'
 require 'modules/block_quote'
 require 'modules/heading'
 require 'modules/list'
@@ -115,6 +121,7 @@ module Texier
       add_module Modules::Basic.new
 
       # These modules can be loaded in any order.
+      add_module Modules::Block.new
       add_module Modules::BlockQuote.new
       add_module Modules::Heading.new
       add_module Modules::List.new

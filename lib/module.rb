@@ -1,6 +1,3 @@
-require "#{File.dirname(__FILE__)}/element"
-require "#{File.dirname(__FILE__)}/utilities"
-
 module Texier
   # The features of Texier processor are separated into self-contained modules.
   # These modules can then be added to/removed from Texier processor according

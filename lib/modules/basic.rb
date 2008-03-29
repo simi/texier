@@ -1,5 +1,3 @@
-require "#{File.dirname(__FILE__)}/../module"
-
 module Texier::Modules
   # This modules provides the most basic features of Texier processor.
   class Basic < Texier::Module

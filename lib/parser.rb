@@ -1,8 +1,5 @@
 require 'strscan'
 
-require "#{File.dirname(__FILE__)}/element"
-require "#{File.dirname(__FILE__)}/error"
-
 module Texier
   # Parser generator based on the theory of Parsing Expression Grammars (PEG).
   # 

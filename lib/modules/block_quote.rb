@@ -1,5 +1,3 @@
-require "#{File.dirname(__FILE__)}/../module"
-
 module Texier::Modules
   # This module provides block quotations.
   class BlockQuote < Texier::Module

@@ -1,6 +1,9 @@
 module Texier
   # Element of the Document Object Model.
   class Element
+    # Empty elements.
+    EMPTY_ELEMENTS = ['img', 'br'].to_set # TODO: more
+    
     attr_reader :name
     attr_reader :content
     attr_reader :attributes
@@ -42,6 +45,11 @@ module Texier
     # Has this element any children elements?
     def has_children?
       content.is_a?(Array) && content.size > 0
+    end
+    
+    # Is this element empty?
+    def empty?
+      EMPTY_ELEMENTS.include?(name)
     end
 
     # Access attributes using methods:

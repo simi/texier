@@ -13,9 +13,15 @@ module Texier
         output = ''
         output << "<#{element.name.to_s}"
         output << render_attributes(element.attributes)
-        output << '>'
-        output << render(element.content)
-        output << "</#{element.name.to_s}>"
+        
+        if element.empty?
+          output << ' />'
+        else
+          output << '>'
+          output << render(element.content)
+          output << "</#{element.name.to_s}>"
+        end
+        
         output
       else
         element.to_s

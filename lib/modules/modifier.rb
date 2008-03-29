@@ -1,6 +1,3 @@
-require 'set'
-require "#{File.dirname(__FILE__)}/../module"
-
 module Texier::Modules
   # TODO: describe various modifiers
   class Modifier < Texier::Module
