@@ -1,5 +1,4 @@
 require "#{File.dirname(__FILE__)}/test_helper"
-require 'parser'
 
 # Test case for Texier::Parser class
 class ParserTest < Test::Unit::TestCase
@@ -202,5 +201,34 @@ class ParserTest < Test::Unit::TestCase
     @parser[:document] = indented(one_or_more(/[a-z]*\n/))
     
     assert_equal ["foo\n", "\n", "bar\n"], @parser.parse(" foo\n\n bar\n")
+  end
+  
+  def test_indented_with_custom_indent_pattern
+    @parser[:document] = e("foo\n") & indented("bar\n", /^\*/) & e('gaz')
+    
+    assert_nil @parser.parse("foo\nbar\ngaz")
+    assert_equal ["foo\n", "bar\n", 'gaz'], @parser.parse("foo\n*bar\ngaz")
+  end
+  
+  def test_indented_with_custom_indent_pattern_should_accept_also_unindented_empty_line
+    @parser[:document] = indented(one_or_more(/[a-z]*\n/), /^\*( |$)/)
+    
+    assert_equal ["foo\n", "\n", "bar\n"], @parser.parse("* foo\n*\n* bar\n")
+  end
+  
+  def test_positive_lookahead
+    @parser[:document] = e('foo') & +e('bar')
+    
+    assert_nil @parser.parse('foo')
+    assert_nil @parser.parse('foogaz')
+    assert_equal ['foo'], @parser.parse('foobar')
+  end
+  
+  def test_negative_lookahead
+    @parser[:document] = -e('foo') & e(/[a-z]{3}/)
+    
+    assert_nil @parser.parse('')
+    assert_nil @parser.parse('foo')
+    assert_equal ['bar'], @parser.parse('bar')
   end
 end

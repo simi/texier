@@ -1,5 +1,4 @@
 require "#{File.dirname(__FILE__)}/element"
-require "#{File.dirname(__FILE__)}/parser"
 require "#{File.dirname(__FILE__)}/utilities"
 
 module Texier

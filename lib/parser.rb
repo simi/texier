@@ -5,7 +5,7 @@ require "#{File.dirname(__FILE__)}/error"
 
 module Texier
   # Parser generator based on the theory of Parsing Expression Grammars (PEG).
-  #
+  # 
   # TODO: describe it in more detail.
   # 
   # OPTIMIZE: using packrat parsing.
@@ -89,7 +89,7 @@ module Texier
 
       # Match expression only in indented string. TODO: describe this in more
       # detail.
-      def indented(e, indent_re = /^[ \t]+/)
+      def indented(e, indent_re = nil)
         Expressions::Indented.new(e, indent_re)
       end
     end
@@ -122,6 +122,16 @@ module Texier
             Sequence.new(self, other)
           end
         end
+        
+        # Positive lookahead
+        def +@
+          PositiveLookahead.new(self)
+        end
+        
+        # Negative lookahead
+        def -@
+          NegativeLookahead.new(self)
+        end
 
         # TODO: describe this
         def map(&block)
@@ -132,7 +142,7 @@ module Texier
         def group
           map {|*results| [results]}
         end
-
+        
         def create(something)
           self.class.create(something)
         end
@@ -300,9 +310,9 @@ module Texier
 
         def parse(scanner)
           # Ok, so what is this about?
-          #
+          # 
           # Let's say that i want to parse strings like this:
-          #
+          # 
           #   "foo,foo,foo,foo,foo"
 
           # First, i save current position of scanner, because if parsing fails,
@@ -395,39 +405,83 @@ module Texier
       class Indented < Expression
         def initialize(expression, indent_re)
           @expression = create(expression)
-          @indent_re = indent_re
+          @indent_re = indent_re || /^([ \t]+|$)/
         end
 
         def parse(scanner)
-          indented_part = ''
-          indent_lengths = []
-
-          indent_re = @indent_re
-
-          # Remove indentation from the beggining of each line.
-          scanner.rest.each_line do |line|
-            if line =~ /^[ \t]*$/
-              indent = ''
-            else
-              break unless indent = line.slice!(indent_re)
-              indent_re = /^#{::Regexp.quote(indent)}/
-            end
-
-            indented_part << line
-            indent_lengths << indent.to_s.length
-          end
-
-          indented_scanner = StringScanner.new(indented_part)
-          result = @expression.parse(indented_scanner)
-
-          lines = indented_part[0..indented_scanner.pos].count("\n")
+          # Try to unindent the string.
+          indented_string, indent_lengths = unindent(scanner.rest)
           
-          # Compute position offset from begining of indented part to the
-          # position where parsing ended.
-          scanner.pos += indented_scanner.pos +
-            indent_lengths[0..lines].inject(0) {|o, l| o + l}
+          # Fail right away if no line was indented.
+          return nil if indented_string.empty?
+          
+          # Parse indented part of the string (now unindented).
+          inner_scanner = StringScanner.new(indented_string)
+          result = @expression.parse(inner_scanner)
+          
+          # How many lines did the inner expression consume.
+          lines = indented_string[0..inner_scanner.pos].count("\n")
+          
+          # Length of the parsed string (including indents)
+          length = inner_scanner.pos + indent_lengths[0..lines].inject(0) {|o, l| o + l}
+          
+          # Update main scanner position.
+          scanner.pos += length
           
           result
+        end
+        
+        private
+        
+        EMPTY_LINE = /^[ \t]*$/
+        
+        def unindent(string)
+          # Take just the indented part of the string and find shortest
+          # indentation.
+          indented_lines = []
+          min = string.length
+          
+          string.each_line do |line|
+            break unless indent = line.slice!(@indent_re)
+            
+            # Empty line doesn't count.
+            min = [indent.length, min].min unless line =~ EMPTY_LINE
+            indented_lines << (indent + line)
+          end
+          
+          # Unindent it and save the lengths of indents.
+          result = ''
+          lengths = []
+          
+          indented_lines.each do |line|
+            unindented_line = line[min..-1]
+            unindented_line = "\n" if unindented_line.to_s.empty?
+            
+            result << unindented_line
+            lengths << (line.length - unindented_line.length)
+          end
+          
+          [result, lengths]
+        end
+      end
+      
+      class PositiveLookahead < Expression
+        def initialize(expression)
+          @expression = expression
+        end
+        
+        def parse(scanner)
+          @expression.peek(scanner) ? [] : nil
+        end
+      end
+      
+      class NegativeLookahead < Expression
+        def initialize(expression)
+          @expression = expression
+        end
+        
+        def parse(scanner)
+          @expression.peek(scanner) ? nil : []
         end
       end
     end

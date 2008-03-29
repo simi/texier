@@ -38,10 +38,21 @@ class BasicTest < Test::Unit::TestCase
     assert_output '<p>hello world</p>', "hello world\n\n\n"
   end
   
+  def test_paragraph_should_strip_whitespace_from_begining_of_its_content
+    assert_output '<p>first</p><p>second</p>', "first\n\n   second"
+  end
+  
   def test_paragraph_with_modifier
     assert_output(
       '<p class="foo">hello world</p>',
       ".[foo]\nhello world"
+    )
+  end
+  
+  def test_paragraph_should_not_consume_block_element_right_ater_it
+    assert_output(
+      '<p>paragraph</p><blockquote><p>blockquote</p></blockquote>',
+      "paragraph\n> blockquote"
     )
   end
   

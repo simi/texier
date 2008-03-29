@@ -4,6 +4,7 @@ require 'parser'
 require 'renderer'
 
 require 'modules/basic'
+require 'modules/block_quote'
 require 'modules/heading'
 require 'modules/list'
 require 'modules/modifier'
@@ -114,6 +115,7 @@ module Texier
       add_module Modules::Basic.new
 
       # These modules can be loaded in any order.
+      add_module Modules::BlockQuote.new
       add_module Modules::Heading.new
       add_module Modules::List.new
       add_module Modules::Phrase.new
