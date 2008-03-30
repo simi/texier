@@ -26,7 +26,7 @@ module Texier::Modules
       end
       
       definition = build_item(/-(?![>-])/, 'dd')
-      definitions = indented(definition.one_or_more.separated_by(/\n+/))
+      definitions = definition.one_or_more.separated_by(/\n+/).indented
       
       list = term & modifier.maybe & e("\n").skip & definitions
       list.map do |term, modifier, *definitions|
@@ -64,7 +64,7 @@ module Texier::Modules
     def build_item(pattern, tag)
       bullet = e(/(#{pattern}) */).skip
       first_line = inline_element.one_or_more.up_to(modifier.maybe & e(/$/).skip)
-      blocks = indented(block_element.one_or_more.separated_by(/\n*/))
+      blocks = block_element.one_or_more.separated_by(/\n*/).indented
       
       item = bullet & first_line & (e(/\n+/).skip & blocks).maybe
       item.map do |first, modifier, *rest|

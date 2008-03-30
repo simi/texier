@@ -65,6 +65,11 @@ class Texier::Parser
     def skip
       map {[]}
     end
+  
+    # Match expression only in indented string.
+    def indented(indent_re = nil)
+      Indented.new(self, indent_re)
+    end
     
     def create(something)
       self.class.create(something)

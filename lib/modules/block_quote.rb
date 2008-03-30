@@ -4,7 +4,7 @@ module Texier::Modules
     block_element('blockquote') do
       content = block_element.one_or_more.separated_by(/\n+/).group
       block_quote = (modifier & e("\n").skip).maybe \
-        & indented(content, /^>( |$)/) & (e("\n>").skip & link).maybe
+        & content.indented(/^>( |$)/) & (e("\n>").skip & link).maybe
       
       block_quote.map do |modifier, content, cite_url|
         element = Texier::Element.new('blockquote', content, :cite => cite_url)

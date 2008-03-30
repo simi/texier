@@ -61,12 +61,4 @@ class Texier::Parser
       [result, lengths]
     end
   end
-    
-  module Generators
-    # Match expression only in indented string. TODO: describe this in more
-    # detail.
-    def indented(e, indent_re = nil)
-      Indented.new(e, indent_re)
-    end
-  end
 end
