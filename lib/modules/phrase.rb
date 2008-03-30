@@ -25,7 +25,7 @@ module Texier::Modules
 
     # Quote
     inline_element('quote') do
-      quote = discard('>>') & everything_up_to(optional(modifier) & discard('<<')) & optional(link)
+      quote = e('>>').skip & everything_up_to(optional(modifier) & e('<<').skip) & optional(link)
       quote = quote.map do |content, modifier, url|
         Texier::Element.new('q', content, 'cite' => url).modify!(modifier)
       end
@@ -55,7 +55,7 @@ module Texier::Modules
     # Span
     def self.span(name, mark)
       inline_element(name) do
-        mark = discard(mark)
+        mark = e(mark).skip
         
         # Span with link and optional modifier.
         span_with_link = mark & everything_up_to(optional(modifier) & mark) & link
@@ -107,7 +107,7 @@ module Texier::Modules
 
     # Build expression that matches a phrase element.
     def build_simple_phrase(mark, tags)
-      mark = discard(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/)
+      mark = e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/).skip
       
       phrase = mark & everything_up_to(optional(modifier) & mark) & optional(link)
       phrase = phrase.map do |content, modifier, url|

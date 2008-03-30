@@ -60,12 +60,7 @@ module Texier
     module Generators
       # Expression that matches text inside quotes.
       def quoted_text(opening, closing = opening)
-        discard(opening) & everything_up_to(discard(closing))
-      end
-
-      # Match expression, but discard the result.
-      def discard(e)
-        expression(e).map {[]}
+        expression(opening).skip & everything_up_to(expression(closing).skip)
       end
     end
   end

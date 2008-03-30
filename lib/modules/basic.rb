@@ -21,8 +21,8 @@ module Texier::Modules
       next_lines = zero_or_more(line_break & -block_element_slot & line)
 
       # Paragraph is default block element.
-      paragraph = optional(parser[:modifier] & discard(/ *\n/)) \
-        & discard(/ */) & first_line & next_lines
+      paragraph = optional(parser[:modifier] & e(/ *\n/).skip) \
+        & e(/ */).skip & first_line & next_lines
         
       paragraph = paragraph.map do |modifier, *lines|
         Texier::Element.new('p', lines).modify!(modifier)
@@ -31,7 +31,7 @@ module Texier::Modules
       block_element = block_element_slot | paragraph
 
       # Root element / starting symbol.
-      document = discard(/\s*/) & zero_or_more(block_element).separated_by(/\n+/)
+      document = e(/\s*/).skip & zero_or_more(block_element).separated_by(/\n+/)
       
           
       # Expression that matches link.

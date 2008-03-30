@@ -1,7 +1,7 @@
 module Texier::Modules
   class Block < Texier::Module
     block_element('text') do
-      opening = discard(/\/--+ *text *\n/)
+      opening = e(/\/--+ *text *\n/).skip
 
       (opening & everything_up_to(closing)).map do |content|
         content = Texier::Utilities.escape_html(content)
@@ -14,7 +14,7 @@ module Texier::Modules
     end
 
     block_element('code') do
-      opening = discard(/\/--+ *code */) & optional(/[^ \n]+/) & discard(/ *\n/)
+      opening = e(/\/--+ *code */).skip & optional(/[^ \n]+/) & e(/ *\n/).skip
 
       (opening & everything_up_to(closing)).map do |language, content|
         Texier::Element.new(
@@ -25,7 +25,7 @@ module Texier::Modules
 
     block_element('html') do
       # TODO: sanitize html
-      opening = discard(/\/--+ *html *\n/)
+      opening = e(/\/--+ *html *\n/).skip
       opening & everything_up_to(closing)
     end
 
@@ -41,7 +41,7 @@ module Texier::Modules
     private
 
     def closing
-      @closing ||= discard(/\n\\--+ */)
+      @closing ||= e(/\n\\--+ */).skip
     end
   end
 end

@@ -45,7 +45,7 @@ module Texier::Modules
       class_value = e(/\#?[a-zA-Z0-9_-]+/)
       classes = one_or_more(class_value).separated_by(/ */)
 
-      class_modifier = (discard('[') & classes & discard(']')).map do |*values|
+      class_modifier = (e('[').skip & classes & e(']').skip).map do |*values|
         proc do |element|
           values.each do |value|
             next unless processor.class_allowed?(value)
@@ -64,10 +64,10 @@ module Texier::Modules
       # .{style-name: style-value; ...}
       style_name = e(/[^: \n]+/)
       style_value = e(/[^;}\n]+/)
-      style = style_name & discard(/ *: */) & style_value
+      style = style_name & e(/ *: */).skip & style_value
       styles = one_or_more(style).separated_by(/ *; */).map(&Hash.method(:[]))
 
-      style_modifier = (discard('{') & styles & discard('}')).map do |values|
+      style_modifier = (e('{').skip & styles & e('}').skip).map do |values|
         proc do |element|
           values.each do |name, value|
             if ATTRIBUTES.include?(name)
@@ -99,7 +99,7 @@ module Texier::Modules
         end
       end
 
-      parser[:modifier] = discard(/ *\./) & one_or_more(
+      parser[:modifier] = e(/ *\./).skip & one_or_more(
         title_modifier | class_modifier | style_modifier |
         horizontal_align_modifier
       ).group

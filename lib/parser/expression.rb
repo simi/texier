@@ -46,7 +46,12 @@ class Texier::Parser
     def group
       map {|*results| [results]}
     end
-        
+
+    # Match expression, but discard the result.
+    def skip
+      map {[]}
+    end
+    
     def create(something)
       self.class.create(something)
     end

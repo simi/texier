@@ -166,8 +166,8 @@ class ParserTest < Test::Unit::TestCase
     assert_equal [['a', 'b'], 'c'], @parser.parse('abc')
   end
   
-  def test_discard
-    @parser[:document] = discard('foo')
+  def test_skip
+    @parser[:document] = e('foo').skip
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('bar')
