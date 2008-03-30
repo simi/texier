@@ -102,7 +102,7 @@ module Texier::Modules
     private
     
     def link
-      @link ||= links_allowed? ? super : empty
+      @link ||= links_allowed? ? super : nothing
     end
 
     # Build expression that matches a phrase element.

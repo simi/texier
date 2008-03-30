@@ -33,12 +33,9 @@ module Texier::Parser
   end
   
   module Generators
-    # Create empty expression that never matches anything. It is actualy Choice,
+    # Create expression that never matches anything. It is actualy Choice,
     # so other expression can be added to it later using << operator.
-    # 
-    # TODO: rename to nothing, create another expression called empty that matches
-    # empty string
-    def empty
+    def nothing
       Choice.new
     end
   end

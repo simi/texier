@@ -70,7 +70,7 @@ module Texier::Modules
         level
       end
       
-      tail = e(/ *(\#{2,}|={2,})? */).skip & modifier.maybe & e(/$/).skip
+      tail = e(/ *(\#{2,}|={2,})? */).skip & modifier.maybe & eol
 
       heading = marker & inline_element.one_or_more.up_to(tail)
       heading.map do |level, content, modifier|
@@ -80,7 +80,7 @@ module Texier::Modules
 
     block_element('underlined') do
       # Underlined headings
-      underline = empty
+      underline = nothing
       levels.each do |char, value|
         underline << e(/ *#{Regexp.quote(char)}{3,} */) {value}
       end

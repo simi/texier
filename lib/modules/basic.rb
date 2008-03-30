@@ -8,8 +8,8 @@ module Texier::Modules
     def initialize_parser
       # These two elements are used to extend the Texier parser with custom
       # expressions in modules.
-      block_element_slot = empty
-      inline_element_slot = empty
+      block_element_slot = nothing
+      inline_element_slot = nothing
 
       plain_text = e(/[^#{PUNCTUATION}]+/)
       inline_element = inline_element_slot | plain_text | e(/[^\n]/)

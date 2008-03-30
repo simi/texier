@@ -24,7 +24,7 @@ module Texier::Modules
 
     def initialize_parser
       unless processor.allowed['modifier']
-        processor.expressions[:modifier] = empty
+        processor.expressions[:modifier] = nothing
         return
       end
 

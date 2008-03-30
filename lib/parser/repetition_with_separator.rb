@@ -1,8 +1,8 @@
 module Texier::Parser
   # TODO: describe this
   class RepetitionWithSeparator < Expression
-    def initialize(rule, separator, min)
-      @expression = e(rule)
+    def initialize(expression, separator, min)
+      @expression = e(expression)
       @separator = e(separator)
       @min = min
     end

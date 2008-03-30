@@ -10,4 +10,11 @@ module Texier::Parser
       result ? [result] : nil
     end
   end
+  
+  module Generators
+    # Expression that matches end of line.
+    def eol
+      e(/$/).skip
+    end
+  end
 end
