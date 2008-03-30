@@ -14,7 +14,7 @@ module Texier::Modules
     end
 
     block_element('code') do
-      opening = e(/\/--+ *code */).skip & optional(/[^ \n]+/) & e(/ *\n/).skip
+      opening = e(/\/--+ *code */).skip & e(/[^ \n]+/).maybe & e(/ *\n/).skip
 
       (opening & everything_up_to(closing)).map do |language, content|
         Texier::Element.new(

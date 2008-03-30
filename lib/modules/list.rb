@@ -28,7 +28,7 @@ module Texier::Modules
       definition = build_item(/-(?![>-])/, 'dd')
       definitions = indented(one_or_more(definition).separated_by(/\n+/))
       
-      list = term & optional(modifier) & e("\n").skip & definitions
+      list = term & modifier.maybe & e("\n").skip & definitions
       list.map do |term, modifier, *definitions|
         Texier::Element.new('dl', [term] + definitions).modify!(modifier)
       end
@@ -47,7 +47,7 @@ module Texier::Modules
         items = one_or_more(item).separated_by("\n")
       end
       
-      list = optional(modifier & e("\n").skip) & items
+      list = (modifier & e("\n").skip).maybe & items
       list.map do |modifier, *items|
         element = Texier::Element.new(style[1] ? 'ol' : 'ul', items)
         
@@ -63,10 +63,10 @@ module Texier::Modules
     # Build expression that matches list item.
     def build_item(pattern, tag)
       bullet = e(/(#{pattern}) */).skip
-      first_line = one_or_more(inline_element).up_to(optional(modifier) & e(/$/).skip)
+      first_line = one_or_more(inline_element).up_to(modifier.maybe & e(/$/).skip)
       blocks = indented(one_or_more(block_element).separated_by(/\n*/))
       
-      item = bullet & first_line & optional(e(/\n+/).skip & blocks)
+      item = bullet & first_line & (e(/\n+/).skip & blocks).maybe
       item.map do |first, modifier, *rest|
         Texier::Element.new(tag, first + rest).modify!(modifier)
       end

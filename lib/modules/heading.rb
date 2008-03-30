@@ -70,7 +70,7 @@ module Texier::Modules
         level
       end
       
-      tail = e(/ *(\#{2,}|={2,})? */).skip & optional(modifier) & e(/$/).skip
+      tail = e(/ *(\#{2,}|={2,})? */).skip & modifier.maybe & e(/$/).skip
 
       heading = marker & one_or_more(inline_element).up_to(tail)
       heading.map do |level, content, modifier|
@@ -85,7 +85,7 @@ module Texier::Modules
         underline << e(/ *#{Regexp.quote(char)}{3,} */) {value}
       end
       
-      tail = optional(modifier) & e("\n").skip
+      tail = modifier.maybe & e("\n").skip
 
       heading = one_or_more(inline_element).up_to(tail) & underline
       heading.map do |content, modifier, level|

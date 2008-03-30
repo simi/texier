@@ -25,7 +25,7 @@ module Texier::Modules
 
     # Quote
     inline_element('quote') do
-      quote = e('>>').skip & everything_up_to(optional(modifier) & e('<<').skip) & optional(link)
+      quote = e('>>').skip & everything_up_to(modifier.maybe & e('<<').skip) & link.maybe
       quote = quote.map do |content, modifier, url|
         Texier::Element.new('q', content, 'cite' => url).modify!(modifier)
       end
@@ -58,7 +58,7 @@ module Texier::Modules
         mark = e(mark).skip
         
         # Span with link and optional modifier.
-        span_with_link = mark & everything_up_to(optional(modifier) & mark) & link
+        span_with_link = mark & everything_up_to(modifier.maybe & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
           element = Texier::Element.new('a', text, 'href' => url)
           element.modify!(modifier)
@@ -109,7 +109,7 @@ module Texier::Modules
     def build_simple_phrase(mark, tags)
       mark = e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/).skip
       
-      phrase = mark & everything_up_to(optional(modifier) & mark) & optional(link)
+      phrase = mark & everything_up_to(modifier.maybe & mark) & link.maybe
       phrase = phrase.map do |content, modifier, url|
         content = Texier::Utilities.escape_html(content)
         element = [*tags].reverse.inject(content) do |element, tag|

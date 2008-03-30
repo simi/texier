@@ -21,7 +21,7 @@ module Texier::Modules
       next_lines = zero_or_more(line_break & -block_element_slot & line)
 
       # Paragraph is default block element.
-      paragraph = optional(parser[:modifier] & e(/ *\n/).skip) \
+      paragraph = (parser[:modifier] & e(/ *\n/).skip).maybe \
         & e(/ */).skip & first_line & next_lines
         
       paragraph = paragraph.map do |modifier, *lines|

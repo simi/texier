@@ -26,7 +26,11 @@ class Texier::Parser
         Sequence.new(self, other)
       end
     end
-        
+  
+    def maybe
+      Maybe.new(self)
+    end
+    
     # Positive lookahead
     def +@
       PositiveLookahead.new(self)

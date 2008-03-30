@@ -85,8 +85,8 @@ class ParserTest < Test::Unit::TestCase
     assert_equal ['a', 'b', 'c'], @parser.parse('abc')
   end
   
-  def test_optional
-    @parser[:document] = optional('foo')
+  def test_maybe
+    @parser[:document] = e('foo').maybe
     
     assert_equal [nil], @parser.parse('')
     assert_equal ['foo'], @parser.parse('foo')
