@@ -17,14 +17,14 @@ class ParserTest < Test::Unit::TestCase
   def test_create_expression_from_string
     assert_nothing_raised do 
       created = e('foo')
-      assert_kind_of Texier::Parser::Expressions::String, created
+      assert_kind_of Texier::Parser::String, created
     end
   end
   
   def test_create_expression_from_regexp
     assert_nothing_raised do 
       created = e(/foo|bar/)
-      assert_kind_of Texier::Parser::Expressions::Regexp, created
+      assert_kind_of Texier::Parser::Regexp, created
     end
   end
   
