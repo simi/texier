@@ -1,3 +1,22 @@
+#
+# Copyright (c) 2008 Adam Ciganek <adam.ciganek@gmail.com>
+#
+# This file is part of Texier.
+#
+# Texier is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License version 2 as published by the Free
+# Software Foundation.
+#
+# Texier is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Texier. If not, see <http://www.gnu.org/licenses/>.
+#
+# For more information please visit http://code.google.com/p/texier/
+#
+
 module Texier
   # This class is used to generate html output from the document object model of
   # the input document.
@@ -13,7 +32,7 @@ module Texier
         output = ''
         output << "<#{element.name.to_s}"
         output << render_attributes(element.attributes)
-        
+
         if element.empty?
           output << ' />'
         else
@@ -21,13 +40,13 @@ module Texier
           output << render(element.content)
           output << "</#{element.name.to_s}>"
         end
-        
+
         output
       else
         element.to_s
       end
     end
-    
+
     def render_text(element)
       case element
       when Array
@@ -40,15 +59,15 @@ module Texier
         element.to_s
       end
     end
-    
+
     protected
-    
+
     def render_attributes(attributes)
       # Ignore nil, false and empty values.
-      attributes = attributes.reject do |key, value| 
+      attributes = attributes.reject do |key, value|
         !value || value.empty?
       end
-      
+
       attributes.inject([]) do |output, (name, value)|
         case value
         when Array
@@ -59,12 +78,12 @@ module Texier
           value = value.inject([]) do |value, (hash_name, hash_value)|
             value + ["#{hash_name}: #{hash_value}"]
           end.join('; ')
-        else        
+        else
           # Sanitize values
           value = Texier::Utilities.escape_html(value)
           value = value.gsub('"', '&quot;')
         end
-        
+
         output << " #{name}=\"#{value}\""
         output
       end.sort.join
