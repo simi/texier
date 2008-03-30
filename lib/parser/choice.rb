@@ -1,17 +1,15 @@
-class Texier::Parser
+module Texier::Parser
   # Ordered choice.
   class Choice < Expression
     attr_reader :expressions
 
     def initialize(*expressions)
-      @expressions = expressions.map do |expression|
-        create(expression)
-      end
+      @expressions = expressions.map(&method(:e))
     end
 
-    def parse(scanner)
+    def parse_scanner(scanner)
       @expressions.each do |expression|
-        if result = expression.parse(scanner)
+        if result = expression.parse_scanner(scanner)
           return result
         end
       end
@@ -21,6 +19,16 @@ class Texier::Parser
 
     def << (expression)
       @expressions << expression
+    end
+  end
+  
+  class Expression
+    def | (other)
+      if other.is_a?(Choice)
+        Choice.new(self, *other.expressions)
+      else
+        Choice.new(self, other)
+      end
     end
   end
   

@@ -54,6 +54,10 @@ module Texier
     #   +process+ before this attribute is set.
     attr_reader :dom
     
+    
+    # Exported parsing expressions.
+    attr_reader :expressions
+    
     def initialize
       @allowed = Hash.new(true)
       @allowed_tags = :all
@@ -145,13 +149,17 @@ module Texier
 
     # Parse the input document and create Document Object Model (dom).
     def parse(input)
-      parser = Parser.new
+      @expressions = {}
       
       @modules.each do |mod|
-        mod.initialize_parser(parser)
+        mod.initialize_parser
       end
-       
-      @dom = parser.parse(input)
+
+      unless @expressions[:document]
+        raise Texier::Error, 'Document expression not defined.'
+      end
+      
+      @dom = @expressions[:document].parse(input)
     end
     
     # This is called after parsing. Here the dom tree can be traversed and

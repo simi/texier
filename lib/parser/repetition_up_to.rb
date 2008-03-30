@@ -1,18 +1,18 @@
-class Texier::Parser
+module Texier::Parser
   # TODO: describe this
   class RepetitionUpTo < Expression
     def initialize(expression, up_to, min)
-      @expression = create(expression)
-      @up_to = create(up_to)
+      @expression = e(expression)
+      @up_to = e(up_to)
       @min = min
     end
 
-    def parse(scanner)
+    def parse_scanner(scanner)
       previous_pos = scanner.pos
       results = []
 
-      until up_to = @up_to.parse(scanner)
-        return nil unless result = @expression.parse(scanner)
+      until up_to = @up_to.parse_scanner(scanner)
+        return nil unless result = @expression.parse_scanner(scanner)
         results.concat(result)
       end
 

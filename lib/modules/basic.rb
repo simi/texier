@@ -5,7 +5,7 @@ module Texier::Modules
 
     options :tab_width => 4
 
-    def initialize_parser(parser)
+    def initialize_parser
       # These two elements are used to extend the Texier parser with custom
       # expressions in modules.
       block_element_slot = empty
@@ -21,7 +21,7 @@ module Texier::Modules
       next_lines = (line_break & -block_element_slot & line).zero_or_more
 
       # Paragraph is default block element.
-      paragraph = (parser[:modifier] & e(/ *\n/).skip).maybe \
+      paragraph = (modifier & e(/ *\n/).skip).maybe \
         & e(/ */).skip & first_line & next_lines
         
       paragraph = paragraph.map do |modifier, *lines|
@@ -43,12 +43,14 @@ module Texier::Modules
       end
 
       # Export these expressions, so they can be used in other modules.
-      parser[:document] = document
-      parser[:block_element] = block_element
-      parser[:block_element_slot] = block_element_slot
-      parser[:inline_element] = inline_element
-      parser[:inline_element_slot] = inline_element_slot
-      parser[:link] = link
+      processor.expressions.merge!(
+        :document => document,
+        :block_element => block_element,
+        :block_element_slot => block_element_slot,
+        :inline_element => inline_element,
+        :inline_element_slot => inline_element_slot,
+        :link => link
+      )
     end
 
     def before_parse(input)

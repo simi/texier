@@ -1,13 +1,13 @@
-class Texier::Parser
+module Texier::Parser
   # TODO: describe this
   class RepetitionWithSeparator < Expression
     def initialize(rule, separator, min)
-      @expression = self.class.create(rule)
-      @separator = self.class.create(separator)
+      @expression = e(rule)
+      @separator = e(separator)
       @min = min
     end
 
-    def parse(scanner)
+    def parse_scanner(scanner)
       # Ok, so what is this about?
       #
       # Let's say that i want to parse strings like this:
@@ -22,7 +22,7 @@ class Texier::Parser
       # Here is try to parse first occurence of "foo". I do this in separate
       # step, because there is no separator at the beggining. If it succeeds, i
       # save the result to results array, if not, i just continue anyway.
-      result = @expression.parse(scanner)
+      result = @expression.parse_scanner(scanner)
       results.concat(result) if result
 
       # Now in this loop i try to parse pairs [",", "foo"] until there are no
@@ -32,9 +32,9 @@ class Texier::Parser
       # want to parse.
       while true
         pos_before_separator = scanner.pos
-        break unless @separator.parse(scanner)
+        break unless @separator.parse_scanner(scanner)
 
-        if result = @expression.parse(scanner)
+        if result = @expression.parse_scanner(scanner)
           # If it matches, store only the "foo" and ignore separator.
           results.concat(result)
         else

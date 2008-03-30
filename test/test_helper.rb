@@ -24,6 +24,8 @@ class String
 end
 
 class Test::Unit::TestCase
+  include Texier::Parser::Generators
+  
   # Assert that Texier produces expected output from given input.
   def assert_output(expected, input)
     actual = (@processor || Texier::Processor.new).process(input)

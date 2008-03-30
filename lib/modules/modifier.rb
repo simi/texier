@@ -22,9 +22,9 @@ module Texier::Modules
       'title', 'type', 'usemap', 'valign', 'value', 'vspace'
     ].to_set
 
-    def initialize_parser(parser)
+    def initialize_parser
       unless processor.allowed['modifier']
-        parser[:modifier] = empty
+        processor.expressions[:modifier] = empty
         return
       end
 
@@ -99,7 +99,7 @@ module Texier::Modules
         end
       end
 
-      parser[:modifier] = e(/ *\./).skip & (
+      processor.expressions[:modifier] = e(/ *\./).skip & (
         title_modifier | class_modifier | style_modifier |
         horizontal_align_modifier
       ).one_or_more.group

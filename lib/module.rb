@@ -20,15 +20,12 @@ module Texier
     def after_parse(dom)      
     end
     
-    def initialize_parser(parser)
-      @parser = parser
+    def initialize_parser
       parser_initializers.each do |(type, name, block)|
         if processor.allowed["#{self.name}/#{name}"]
-          parser[:"#{type}_slot"] << instance_eval(&block)
+          processor.expressions[:"#{type}_slot"] << instance_eval(&block)
         end
       end
-    ensure
-      @parser = nil
     end
   
     protected
@@ -77,8 +74,11 @@ module Texier
     
     # Access exported parser expressions as ordinary methods.
     def method_missing(name, *args, &block)
-      super unless @parser && @parser.has_expression?(name)
-      @parser[name]
+      if expression = processor.expressions[name]
+        expression
+      else
+        super
+      end
     end
   end
 end

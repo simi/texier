@@ -1,61 +1,41 @@
-class Texier::Parser
+module Texier::Parser
+  # Helper method to generate various types of parsing expressions.
+  module Generators
+    # Create expression from string or regexp literals. If passed argument is
+    # already Expression, it is returned unchanged.
+    def expression(something, &block)
+      result = case something
+      when ::String then String.new(something)
+      when ::Regexp then Regexp.new(something)
+      when Expression then something
+      else raise Error, "I dont know how to create expression from #{something.class.name}"
+      end
+      
+      result = result.map(&block) if block_given?
+      result
+    end
+
+    alias_method :e, :expression
+  end
+  
   # Base class for parsing expressions.
   class Expression
+    include Generators
+    
+    def parse_string(string)
+      parse_scanner(StringScanner.new(string))
+    end
+    
+    alias_method :parse, :parse_string
+    
     def peek(scanner)
       previous_pos = scanner.pos
-      result = parse(scanner)
+      result = parse_scanner(scanner)
       scanner.pos = previous_pos
 
       result
     end
-
-    # Ordered choice
-    def | (other)
-      if other.is_a?(Choice)
-        Choice.new(self, *other.expressions)
-      else
-        Choice.new(self, other)
-      end
-    end
-
-    # Sequence
-    def & (other)
-      if other.is_a?(Sequence)
-        Sequence.new(self, *other.expressions)
-      else
-        Sequence.new(self, other)
-      end
-    end
   
-    def maybe
-      Maybe.new(self)
-    end
-  
-    # Expression that matches zero or more occurences of this expression.
-    def zero_or_more
-      Repetition.new(self, 0)
-    end
-
-
-    def one_or_more
-      Repetition.new(self, 1)
-    end
-
-    # Positive lookahead
-    def +@
-      PositiveLookahead.new(self)
-    end
-        
-    # Negative lookahead
-    def -@
-      NegativeLookahead.new(self)
-    end
-
-    # TODO: describe this
-    def map(&block)
-      Mapper.new(self, &block)
-    end
-
     # TODO: describe this
     def group
       map {|*results| [results]}
@@ -65,37 +45,5 @@ class Texier::Parser
     def skip
       map {[]}
     end
-  
-    # Match expression only in indented string.
-    def indented(indent_re = nil)
-      Indented.new(self, indent_re)
-    end
-    
-    def create(something)
-      self.class.create(something)
-    end
-
-    def self.create(something)
-      case something
-      when ::String then String.new(something)
-      when ::Regexp then Regexp.new(something)
-      when Expression then something
-      else raise Error,
-          "I dont know how to create expression from #{something.class.name}"
-      end
-    end
-  end
-  
-  # Helper method to generate various types of parsing expressions.
-  module Generators
-    # Create expression from string or regexp literals. If passed argument is
-    # already Expression instance, it is returned unchanged.
-    def expression(something, &block)
-      result = Expression.create(something)
-      result = result.map(&block) if block_given?
-      result
-    end
-
-    alias_method :e, :expression
   end
 end

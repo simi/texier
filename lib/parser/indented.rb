@@ -1,12 +1,12 @@
-class Texier::Parser
+module Texier::Parser
   # TODO: describe this
   class Indented < Expression
     def initialize(expression, indent_re)
-      @expression = create(expression)
+      @expression = e(expression)
       @indent_re = indent_re || /^([ \t]+|$)/
     end
 
-    def parse(scanner)
+    def parse_scanner(scanner)
       # Try to unindent the string.
       indented_string, indent_lengths = unindent(scanner.rest)
           
@@ -15,7 +15,7 @@ class Texier::Parser
           
       # Parse indented part of the string (now unindented).
       inner_scanner = StringScanner.new(indented_string)
-      result = @expression.parse(inner_scanner)
+      result = @expression.parse_scanner(inner_scanner)
           
       # How many lines did the inner expression consume.
       lines = indented_string[0..inner_scanner.pos].count("\n")
@@ -59,6 +59,12 @@ class Texier::Parser
       end
           
       [result, lengths]
+    end
+  end
+  
+  class Expression
+    def indented(indent_re = nil)
+      Indented.new(self, indent_re)
     end
   end
 end

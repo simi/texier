@@ -1,11 +1,11 @@
-class Texier::Parser
+module Texier::Parser
   # Expression that matches when regexp matches.
   class Regexp < Expression
     def initialize(regexp = //)
       @regexp = regexp
     end
 
-    def parse(scanner)
+    def parse_scanner(scanner)
       result = scanner.scan(@regexp)
       result ? [result] : nil
     end

@@ -1,12 +1,18 @@
-class Texier::Parser
+module Texier::Parser
   # Expression is optional.
   class Maybe < Expression
     def initialize(expression)
-      @expression = create(expression)
+      @expression = e(expression)
     end
 
-    def parse(scanner)
-      @expression.parse(scanner) || [nil]
+    def parse_scanner(scanner)
+      @expression.parse_scanner(scanner) || [nil]
+    end
+  end
+  
+  class Expression
+    def maybe
+      Maybe.new(self)
     end
   end
 end
