@@ -30,17 +30,4 @@ class Texier::Parser
       RepetitionUpTo.new(@expression, stop, @min)
     end
   end
-  
-  module Generators
-    # Creates expression that matches zero or more occurences of another
-    # expression.
-    def zero_or_more(e)
-      Repetition.new(e, 0)
-    end
-
-
-    def one_or_more(e)
-      Repetition.new(e, 1)
-    end
-  end
 end

@@ -21,12 +21,12 @@ module Texier::Modules
     
     # Definition lists.
     block_element('definition') do
-      term = one_or_more(inline_element).up_to(e(":").skip).map do |content|
+      term = inline_element.one_or_more.up_to(e(":").skip).map do |content|
         Texier::Element.new('dt', content)
       end
       
       definition = build_item(/-(?![>-])/, 'dd')
-      definitions = indented(one_or_more(definition).separated_by(/\n+/))
+      definitions = indented(definition.one_or_more.separated_by(/\n+/))
       
       list = term & modifier.maybe & e("\n").skip & definitions
       list.map do |term, modifier, *definitions|
@@ -42,9 +42,9 @@ module Texier::Modules
       
       if style[3]
         next_item = build_item(style[3], 'li')
-        items = item & e("\n").skip & one_or_more(next_item).separated_by("\n")
+        items = item & e("\n").skip & next_item.one_or_more.separated_by("\n")
       else
-        items = one_or_more(item).separated_by("\n")
+        items = item.one_or_more.separated_by("\n")
       end
       
       list = (modifier & e("\n").skip).maybe & items
@@ -63,8 +63,8 @@ module Texier::Modules
     # Build expression that matches list item.
     def build_item(pattern, tag)
       bullet = e(/(#{pattern}) */).skip
-      first_line = one_or_more(inline_element).up_to(modifier.maybe & e(/$/).skip)
-      blocks = indented(one_or_more(block_element).separated_by(/\n*/))
+      first_line = inline_element.one_or_more.up_to(modifier.maybe & e(/$/).skip)
+      blocks = indented(block_element.one_or_more.separated_by(/\n*/))
       
       item = bullet & first_line & (e(/\n+/).skip & blocks).maybe
       item.map do |first, modifier, *rest|

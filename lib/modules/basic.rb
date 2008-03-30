@@ -14,11 +14,11 @@ module Texier::Modules
       plain_text = e(/[^#{PUNCTUATION}]+/)
       inline_element = inline_element_slot | plain_text | e(/[^\n]/)
 
-      line = one_or_more(inline_element)
+      line = inline_element.one_or_more
 
       line_break = e("\n") # TODO: insert <br /> when neccessary
       first_line = line
-      next_lines = zero_or_more(line_break & -block_element_slot & line)
+      next_lines = (line_break & -block_element_slot & line).zero_or_more
 
       # Paragraph is default block element.
       paragraph = (parser[:modifier] & e(/ *\n/).skip).maybe \
@@ -31,7 +31,7 @@ module Texier::Modules
       block_element = block_element_slot | paragraph
 
       # Root element / starting symbol.
-      document = e(/\s*/).skip & zero_or_more(block_element).separated_by(/\n+/)
+      document = e(/\s*/).skip & block_element.zero_or_more.separated_by(/\n+/)
       
           
       # Expression that matches link.

@@ -30,7 +30,17 @@ class Texier::Parser
     def maybe
       Maybe.new(self)
     end
-    
+  
+    # Expression that matches zero or more occurences of this expression.
+    def zero_or_more
+      Repetition.new(self, 0)
+    end
+
+
+    def one_or_more
+      Repetition.new(self, 1)
+    end
+
     # Positive lookahead
     def +@
       PositiveLookahead.new(self)

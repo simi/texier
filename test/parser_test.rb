@@ -93,7 +93,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_zero_or_more_repetition
-    @parser[:document] = zero_or_more('foo')
+    @parser[:document] = e('foo').zero_or_more
 
     assert_equal [], @parser.parse('')
     assert_equal ['foo'], @parser.parse('foo')
@@ -101,7 +101,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_one_or_more_repetition
-    @parser[:document] = one_or_more('foo')
+    @parser[:document] = e('foo').one_or_more
     
     assert_nil @parser.parse('')
     assert_equal ['foo'], @parser.parse('foo')
@@ -109,7 +109,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_zero_or_more_repetition_with_separator
-    @parser[:document] = zero_or_more('foo').separated_by('-')
+    @parser[:document] = e('foo').zero_or_more.separated_by('-')
     
     assert_equal [], @parser.parse('')
     assert_equal ['foo'], @parser.parse('foo')
@@ -117,7 +117,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_repetition_with_separator_should_not_consume_last_separator
-    @parser[:document] = zero_or_more('foo').separated_by('-') & '-bar'
+    @parser[:document] = e('foo').zero_or_more.separated_by('-') & '-bar'
 
     assert_equal ['-bar'], @parser.parse('-bar')
     assert_equal ['foo', '-bar'], @parser.parse('foo-bar')
@@ -151,7 +151,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_one_or_more_up_to
-    @parser[:document] = one_or_more(/[a-z]{3}/).up_to('foo')
+    @parser[:document] = e(/[a-z]{3}/).one_or_more.up_to('foo')
     
     assert_nil @parser.parse('')
     assert_nil @parser.parse('barbarbar')
@@ -198,7 +198,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_indented_should_accept_also_unindented_empty_line
-    @parser[:document] = indented(one_or_more(/[a-z]*\n/))
+    @parser[:document] = indented(e(/[a-z]*\n/).one_or_more)
     
     assert_equal ["foo\n", "\n", "bar\n"], @parser.parse(" foo\n\n bar\n")
   end
@@ -211,7 +211,7 @@ class ParserTest < Test::Unit::TestCase
   end
   
   def test_indented_with_custom_indent_pattern_should_accept_also_unindented_empty_line
-    @parser[:document] = indented(one_or_more(/[a-z]*\n/), /^\*( |$)/)
+    @parser[:document] = indented(e(/[a-z]*\n/).one_or_more, /^\*( |$)/)
     
     assert_equal ["foo\n", "\n", "bar\n"], @parser.parse("* foo\n*\n* bar\n")
   end

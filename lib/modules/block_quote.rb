@@ -2,7 +2,7 @@ module Texier::Modules
   # This module provides block quotations.
   class BlockQuote < Texier::Module
     block_element('blockquote') do
-      content = one_or_more(block_element).separated_by(/\n+/).group
+      content = block_element.one_or_more.separated_by(/\n+/).group
       block_quote = (modifier & e("\n").skip).maybe \
         & indented(content, /^>( |$)/) & (e("\n>").skip & link).maybe
       
