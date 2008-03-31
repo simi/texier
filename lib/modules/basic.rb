@@ -18,10 +18,20 @@
 # 
 
 module Texier::Modules
-  # This modules provides the most basic features of Texier processor.
+  # Basic module.
+  # 
+  # This modules provides the most basic features of Texier processor. It
+  # exports two parsing expressions: +inline_element+ and +block_element+. They
+  # are provided for other modules to extend Texier syntax with their own
+  # expressions (see documentation of class Module for explanation how to do
+  # that). It also defines default inline element (plain text without any
+  # formatting) and block_element (paragraph). Last, it defines expression
+  # +document+ which is root expression of whole Texier grammar and coresponds
+  # to whole document.
   class Basic < Texier::Module
     PUNCTUATION = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?")
 
+    # Texier converts tabs to spaces. This specifies how may spaces is one tab.
     options :tab_width => 4
 
     def initialize_parser
@@ -75,7 +85,7 @@ module Texier::Modules
     def before_parse(input)
       input = input.dup
 
-      # Standardize line endings to unix style.
+      # Convert line endings to unix style.
       input.gsub!("\r\n", "\n") # DOS/Windows style
       input.gsub!("\r", "\n") # Mac style
 

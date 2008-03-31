@@ -40,7 +40,7 @@ module Texier::Modules
     
     # Definition lists.
     block_element('definition') do
-      term = inline_element.one_or_more.up_to(e(":").skip).map do |content|
+      term = inline_element.one_or_more.up_to(e(":").skip).map do |*content|
         Texier::Element.new('dt', content)
       end
       
@@ -82,7 +82,7 @@ module Texier::Modules
     # Build expression that matches list item.
     def build_item(pattern, tag)
       bullet = e(/(#{pattern}) */).skip
-      first_line = inline_element.one_or_more.up_to(modifier.maybe & eol)
+      first_line = inline_element.one_or_more.group.up_to(modifier.maybe & eol)
       blocks = block_element.one_or_more.separated_by(/\n*/).indented
       
       item = bullet & first_line & (e(/\n+/).skip & blocks).maybe

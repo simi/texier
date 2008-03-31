@@ -44,10 +44,6 @@ module Texier::Parser
     def separated_by(separator)
       RepetitionWithSeparator.new(@expression, separator, @min)
     end
-
-    def up_to(stop)
-      RepetitionUpTo.new(@expression, stop, @min)
-    end
   end
   
   class Expression

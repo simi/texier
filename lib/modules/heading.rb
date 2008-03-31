@@ -91,7 +91,7 @@ module Texier::Modules
       
       tail = e(/ *(\#{2,}|={2,})? */).skip & modifier.maybe & eol
 
-      heading = marker & inline_element.one_or_more.up_to(tail)
+      heading = marker & inline_element.one_or_more.group.up_to(tail)
       heading.map do |level, content, modifier|
         create_element(level, content, modifier)
       end
@@ -106,7 +106,7 @@ module Texier::Modules
       
       tail = modifier.maybe & e("\n").skip
 
-      heading = inline_element.one_or_more.up_to(tail) & underline
+      heading = inline_element.one_or_more.group.up_to(tail) & underline
       heading.map do |content, modifier, level|
         create_element(level, content, modifier)
       end

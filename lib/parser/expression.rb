@@ -18,7 +18,9 @@
 # 
 
 module Texier::Parser
-  # Helper method to generate various types of parsing expressions.
+  # This module contains methods that generate various types of parsing
+  # expressions. If you want to use them in your class, you have to +include+
+  # this module first.
   module Generators
     # Create expression from string or regexp literals. If passed argument is
     # already Expression, it is returned unchanged.
@@ -37,7 +39,9 @@ module Texier::Parser
     alias_method :e, :expression
   end
   
-  # Base class for parsing expressions.
+  # Base class for all types of parsing expressions. If you want to create your
+  # own expression class, you have to extend this class and (re)implement method
+  # +parse_scanner+.
   class Expression
     include Generators
     
@@ -47,6 +51,8 @@ module Texier::Parser
     
     alias_method :parse, :parse_string
     
+    # Test if this expression matches, but does not advance current position in
+    # the parsed string.
     def peek(scanner)
       previous_pos = scanner.pos
       result = parse_scanner(scanner)
@@ -55,12 +61,12 @@ module Texier::Parser
       result
     end
   
-    # TODO: describe this
+    # Modify the expression to return its result in array.
     def group
       map {|*results| [results]}
     end
 
-    # Match expression, but discard the result.
+    # Modify the expression to discard its result.
     def skip
       map {[]}
     end

@@ -1,13 +1,23 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class EverythingUpToTest < Test::Unit::TestCase
-  def test_everything_up_to
-    parser = everything_up_to('bar')
+class UpToTest < Test::Unit::TestCase
+  def test_up_to
+    parser = e(/[a-z]*/).up_to('bar')
+    
+    assert_nil parser.parse('foo')
+    assert_nil parser.parse('foo42bar')
+    
+    assert_equal ['foo', 'bar'], parser.parse('foobar')
+  end
+  
+  def test_one_or_more_up_to
+    parser = e(/[a-z]{3}/).one_or_more.up_to('foo')
     
     assert_nil parser.parse('')
+    assert_nil parser.parse('barbarbar')
     assert_nil parser.parse('foo')
-    assert_nil parser.parse('bar')
-    assert_equal ['foo', 'bar'], parser.parse('foobar')
+    
+    assert_equal ['bar', 'gaz', 'foo'], parser.parse('bargazfoo')
   end
   
   def test_quoted_text

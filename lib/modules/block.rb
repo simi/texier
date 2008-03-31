@@ -18,11 +18,16 @@
 # 
 
 module Texier::Modules
+  # Block module
+  # 
+  # This module defines various blocks in the document.
+  # 
+  # TODO: explain text, html, code, div
   class Block < Texier::Module
     block_element('text') do
       opening = e(/\/--+ *text *\n/).skip
 
-      (opening & everything_up_to(closing)).map do |content|
+      (opening & everything.up_to(closing)).map do |content|
         content = Texier::Utilities.escape_html(content)
         lines = content.split("\n")
         breaks = Array.new(lines.size - 1, Texier::Element.new('br'))
@@ -35,7 +40,7 @@ module Texier::Modules
     block_element('code') do
       opening = e(/\/--+ *code */).skip & e(/[^ \n]+/).maybe & e(/ *\n/).skip
 
-      (opening & everything_up_to(closing)).map do |language, content|
+      (opening & everything.up_to(closing)).map do |language, content|
         Texier::Element.new(
           'pre', Texier::Element.new('code', content), 'class' => language
         )
@@ -45,17 +50,16 @@ module Texier::Modules
     block_element('html') do
       # TODO: fix broken html
       opening = e(/\/--+ *html *\n/).skip
-      opening & everything_up_to(closing)
+      opening & everything.up_to(closing)
     end
 
-    # TODO: later
-    #    block_element('div') do
-    #      opening = discard(/\/--+ *div *\n/)
-    # 
-    #      (opening & document & closing).map do |*content|
-    #        Texier::Element.new('div', content)
-    #      end
-    #    end
+    block_element('div') do
+      opening = e(/\/--+ *div *\n/).skip
+     
+      (opening & document.up_to(closing)).map do |*content|
+        Texier::Element.new('div', content)
+      end
+    end
 
     private
 

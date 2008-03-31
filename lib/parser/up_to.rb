@@ -18,29 +18,45 @@
 # 
 
 module Texier::Parser
-  # TODO: describe this
-  class RepetitionUpTo < Expression
-    def initialize(expression, up_to, min)
+  class UpTo < Texier::Parser::Expression
+    def initialize(expression, stop)
       @expression = e(expression)
-      @up_to = e(up_to)
-      @min = min
+      @stop = e(stop)
     end
 
     def parse_scanner(scanner)
       previous_pos = scanner.pos
-      results = []
-
-      until up_to = @up_to.parse_scanner(scanner)
-        return nil unless result = @expression.parse_scanner(scanner)
-        results.concat(result)
+      inner_string = ''
+      
+      until stop = @stop.parse_scanner(scanner)
+        break unless char = scanner.getch
+        inner_string << char
       end
-
-      if results.size >= @min
-        [results] + up_to
+      
+      return nil unless stop
+      
+      inner_scanner = StringScanner.new(inner_string)
+      inner_result = @expression.parse_scanner(inner_scanner)
+        
+      if inner_result && inner_scanner.eos?
+        inner_result + stop
       else
         scanner.pos = previous_pos
         nil
       end
+    end
+  end
+
+  class Expression
+    def up_to(stop)
+      UpTo.new(self, stop)
+    end
+  end
+  
+  module Generators
+    # Expression that matches text inside quotes.
+    def quoted_text(opening, closing = opening)
+      e(opening).skip & everything.up_to(e(closing).skip)
     end
   end
 end
