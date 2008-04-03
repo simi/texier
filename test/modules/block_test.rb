@@ -42,4 +42,18 @@ class BlockTest < Test::Unit::TestCase
   def test_div_block
     assert_output '<div><p>hello world</p></div>', "/-- div\nhello world\n\\--"
   end
+  
+  def test_nested_div_blocks
+    assert_output(
+      '<div><p>outer</p><div><p>nested</p></div></div>',
+      "/-- div\nouter\n/-- div\nnested\n\\--\n\\--"
+    )
+  end
+  
+  def test_div_block_with_modifier
+    assert_output(
+      '<div class="foo"><p>hello world</p></div>',
+      "/-- div .[foo]\nhello world\n\\--"
+    )
+  end
 end

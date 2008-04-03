@@ -19,20 +19,31 @@
 
 module Texier::Parser
   # TODO: describe this.
-  class Everything < Expression
+  class EverythingUpTo < Expression
+    def initialize(expression)
+      @expression = e(expression)
+    end
+    
     def parse_scanner(scanner)
-      result = scanner.rest
-      scanner.terminate
+      result = ''
       
-      result.empty? ? nil : [result]
+      until stop = @expression.parse_scanner(scanner)
+        return nil unless char = scanner.getch
+        result << char
+      end
+      
+      result.empty? ? nil : [result] + stop
     end
   end
 
   module Generators
-    # Creates expression that matches everything from current position up to
-    # end of the string.
-    def everything
-      Everything.new
+    def everything_up_to(expression)
+      EverythingUpTo.new(expression)
+    end
+    
+    # Expression that matches text inside quotes.
+    def quoted_text(opening, closing = opening)
+      e(opening).skip & everything_up_to(e(closing).skip)
     end
   end
 end

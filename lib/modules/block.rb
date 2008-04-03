@@ -27,7 +27,7 @@ module Texier::Modules
     block_element('text') do
       opening = e(/\/--+ *text *\n/).skip
 
-      (opening & everything.up_to(closing)).map do |content|
+      (opening & everything_up_to(closing)).map do |content|
         content = Texier::Utilities.escape_html(content)
         lines = content.split("\n")
         breaks = Array.new(lines.size - 1, Texier::Element.new('br'))
@@ -40,7 +40,7 @@ module Texier::Modules
     block_element('code') do
       opening = e(/\/--+ *code */).skip & e(/[^ \n]+/).maybe & e(/ *\n/).skip
 
-      (opening & everything.up_to(closing)).map do |language, content|
+      (opening & everything_up_to(closing)).map do |language, content|
         Texier::Element.new(
           'pre', Texier::Element.new('code', content), 'class' => language
         )
@@ -50,14 +50,14 @@ module Texier::Modules
     block_element('html') do
       # TODO: fix broken html
       opening = e(/\/--+ *html *\n/).skip
-      opening & everything.up_to(closing)
+      opening & everything_up_to(closing)
     end
 
     block_element('div') do
-      opening = e(/\/--+ *div *\n/).skip
-     
-      (opening & document.up_to(closing)).map do |*content|
-        Texier::Element.new('div', content)
+      opening = e(/\/--+ *div */).skip & modifier.maybe & e("\n").skip
+      
+      (opening & document.up_to(closing)).map do |modifier, *content|
+        Texier::Element.new('div', content).modify!(modifier)
       end
     end
 
