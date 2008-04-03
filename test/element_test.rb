@@ -47,11 +47,25 @@ class ElementTest < Test::Unit::TestCase
   end
   
   def test_attributes_should_be_accessible_as_methods
-	element = Texier::Element.new('foo')	
-	assert_nil element.bar
+    element = Texier::Element.new('foo')	
+    assert_nil element.bar
 	
-	element.bar = 'bar'
-	assert_equal 'bar', element.bar	
-	assert_equal 'bar', element.attributes['bar']
+    element.bar = 'bar'
+    assert_equal 'bar', element.bar	
+    assert_equal 'bar', element.attributes['bar']
+  end
+  
+  def test_add_class_name_should_ignore_nil_argument
+    element = Texier::Element.new('em')
+    element.add_class_name(nil)
+    
+    assert_equal [], element.class_name
+  end
+  
+  def test_add_class_name_should_create_array_if_class_already_contains_string
+    element = Texier::Element.new('em', 'class' => 'foo')
+    element.add_class_name('bar')
+    
+    assert_equal ['foo', 'bar'], element.class_name
   end
 end

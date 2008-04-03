@@ -54,7 +54,7 @@ module Texier::Modules
         & e(/ */).skip & first_line & next_lines
         
       paragraph = paragraph.map do |modifier, *lines|
-        Texier::Element.new('p', lines).modify!(modifier)
+        Texier::Element.new('p', lines).modify(modifier)
       end
 
       block_element = block_element_slot | paragraph

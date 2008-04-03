@@ -104,13 +104,13 @@ module Texier
 	
     # Convenience method for adding class names.
     def add_class_name(value)
-      @attributes['class'] ||= []
-      @attributes['class'] << value
+      @attributes['class'] = [*@attributes['class']].compact
+      @attributes['class'] << value if value
       self
     end
     
     # Apply modifier.
-    def modify!(modifier)
+    def modify(modifier)
       modifier.each {|m| m.call(self)} if modifier
       self
     end

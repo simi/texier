@@ -46,7 +46,7 @@ module Texier::Modules
     inline_element('quote') do
       quote = e('>>').skip & everything_up_to(modifier.maybe & e('<<').skip) & link.maybe
       quote = quote.map do |content, modifier, url|
-        Texier::Element.new('q', content, 'cite' => url).modify!(modifier)
+        Texier::Element.new('q', content, 'cite' => url).modify(modifier)
       end
     end
     
@@ -80,13 +80,13 @@ module Texier::Modules
         span_with_link = mark & everything_up_to(modifier.maybe & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
           element = Texier::Element.new('a', text, 'href' => url)
-          element.modify!(modifier)
+          element.modify(modifier)
         end
       
         # Span with modifier.
         span_with_modifier = mark & everything_up_to(modifier & mark)
         span_with_modifier = span_with_modifier.map do |text, modifier|
-          Texier::Element.new('span', text).modify!(modifier)
+          Texier::Element.new('span', text).modify(modifier)
         end
       
         span_with_link | span_with_modifier
@@ -135,7 +135,7 @@ module Texier::Modules
           Texier::Element.new(tag, element)
         end
         element = Texier::Element.new('a', element, 'href' => url) if url
-        element.modify!(modifier)
+        element.modify(modifier)
       end
     end
   end

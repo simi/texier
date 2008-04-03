@@ -27,7 +27,7 @@ module Texier::Modules
       
       block_quote.map do |modifier, content, cite_url|
         element = Texier::Element.new('blockquote', content, :cite => cite_url)
-        element.modify!(modifier)
+        element.modify(modifier)
       end
     end
   end

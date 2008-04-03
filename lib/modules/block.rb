@@ -38,12 +38,13 @@ module Texier::Modules
     end
 
     block_element('code') do
-      opening = e(/\/--+ *code */).skip & e(/[^ \n]+/).maybe & e(/ *\n/).skip
+      opening = e(/\/--+ *code */).skip & e(/[^ \n\.]+/).maybe \
+        & modifier.maybe & e("\n").skip
 
-      (opening & everything_up_to(closing)).map do |language, content|
+      (opening & everything_up_to(closing)).map do |language, modifier, content|
         Texier::Element.new(
           'pre', Texier::Element.new('code', content), 'class' => language
-        )
+        ).modify(modifier)
       end
     end
 
@@ -57,7 +58,7 @@ module Texier::Modules
       opening = e(/\/--+ *div */).skip & modifier.maybe & e("\n").skip
       
       (opening & document.up_to(closing)).map do |modifier, *content|
-        Texier::Element.new('div', content).modify!(modifier)
+        Texier::Element.new('div', content).modify(modifier)
       end
     end
 

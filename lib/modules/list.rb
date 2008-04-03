@@ -49,7 +49,7 @@ module Texier::Modules
       
       list = term & modifier.maybe & e("\n").skip & definitions
       list.map do |term, modifier, *definitions|
-        Texier::Element.new('dl', [term] + definitions).modify!(modifier)
+        Texier::Element.new('dl', [term] + definitions).modify(modifier)
       end
     end
 
@@ -75,7 +75,7 @@ module Texier::Modules
           element.style['list-style-type'] = style[2]
         end
         
-        element.modify!(modifier)
+        element.modify(modifier)
       end
     end
     
@@ -87,7 +87,7 @@ module Texier::Modules
       
       item = bullet & first_line & (e(/\n+/).skip & blocks).maybe
       item.map do |first, modifier, *rest|
-        Texier::Element.new(tag, first + rest).modify!(modifier)
+        Texier::Element.new(tag, first + rest).modify(modifier)
       end
     end
   end

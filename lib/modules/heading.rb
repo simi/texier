@@ -155,7 +155,7 @@ module Texier::Modules
     # Create Heading dom element
     def create_element(level, content, modifier)
       heading = Texier::Element.new("h#{level + 1}", content, 'level' => level)
-      heading.modify!(modifier)
+      heading.modify(modifier)
       heading.id ||= auto_id(content)
 
       @title ||= Texier::Renderer.new.render_text(heading)

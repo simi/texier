@@ -42,6 +42,8 @@ module Texier::Parser
 
   # Monkey-patch lazy parsing support to these classes.
   
+  # TODO: This is not very DRY. Refactor!
+  
   class Expression
     def parse_scanner_lazily(scanner, stop)
       parse_scanner(scanner)
