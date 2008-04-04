@@ -18,12 +18,14 @@
 # 
 
 module Texier::Modules
-  # This module provides Emoticons (smilies).
+  # This module repalces emoticons (smilies) with images. It is disabled by
+  # default (can be enabled using processor.allowed['emoticon'] = true)
   class Emoticon < Texier::Module
       
     # TODO: root and file_root
     
     options(
+      # What emoticon will be replaced with what image.
       :icons => {
         ':-)' => 'smile.gif',
         ':-(' => 'sad.gif',
@@ -45,7 +47,9 @@ module Texier::Modules
     inline_element('emoticon') do
       icons.inject(nothing) do |result, (pattern, image)|
         result | e(/#{Regexp.quote(pattern)}+/).map do
-          Texier::Element.new('img', 'src' => image, 'alt' => pattern)
+          Texier::Element.new(
+            'img', 'src' => image, 'alt' => pattern, 'class' => class_name
+          )
         end
       end
     end
