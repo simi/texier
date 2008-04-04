@@ -24,7 +24,7 @@ module Texier::Modules
   # 
   # TODO: explain text, html, code, div
   class Block < Texier::Module
-    block_element('text') do
+    block_element('block/text') do
       opening = e(/\/--+ *text *\n/).skip
 
       (opening & everything_up_to(closing)).map do |content|
@@ -37,7 +37,7 @@ module Texier::Modules
       end
     end
 
-    block_element('code') do
+    block_element('block/code') do
       opening = e(/\/--+ *code */).skip & e(/[^ \n\.]+/).maybe \
         & modifier.maybe & e("\n").skip
 
@@ -48,19 +48,21 @@ module Texier::Modules
       end
     end
 
-    block_element('html') do
-      # TODO: fix broken html
+    block_element('block/html') do
       opening = e(/\/--+ *html *\n/).skip
       opening & everything_up_to(closing)
+      # TODO: fix broken html
     end
 
-    block_element('div') do
+    block_element('block/div') do
       opening = e(/\/--+ *div */).skip & modifier.maybe & e("\n").skip
       
       (opening & document.up_to(closing)).map do |modifier, *content|
         Texier::Element.new('div', content).modify(modifier)
       end
     end
+    
+    # TODO: add pre, comment, texysource and default blocks.
 
     private
 

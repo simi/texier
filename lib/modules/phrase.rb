@@ -31,19 +31,19 @@ module Texier::Modules
       inline_element(name) {build_simple_phrase(mark, tags)}
     end
 
-    simple_phrase('em', '*', 'em')
-    simple_phrase('em-alt', '//', 'em')
-    simple_phrase('strong', '**', 'strong')
-    simple_phrase('strong+em', '***', ['strong', 'em'])
-    simple_phrase('code', '`', 'code')
-    simple_phrase('ins', '++', 'ins')
-    simple_phrase('del', '--', 'del')
-    simple_phrase('sup', '^^', 'sup')
-    simple_phrase('sub', '__', 'sub')
-    simple_phrase('cite', '~~', 'cite')
+    simple_phrase('phrase/em', '*', 'em')
+    simple_phrase('phrase/em-alt', '//', 'em')
+    simple_phrase('phrase/strong', '**', 'strong')
+    simple_phrase('phrase/strong+em', '***', ['strong', 'em'])
+    simple_phrase('phrase/code', '`', 'code')
+    simple_phrase('phrase/ins', '++', 'ins')
+    simple_phrase('phrase/del', '--', 'del')
+    simple_phrase('phrase/sup', '^^', 'sup')
+    simple_phrase('phrase/sub', '__', 'sub')
+    simple_phrase('phrase/cite', '~~', 'cite')
 
     # Quote
-    inline_element('quote') do
+    inline_element('phrase/quote') do
       quote = e('>>').skip & everything_up_to(modifier.maybe & e('<<').skip) & link.maybe
       quote = quote.map do |content, modifier, url|
         Texier::Element.new('q', content, 'cite' => url).modify(modifier)
@@ -59,11 +59,11 @@ module Texier::Modules
       end
     end
 
-    subscript_or_superscript('sup-alt', '^', 'sup')
-    subscript_or_superscript('sub-alt', '_', 'sub')
+    subscript_or_superscript('phrase/sup-alt', '^', 'sup')
+    subscript_or_superscript('phrase/sub-alt', '_', 'sub')
 
     # Acronym/abbreviation
-    inline_element('acronym') do
+    inline_element('phrase/acronym') do
       content = e(/\w{2,}|(\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
       
       (content & quoted_text('((', '))')).map do |acronym, meaning|
@@ -93,17 +93,17 @@ module Texier::Modules
       end
     end
     
-    span('span', '"')
-    span('span-alt', '~')
+    span('phrase/span', '"')
+    span('phrase/span-alt', '~')
     
     # Quick links (blah:www.metatribe.org)
-    inline_element('quicklink') do
+    inline_element('phrase/quicklink') do
       (e(/[^\s:]+/) & link).map do |content, url|
         Texier::Element.new('a', content, 'href' => url)
       end
     end
     
-    inline_element('notexy') do
+    inline_element('phrase/notexy') do
       quoted_text("''").map(&Texier::Utilities.method(:escape_html))
     end
 

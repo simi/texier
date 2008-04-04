@@ -80,7 +80,7 @@ module Texier::Modules
       }
     )
 
-    block_element('surrounded') do
+    block_element('heading/surrounded') do
       # Surrounded headings
       marker = e(/ *(\#{2,}|={2,}) +/) do |line|
         # Calculate relative level of heading according to length of the marker.
@@ -97,7 +97,7 @@ module Texier::Modules
       end
     end
 
-    block_element('underlined') do
+    block_element('heading/underlined') do
       # Underlined headings
       underline = nothing
       levels.each do |char, value|

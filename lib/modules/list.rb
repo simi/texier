@@ -39,7 +39,7 @@ module Texier::Modules
     end
     
     # Definition lists.
-    block_element('definition') do
+    block_element('list/definition') do
       term = inline_element.one_or_more.up_to(e(":").skip).map do |*content|
         Texier::Element.new('dt', content)
       end

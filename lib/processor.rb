@@ -29,6 +29,7 @@ require 'module'
 require 'modules/basic'
 require 'modules/block'
 require 'modules/block_quote'
+require 'modules/emoticon'
 require 'modules/heading'
 require 'modules/list'
 require 'modules/modifier'
@@ -145,6 +146,7 @@ module Texier
       # These modules can be loaded in any order.
       add_module Modules::Block.new
       add_module Modules::BlockQuote.new
+      add_module Modules::Emoticon.new
       add_module Modules::Heading.new
       add_module Modules::List.new
       add_module Modules::Phrase.new

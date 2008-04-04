@@ -41,7 +41,7 @@ module Texier
     
     def initialize_parser
       parser_initializers.each do |(type, name, block)|
-        if processor.allowed["#{self.name}/#{name}"]
+        if processor.allowed[name]
           processor.expressions[:"#{type}_slot"] << instance_eval(&block)
         end
       end
