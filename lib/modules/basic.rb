@@ -58,7 +58,7 @@ module Texier::Modules
       end
 
       block_element = block_element_slot | paragraph
-
+      
       # Root element / starting symbol.
       document = e(/\s*/).skip & block_element.zero_or_more.separated_by(/\n+/)
       

@@ -19,6 +19,7 @@
 
 require 'set'
 
+require 'dtd'
 require 'element'
 require 'error'
 require 'parser'
@@ -32,6 +33,7 @@ require 'modules/block_quote'
 require 'modules/emoticon'
 require 'modules/horiz_line'
 require 'modules/heading'
+require 'modules/html'
 require 'modules/list'
 require 'modules/modifier'
 require 'modules/phrase'
@@ -77,6 +79,9 @@ module Texier
 
     # Exported parsing expressions.
     attr_reader :expressions
+    
+    # DTD of output document.
+    attr_accessor :dtd
 
     def initialize
       @allowed = Hash.new(true)
@@ -84,6 +89,8 @@ module Texier
       @allowed_classes = :all
       @allowed_styles = :all
       @align_classes = {}
+      
+      @dtd = Dtd.new
 
       load_modules
     end
@@ -149,6 +156,7 @@ module Texier
       add_module Modules::Emoticon.new
       add_module Modules::Heading.new
       add_module Modules::HorizLine.new
+      add_module Modules::Html.new
       add_module Modules::List.new
       add_module Modules::Phrase.new
     end

@@ -28,6 +28,10 @@ module Texier
     attr_accessor :processor
     attr_accessor :name
     
+    def dtd
+      processor.dtd
+    end
+    
     # This method is called before parsing. Derived classes should override it
     # if they need to preprocess the input document.
     def before_parse(input)

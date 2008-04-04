@@ -72,7 +72,7 @@ module Texier::Parser
       apply(@expression.parse_scanner_lazily(scanner, stop))
     end
   end
-
+  
   class Repetition
     def parse_scanner_lazily(scanner, stop)
       previous_pos = scanner.pos
