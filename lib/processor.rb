@@ -30,6 +30,7 @@ require 'modules/basic'
 require 'modules/block'
 require 'modules/block_quote'
 require 'modules/emoticon'
+require 'modules/horiz_line'
 require 'modules/heading'
 require 'modules/list'
 require 'modules/modifier'
@@ -143,11 +144,11 @@ module Texier
       add_module Modules::Modifier.new
       add_module Modules::Basic.new
 
-      # These modules can be loaded in any order.
       add_module Modules::Block.new
       add_module Modules::BlockQuote.new
       add_module Modules::Emoticon.new
       add_module Modules::Heading.new
+      add_module Modules::HorizLine.new
       add_module Modules::List.new
       add_module Modules::Phrase.new
     end
@@ -156,7 +157,11 @@ module Texier
     def default_module_name(mod)
       name = mod.class.name
       name.sub!(/^(.*::)?/, '')
-      name.downcase!
+      
+      # CamelCase to under_score
+      name.gsub!(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+      name.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
+      name.downcase      
     end
 
     # This is called before parsing. Here the input document can be modified as

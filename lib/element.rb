@@ -21,7 +21,7 @@ module Texier
   # Element of the Document Object Model.
   class Element
     # Empty elements.
-    EMPTY_ELEMENTS = ['img', 'br'].to_set # TODO: more
+    EMPTY_ELEMENTS = ['br', 'hr', 'img'].to_set # TODO: more
     
     attr_reader :name
     attr_reader :content
