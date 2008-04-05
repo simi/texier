@@ -17,6 +17,8 @@
 # For more information please visit http://code.google.com/p/texier/
 # 
 
+require "#{File.dirname(__FILE__)}/../expressions/html_element"
+
 module Texier::Modules
   # Block module
   # 
@@ -24,11 +26,12 @@ module Texier::Modules
   # 
   # TODO: explain text, html, code, div
   class Block < Texier::Module
+    include Texier::Expressions::HtmlElement
+    
     block_element('block/text') do
       opening = e(/\/--+ *text *\n/).skip
 
       (opening & everything_up_to(closing)).map do |content|
-        content = Texier::Utilities.escape_html(content)
         lines = content.split("\n")
         breaks = Array.new(lines.size - 1, Texier::Element.new('br'))
 
@@ -49,9 +52,11 @@ module Texier::Modules
     end
 
     block_element('block/html') do
+      content = nothing
+      content << (html_element(dtd, content) | e(/[^<]+/) | e('<'))
+      
       opening = e(/\/--+ *html *\n/).skip
-      opening & everything_up_to(closing)
-      # TODO: fix broken html
+      opening & content.one_or_more.up_to(closing)
     end
 
     block_element('block/div') do

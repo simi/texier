@@ -37,14 +37,14 @@ class BlockTest < Test::Unit::TestCase
   
   def test_code_block_with_modifier
     assert_output(
-      '<pre class="rails"><code>render :text => "hello world"</code></pre>',
+      '<pre class="rails"><code>render :text =&gt; "hello world"</code></pre>',
       "/-- code .[rails]\nrender :text => \"hello world\"\n\\--"
     )
   end
   
   def test_code_block_with_language_and_modifier
     assert_output(
-      '<pre class="ruby rails"><code>render :text => "hello world"</code></pre>',
+      '<pre class="ruby rails"><code>render :text =&gt; "hello world"</code></pre>',
       "/-- code ruby .[rails]\nrender :text => \"hello world\"\n\\--"
     )
   end

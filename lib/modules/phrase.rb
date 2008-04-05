@@ -28,7 +28,7 @@ module Texier::Modules
     
     # Shortcut for defining parsing expression for simple phrases.
     def self.simple_phrase(name, mark, tags)
-      inline_element(name) {build_simple_phrase(mark, tags)}
+      inline_element(name) {simple_phrase(mark, tags)}
     end
 
     simple_phrase('phrase/em', '*', 'em')
@@ -103,9 +103,7 @@ module Texier::Modules
       end
     end
     
-    inline_element('phrase/notexy') do
-      quoted_text("''").map(&Texier::Utilities.method(:escape_html))
-    end
+    inline_element('phrase/notexy') {quoted_text("''")}
 
     def processor=(processor)
       super
@@ -124,13 +122,12 @@ module Texier::Modules
       @link ||= links_allowed? ? super : nothing
     end
 
-    # Build expression that matches a phrase elfement.
-    def build_simple_phrase(mark, tags)
+    # Expression that matches a phrase element.
+    def simple_phrase(mark, tags)
       mark = e(/#{Regexp.quote(mark)}(?!#{Regexp.quote(mark[0,1])})/).skip
       
       phrase = mark & everything_up_to(modifier.maybe & mark) & link.maybe
       phrase = phrase.map do |content, modifier, url|
-        content = Texier::Utilities.escape_html(content)
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end

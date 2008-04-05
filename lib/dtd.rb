@@ -53,11 +53,51 @@ module Texier
       end
     end
     
+    # List of tags and their properties.
     TAGS = {
       'a' => {:block => false},
+      'abbr' => {:block => false},
+      'acronym' => {:block => false},
       'b' => {:block => false, :strict => false},
+      'blockquote' => {:block => true},
+      'br' => {:block => false, :empty => true},
+      'caption' => {:block => true},
+      'cite' => {:block => false},
+      'code' => {:block => true},
+      'dd' => {:block => true},
+      'del' => {:block => false},
       'div' => {:block => true},
-      'p' => {:block => true}
+      'dl' => {:block => true},
+      'dt' => {:block => true},
+      'em' => {:block => false},
+      'h1' => {:block => true},
+      'h2' => {:block => true},
+      'h3' => {:block => true},
+      'h4' => {:block => true},
+      'h5' => {:block => true},
+      'h6' => {:block => true},
+      'hr' => {:block => true, :empty => true},
+      'i' => {:block => false, :strict => false},
+      'img' => {:block => false, :empty => true},
+      'input' => {:block => false, :empty => true},
+      'ins' => {:block => false},
+      'li' => {:block => true},
+      'ol' => {:block => true},
+      'p' => {:block => true},
+      'pre' => {:block => true},
+      'q' => {:block => false},
+      'span' => {:block => false},
+      'strong' => {:block => false},
+      'sub' => {:block => false},
+      'sup' => {:block => false},
+      'table' => {:block => true},
+      'tbody' => {:block => true},
+      'td' => {:block => true},
+      'tfoot' => {:block => true},
+      'th' => {:block => true},
+      'thead' => {:block => true},
+      'tr' => {:block => true},
+      'ul' => {:block => true}
       
       # TODO: complete this
     }.map {|name, properties| Tag.new(name, properties)}

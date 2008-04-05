@@ -51,6 +51,12 @@ module Texier::Parser
     
     alias_method :parse, :parse_string
     
+    # TODO: create method parse_scanner, which will remember current position,
+    # then calls the method try_parse_scanner (which should be implemented in
+    # derived classes) and if that returns nil, reset the scanner position. In
+    # derived classes, rename parse_scanner to try_parse_scanner and remove the
+    # scanner position reset logic from it.
+    
     # Test if this expression matches, but does not advance current position in
     # the parsed string.
     def peek(scanner)

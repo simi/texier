@@ -26,14 +26,20 @@ module Texier::Parser
     end
 
     def parse_scanner(scanner)
-      apply(@expression.parse_scanner(scanner))
+      previous_pos = scanner.pos
+      
+      if result = apply(@expression.parse_scanner(scanner))
+        result
+      else
+        scanner.pos = previous_pos
+        nil
+      end
     end
 
     private
 
     def apply(result)
-      if result
-        result = @block.call(*result)
+      if result && result = @block.call(*result)
         result.is_a?(Array) ? result : [result]
       else
         nil

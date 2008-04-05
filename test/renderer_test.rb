@@ -15,6 +15,10 @@ class RendererTest < Test::Unit::TestCase
   def test_string_should_be_rendered_as_itself
     assert_equal 'hello world', @renderer.render('hello world')
   end
+  
+  def test_string_should_be_sanitized
+    assert_equal 'hello &lt;world&gt;', @renderer.render('hello <world>')
+  end
 
   def test_array_should_be_rendered_as_concatenation_of_renderings_of_its_items
     assert_equal 'foobar', @renderer.render(['foo', 'bar'])
@@ -67,6 +71,12 @@ class RendererTest < Test::Unit::TestCase
       '<em style="font-family: sans-serif; color: red"></em>',
       @renderer.render(element)
     )
+  end
+  
+  def test_boolean_attribute
+    element = Texier::Element.new('input', 'disabled' => true)
+    
+    assert_equal '<input disabled="disabled" />', @renderer.render(element)
   end
 
   def test_empty_element

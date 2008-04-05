@@ -207,7 +207,7 @@ module Texier
     # 
     # NOTE: should i bother adding support for other output formats?
     def render
-      renderer = Renderer.new
+      renderer = Renderer.new(@dtd)
       renderer.render(@dom)
     end
   end

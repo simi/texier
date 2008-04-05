@@ -17,35 +17,28 @@
 # For more information please visit http://code.google.com/p/texier/
 # 
 
+require "#{File.dirname(__FILE__)}/../expressions/html_element"
+
 module Texier::Modules
+  # This module processes html elements.
   class Html < Texier::Module
+    include Texier::Expressions::HtmlElement
+    
     block_element('html/tag') do
-      attribute_name = e(/[a-zA-Z0-9\-_\:.]+/)
-      attribute_value = e(/[^"> \n]+/) | (e('"').skip & everything_up_to(e('"').skip))
-      
-      attribute = attribute_name & e(/ *= */).skip & attribute_value
-      attributes = attribute.zero_or_more.separated_by(/ +/).map(&Hash.method(:[]))
-      
-      # TODO: consider allowed_tags, allowed_classes & allowed_styles
-      
       content = nothing
-      
-      html_element = dtd.block.pair.inject(nothing) do |result, tag|
-        opening = e(/<#{tag} */).skip & attributes & e(/ *>/).skip
-        closing = e(/<\/#{tag} *>/).skip
-        
-        result | (opening & content.up_to(closing)).map do |attributes, *content|
-          Texier::Element.new(tag.name, content, attributes)
-        end
-      end
-      
-      # TODO: empty elements
+      element = html_element(dtd.block, content)
       
       content << (
-        (html_element | inline_element).zero_or_more & document & e(/\s*/).skip
+        (element | inline_element).zero_or_more & document & e(/\s*/).skip
       )
       
-      html_element
+      element
     end
+    
+    inline_element('html/tag') do
+      html_element(dtd.inline, inline_element.zero_or_more)
+    end
+    
+    # TODO: HTML comments
   end
 end

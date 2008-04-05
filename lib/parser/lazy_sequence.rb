@@ -69,7 +69,14 @@ module Texier::Parser
   
   class Map
     def parse_scanner_lazily(scanner, stop)
-      apply(@expression.parse_scanner_lazily(scanner, stop))
+      previous_pos = scanner.pos
+      
+      if result = apply(@expression.parse_scanner_lazily(scanner, stop))
+        result
+      else
+        scanner.pos = previous_pos
+        nil
+      end
     end
   end
   

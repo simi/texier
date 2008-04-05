@@ -21,6 +21,10 @@ module Texier
   # This class is used to generate html output from the document object model of
   # the input document.
   class Renderer
+    def initialize(dtd = nil)
+      @dtd = dtd || Dtd.new
+    end
+    
     # Render a dom element.
     def render(element)
       case element
@@ -33,7 +37,7 @@ module Texier
         output << "<#{element.name.to_s}"
         output << render_attributes(element.attributes)
 
-        if element.empty?
+        if empty_element?(element)
           output << ' />'
         else
           output << '>'
@@ -43,7 +47,7 @@ module Texier
 
         output
       else
-        element.to_s
+        Texier::Utilities.escape_html(element.to_s)
       end
     end
 
@@ -65,11 +69,13 @@ module Texier
     def render_attributes(attributes)
       # Ignore nil, false and empty values.
       attributes = attributes.reject do |key, value|
-        !value || value.empty?
+        !value || value.to_s.empty?
       end
 
       attributes.inject([]) do |output, (name, value)|
         case value
+        when TrueClass
+          value = name
         when Array
           # TODO: sanitize values
           value = value.join(' ')
@@ -87,6 +93,13 @@ module Texier
         output << " #{name}=\"#{value}\""
         output
       end.sort.join
+    end
+    
+    private
+    
+    def empty_element?(element)
+      # OPTIMIZE: this is O(n), make it O(1)
+      @dtd.empty.include?(element.name)
     end
   end
 end
