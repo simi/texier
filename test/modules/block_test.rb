@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Block class
-class BlockTest < Test::Unit::TestCase
+class Texier::Modules::BlockTest < Test::Unit::TestCase
   def test_text_block
     assert_output 'hello world', "/-- text\nhello world\n\\--"
   end

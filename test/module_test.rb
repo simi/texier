@@ -7,7 +7,7 @@ module Texier::Modules
 end
 
 # Test case for Texier::Module class
-class ModuleTest < Test::Unit::TestCase
+class Texier::ModuleTest < Test::Unit::TestCase
   def test_options_should_have_default_value
     test_mod = Texier::Modules::Test.new
 

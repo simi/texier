@@ -1,9 +1,9 @@
-require "#{File.dirname(__FILE__)}/test_helper"
+require "#{File.dirname(__FILE__)}/../test_helper"
 
-# Test case for Texier::Renderer class
-class RendererTest < Test::Unit::TestCase
+# Test case for Texier::Renderers::Html class
+class Texier::Renderers::HtmlTest < Test::Unit::TestCase
   def setup
-    @renderer = Texier::Renderer.new
+    @renderer = Texier::Renderers::Html.new
   end
 
   def test_empty_element_should_be_rendered_as_empty_string
@@ -82,13 +82,5 @@ class RendererTest < Test::Unit::TestCase
   def test_empty_element
     element = Texier::Element.new('br')
     assert_equal '<br />', @renderer.render(element)
-  end
-
-  def test_render_text
-    element = Texier::Element.new('em', 'hello', 'class' => 'bar')
-    assert_equal 'hello', @renderer.render_text(element)
-
-    element = Texier::Element.new('strong', Texier::Element.new('em', 'hello'))
-    assert_equal 'hello', @renderer.render_text(element)
   end
 end

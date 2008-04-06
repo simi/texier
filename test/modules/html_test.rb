@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Html
-class HtmlTest < Test::Unit::TestCase
+class Texier::Modules::HtmlTest < Test::Unit::TestCase
   def test_inline_html_element
     assert_output '<p><em>hello</em></p>', '<em>hello</em>'
   end
@@ -127,5 +127,41 @@ class HtmlTest < Test::Unit::TestCase
     
     element = @processor.dom[0].content[0]
     assert_instance_of Hash, element.style
+  end
+  
+  def test_html_comment
+    assert_output '<!-- comment -->', '<!-- comment -->'
+  end
+  
+  def test_multiline_html_comment
+    assert_output(
+      "<!-- first line\nsecond line -->", 
+      "<!-- first line\nsecond line -->"
+    )
+  end
+  
+  def test_content_of_html_comment_should_not_be_escaped
+    assert_output '<!-- <img src="foo" /> -->', '<!-- <img src="foo" /> -->'
+  end
+  
+  def test_html_comment_as_inline_element
+    assert_output(
+      '<p>hello <!-- comment --> world</p>',
+      'hello <!-- comment --> world'
+    )
+  end
+  
+  def test_multiline_html_comment_as_inline_element
+    assert_output(
+      "<p>hello <!-- first line\nsecond line --> world</p>",
+      "hello <!-- first line\nsecond line --> world"
+    )
+  end
+  
+  def test_comments_should_be_discarded_if_pass_comments_is_false
+    @processor = Texier::Processor.new
+    @processor.html_module.pass_comments = false
+    
+    assert_output '<p>hello world</p>', 'hello<!-- comment --> world'
   end
 end

@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class LazySequenceTest < Test::Unit::TestCase
+class Texier::Parser::LazySequenceTest < Test::Unit::TestCase
   def test_lazy_sequence_with_repetition
     parser = e(/[a-z]{3}/).one_or_more.up_to('bar')
     

@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class StringTest < Test::Unit::TestCase
+class Texier::Parser::StringTest < Test::Unit::TestCase
   def test_string
     parser = e('hello world')
     

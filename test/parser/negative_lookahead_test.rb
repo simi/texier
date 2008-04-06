@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class NegativeLookaheadTest < Test::Unit::TestCase
+class Texier::Parser::NegativeLookaheadTest < Test::Unit::TestCase
   def test_negative_lookahead
     parser = -e('foo') & e(/[a-z]{3}/)
     

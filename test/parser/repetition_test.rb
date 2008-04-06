@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class RepetitionTest < Test::Unit::TestCase
+class Texier::Parser::RepetitionTest < Test::Unit::TestCase
   def test_zero_or_more_repetition
     parser = e('foo').zero_or_more
 

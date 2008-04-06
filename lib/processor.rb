@@ -19,11 +19,13 @@
 
 require 'set'
 
+require 'comment'
 require 'dtd'
 require 'element'
 require 'error'
 require 'parser'
-require 'renderer'
+require 'renderers/html'
+require 'renderers/plain_text'
 require 'utilities'
 
 require 'module'
@@ -126,6 +128,8 @@ module Texier
     # Is attribute of given tag alowed? Allowed attributes can be specified in
     # +allowed_tags+ property.
     def attribute_allowed?(tag_name, attribute_name)
+      # TODO: take also current dtd into consideration.
+    
       tag_allowed?(tag_name) &&
         (allowed_tags == :all ||
           allowed_tags[tag_name] == :all ||
@@ -204,10 +208,8 @@ module Texier
     end
 
     # Traverse dom tree and create output HTML document.
-    # 
-    # NOTE: should i bother adding support for other output formats?
     def render
-      renderer = Renderer.new(@dtd)
+      renderer = Renderers::Html.new(@dtd)
       renderer.render(@dom)
     end
   end

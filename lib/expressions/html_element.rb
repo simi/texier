@@ -23,6 +23,8 @@ module Texier
     # This module provides expressions for parsing html elements.
     module HtmlElement
       private
+      
+      # TODO: accept also uppercase tags
     
       # Expression that matches opening tag.
       def opening_tag(tag)

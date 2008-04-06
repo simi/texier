@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for class Texier::Modules::Emoticon
-class EmoticonTest < Test::Unit::TestCase
+class Texier::Modules::EmoticonTest < Test::Unit::TestCase
   def test_emoticons_should_be_disabled_by_default
     assert_output '<p>:-)</p>', ':-)'
   end

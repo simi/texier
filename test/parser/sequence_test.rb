@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class SequenceTest < Test::Unit::TestCase
+class Texier::Parser::SequenceTest < Test::Unit::TestCase
   def test_sequence
     parser = e('foo') & e('bar')
     

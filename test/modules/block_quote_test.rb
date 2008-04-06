@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::BlockQuote class
-class BlockQuoteTest < Test::Unit::TestCase
+class Texier::Modules::BlockQuoteTest < Test::Unit::TestCase
   def test_single_line_block_quote
     assert_output(
       '<blockquote><p>hello world</p></blockquote>',

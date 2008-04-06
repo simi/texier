@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class ChoiceTest < Test::Unit::TestCase
+class Texier::Parser::ChoiceTest < Test::Unit::TestCase
   def test_choice
     parser = e('foo') | e('bar')
     

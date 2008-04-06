@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class MapTest < Test::Unit::TestCase
+class Texier::Parser::MapTest < Test::Unit::TestCase
   def test_map
     parser = e('foo') do
       'bar'

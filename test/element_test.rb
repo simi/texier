@@ -2,7 +2,7 @@ require "#{File.dirname(__FILE__)}/test_helper"
 require 'element'
 
 # Test case for Texier::Element class
-class ElementTest < Test::Unit::TestCase
+class Texier::ElementTest < Test::Unit::TestCase
   def test_append_child
     parent = Texier::Element.new('parent')
     child = Texier::Element.new('child')

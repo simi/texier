@@ -2,7 +2,7 @@ require "#{File.dirname(__FILE__)}/test_helper"
 require "processor"
 
 # Test case for Texier::Processor class
-class ProcessorTest < Test::Unit::TestCase
+class Texier::ProcessorTest < Test::Unit::TestCase
   def setup
     @processor = Texier::Processor.new
   end

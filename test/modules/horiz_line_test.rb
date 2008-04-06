@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for class Texier::Modules::HorizLine
-class HorizLineTest < Test::Unit::TestCase
+class Texier::Modules::HorizLineTest < Test::Unit::TestCase
   def test_module_name_should_be_horiz_line
     processor = Texier::Processor.new
     

@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class ExpressionTest < Test::Unit::TestCase
+class Texier::Parser::ExpressionTest < Test::Unit::TestCase
   def test_create_expression_from_string
     assert_nothing_raised do 
       created = e('foo')

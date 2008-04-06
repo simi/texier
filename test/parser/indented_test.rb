@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class IndentedTest < Test::Unit::TestCase
+class Texier::Parser::IndentedTest < Test::Unit::TestCase
   def test_indented
     parser = e("foo\n") & e("bar\n").indented & e('gaz')
 

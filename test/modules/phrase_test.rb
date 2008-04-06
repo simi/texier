@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Phrase class
-class PhraseTest < Test::Unit::TestCase
+class Texier::Modules::PhraseTest < Test::Unit::TestCase
   def setup
     @processor = Texier::Processor.new
   end

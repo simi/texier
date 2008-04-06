@@ -158,7 +158,7 @@ module Texier::Modules
       heading.modify(modifier)
       heading.id ||= auto_id(content)
 
-      @title ||= Texier::Renderer.new.render_text(heading)
+      @title ||= Texier::Renderers::PlainText.new.render(heading)
       @toc << heading
 
       heading
@@ -168,7 +168,7 @@ module Texier::Modules
     def auto_id(content)
       return nil unless generate_id
 
-      id = Texier::Renderer.new.render_text(content)
+      id = Texier::Renderers::PlainText.new.render(content)
       id = id_prefix + Texier::Utilities.webalize(id)
       id = Texier::Utilities.sequel(id) while @used_ids[id]
 

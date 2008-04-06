@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class EverythingUpToTest < Test::Unit::TestCase
+class Texier::Parser::EverythingUpToTest < Test::Unit::TestCase
   def test_everything_up_to
     parser = everything_up_to('bar')
     

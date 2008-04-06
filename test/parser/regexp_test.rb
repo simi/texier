@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class RegexpTest < Test::Unit::TestCase
+class Texier::Parser::RegexpTest < Test::Unit::TestCase
   def test_regexp
     parser = e(/hello.*world/)
     

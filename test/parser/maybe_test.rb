@@ -1,6 +1,6 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class MaybeTest < Test::Unit::TestCase
+class Texier::Parser::MaybeTest < Test::Unit::TestCase
   def test_maybe
     parser = e('foo').maybe
     

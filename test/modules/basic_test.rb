@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Basic class
-class BasicTest < Test::Unit::TestCase
+class Texier::Modules::BasicTest < Test::Unit::TestCase
   def test_empty_input_should_produce_empty_dom
     processor = Texier::Processor.new
     processor.process('')
