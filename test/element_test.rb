@@ -68,4 +68,11 @@ class Texier::ElementTest < Test::Unit::TestCase
     
     assert_equal ['foo', 'bar'], element.class_name
   end
+  
+  def test_add_style
+    element = Texier::Element.new('em')
+    element.add_style('color', 'red')
+    
+    assert_equal({'color' => 'red'}, element.style)
+  end
 end

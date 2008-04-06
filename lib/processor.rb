@@ -36,6 +36,7 @@ require 'modules/emoticon'
 require 'modules/horiz_line'
 require 'modules/heading'
 require 'modules/html'
+require 'modules/image'
 require 'modules/list'
 require 'modules/modifier'
 require 'modules/phrase'
@@ -71,7 +72,7 @@ module Texier
 
     # CSS classes for align modifiers. You can specify classes for these
     # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
-    attr_reader :align_classes
+    attr_accessor :align_classes
 
 
     # Document Object Model of last parsed document. You must call method
@@ -94,7 +95,19 @@ module Texier
       
       @dtd = Dtd.new
 
-      load_modules
+      # These modules have to be loaded first.
+      add_module Modules::Modifier.new
+      add_module Modules::Basic.new
+
+      add_module Modules::Block.new
+      add_module Modules::BlockQuote.new
+      add_module Modules::Emoticon.new
+      add_module Modules::Heading.new
+      add_module Modules::HorizLine.new
+      add_module Modules::Html.new
+      add_module Modules::Image.new
+      add_module Modules::List.new
+      add_module Modules::Phrase.new
     end
 
     # Process input string in Texy format and produce output in HTML format.
@@ -149,21 +162,6 @@ module Texier
     end
 
     protected
-
-    def load_modules
-      # These modules have to be loaded first.
-      add_module Modules::Modifier.new
-      add_module Modules::Basic.new
-
-      add_module Modules::Block.new
-      add_module Modules::BlockQuote.new
-      add_module Modules::Emoticon.new
-      add_module Modules::Heading.new
-      add_module Modules::HorizLine.new
-      add_module Modules::Html.new
-      add_module Modules::List.new
-      add_module Modules::Phrase.new
-    end
 
     # Default name of module is derived from it's class name.
     def default_module_name(mod)

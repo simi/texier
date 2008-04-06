@@ -25,6 +25,8 @@ module Texier::Parser
     end
 
     def parse_scanner(scanner)
+      # FIXME: i think this is not multibyte safe
+      
       if scanner.peek(@string.length) == @string
         scanner.pos += @string.length
         [@string]

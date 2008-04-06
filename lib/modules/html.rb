@@ -23,6 +23,8 @@ module Texier::Modules
   # This module processes html elements.
   class Html < Texier::Module
     include Texier::Expressions::HtmlElement
+    
+    # TODO: preprocess document to ensure validity and well-formness.
 
     # Pass HTML comments to the output (true), or discard them (false)?
     options :pass_comments => true

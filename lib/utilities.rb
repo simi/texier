@@ -37,4 +37,16 @@ module Texier::Utilities
       "#{string}#{separator}2"
     end
   end
+  
+  # Prepend root to url, unless it is absolute already.
+  def self.prepend_root(url, root)
+    if root.to_s.empty?
+      url
+    else
+      root.sub!(/[\/\\]*$/, '')
+      url.sub!(/^[\/\\]*/, '')
+      
+      "#{root}/#{url}"
+    end
+  end
 end

@@ -101,6 +101,12 @@ module Texier
       self
     end
     
+    # Convenience method for setting styles.
+    def add_style(name, value)
+      @attributes['style'] ||= {}
+      @attributes['style'][name] = value
+    end
+    
     # Apply modifier.
     def modify(modifier)
       modifier.each {|m| m.call(self)} if modifier

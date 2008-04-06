@@ -28,9 +28,8 @@ module Texier::Parser
 
     def parse_scanner(scanner)
       previous_pos = scanner.pos
-      results = []
 
-      @expressions.each do |expression|
+      @expressions.inject([]) do |results, expression|
         if result = expression.parse_scanner(scanner)
           results.concat(result)
         else
@@ -38,8 +37,6 @@ module Texier::Parser
           return nil
         end
       end
-
-      results
     end
 
     def & (other)
