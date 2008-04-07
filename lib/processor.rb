@@ -95,6 +95,8 @@ module Texier
       
       @dtd = Dtd.new
 
+      @expressions = {}
+
       # These modules have to be loaded first.
       add_module Modules::Modifier.new
       add_module Modules::Basic.new

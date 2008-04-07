@@ -48,4 +48,35 @@ class Texier::Modules::ImageTest < Test::Unit::TestCase
       '[* hello.jpg >]'
     )
   end
+  
+  def test_image_with_modifier
+    assert_output(
+      '<p><img class="foo" src="/images/hello.jpg" /></p>',
+      '[* hello.jpg .[foo] *]'
+    )
+  end
+  
+  def test_title_modifier_should_be_applied_as_alt
+    assert_output(
+      '<p><img alt="hello world" src="/images/hello.jpg" /></p>',
+      '[* hello.jpg .(hello world) *]'
+    )
+  end
+  
+  def test_if_alt_is_not_set_default_alt_should_be_used
+    @processor = Texier::Processor.new
+    @processor.image_module.default_alt = 'hello world'
+    
+    assert_output(
+      '<p><img alt="hello world" src="/images/hello.jpg" /></p>',
+      '[* hello.jpg *]'
+    )
+  end
+  
+  def test_image_with_link
+    assert_output(
+      '<p><a href="http://metatribe.org"><img src="/images/hello.jpg" /></a></p>',
+      '[* hello.jpg *]:http://metatribe.org'
+    )
+  end
 end

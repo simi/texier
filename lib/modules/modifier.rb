@@ -50,9 +50,6 @@ module Texier::Modules
       # .(hello world)
       title_modifier = quoted_text('(', ')').map do |value|
         proc do |element|
-          # TODO: if it is <img> (and possibly some other), use alt instead of
-          # title.
-
           # TODO: Apply typographic fixes (when Typography module is finished)
           element.title = value.strip
         end

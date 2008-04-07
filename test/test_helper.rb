@@ -30,7 +30,12 @@ class Test::Unit::TestCase
   def assert_output(expected, input)
     actual = (@processor || Texier::Processor.new).process(input)
     
-    assert_block "<#{expected.inspect}> expected but was\n<#{actual.inspect}>." do
+    message = ''
+    message << "<#{input.inspect}> should result in\n"
+    message << "<#{expected.inspect}> but was\n"
+    message << "<#{actual.inspect}> instead."
+    
+    assert_block message do
       expected == actual
     end
   end

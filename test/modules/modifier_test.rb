@@ -10,7 +10,7 @@ class Texier::Modules::ModifierTest < Test::Unit::TestCase
     assert_output '<p><em title="foo">hello</em></p>', '*hello .(foo)*'
     assert_output '<p><em title="foo">hello</em></p>', '*hello .( foo  )*'
   end
-
+  
   def test_class
     assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo]*'
   end
@@ -21,10 +21,10 @@ class Texier::Modules::ModifierTest < Test::Unit::TestCase
   end
   
   def test_only_allowed_classes_should_be_used
-	@processor.allowed_classes = ['foo']
-	assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo]*'
-	assert_output '<p><em>hello</em></p>', '*hello .[bar]*'
-	assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo bar]*'
+    @processor.allowed_classes = ['foo']
+    assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo]*'
+    assert_output '<p><em>hello</em></p>', '*hello .[bar]*'
+    assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo bar]*'
   end
 
   def test_id
@@ -32,9 +32,9 @@ class Texier::Modules::ModifierTest < Test::Unit::TestCase
   end
   
   def test_only_allowed_ids_should_be_used
-	@processor.allowed_classes = ['#foo']
-	assert_output '<p><em id="foo">hello</em></p>', '*hello .[#foo]*'
-	assert_output '<p><em>hello</em></p>', '*hello .[#bar]*'
+    @processor.allowed_classes = ['#foo']
+    assert_output '<p><em id="foo">hello</em></p>', '*hello .[#foo]*'
+    assert_output '<p><em>hello</em></p>', '*hello .[#bar]*'
   end
 
   def test_class_and_id
@@ -57,16 +57,16 @@ class Texier::Modules::ModifierTest < Test::Unit::TestCase
   end
   
   def test_onle_allowed_styles_should_be_used
-	@processor.allowed_styles = ['font-size']
-	assert_output(
-	  '<p><em style="font-size: 20px">hello</em></p>', 
-	  '*hello .{font-size: 20px}*'
-	)
-	assert_output '<p><em>hello</em></p>', '*hello .{color: red}*'
-	assert_output(
-	  '<p><em style="font-size: 20px">hello</em></p>', 
-	  '*hello .{font-size: 20px; color: red}*'
-	)
+    @processor.allowed_styles = ['font-size']
+    assert_output(
+      '<p><em style="font-size: 20px">hello</em></p>', 
+      '*hello .{font-size: 20px}*'
+    )
+    assert_output '<p><em>hello</em></p>', '*hello .{color: red}*'
+    assert_output(
+      '<p><em style="font-size: 20px">hello</em></p>', 
+      '*hello .{font-size: 20px; color: red}*'
+    )
   end
   
   def test_when_style_name_is_valid_attribute_name_it_should_be_used_as_attribute
@@ -77,13 +77,13 @@ class Texier::Modules::ModifierTest < Test::Unit::TestCase
   end
   
   def test_only_allowed_attributes_should_be_used
-	@processor.allowed_tags = {'em' => ['onclick']}
+    @processor.allowed_tags = {'em' => ['onclick']}
 	
-	assert_output(
-	  '<p><em onclick="hello()">hello</em></p>', 
-	  '*hello .{onclick: hello()}*'
-	)
-	assert_output '<p><em>hello</em></p>', '*hello .{onmouseover: hello()}*'
+    assert_output(
+      '<p><em onclick="hello()">hello</em></p>', 
+      '*hello .{onclick: hello()}*'
+    )
+    assert_output '<p><em>hello</em></p>', '*hello .{onmouseover: hello()}*'
   end
 
   def test_horizontal_align
@@ -103,8 +103,8 @@ class Texier::Modules::ModifierTest < Test::Unit::TestCase
   end
   
   def test_horizontal_align_should_be_used_only_if_text_align_style_is_allowed
-	@processor.allowed_styles = nil
-	assert_output '<p>hello</p>', ".<\nhello"
+    @processor.allowed_styles = nil
+    assert_output '<p>hello</p>', ".<\nhello"
   end
 
   def test_many_modifiers
