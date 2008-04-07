@@ -43,7 +43,7 @@ module Texier
     
       # Expression that matches attributes of a tag.
       def attributes
-        @attributes ||= begin
+        processor.expressions[:attributes] ||= begin
           attribute = nothing
         
           # class

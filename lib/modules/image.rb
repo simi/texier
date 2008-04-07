@@ -20,6 +20,9 @@
 module Texier::Modules
   # This module provides images.
   class Image < Texier::Module
+    include Texier::Expressions::Link
+    include Texier::Expressions::Modifier
+    
     options(
       # Root of relative images.
       :root => '/images',
@@ -34,10 +37,8 @@ module Texier::Modules
       :default_alt => nil
     )
     
-    # TODO: add support for mouseover images. (this feature isn't that useful,
-    # in my opinion, so i'll give it very low priority right now)
-    
-    # TODO: image size [* foo.jpg 123x456 *]
+    # TODO: add support for mouseover images. (this feature isn't that useful
+    # in my opinion. It gets low priority...)
     
     # TODO: determine image size automaticaly (if image is local and some
     # image processing tool (RMagic, for example) is loaded)
@@ -45,16 +46,20 @@ module Texier::Modules
     inline_element('image') do
       opening = e(/\[\* */).skip
       
-      align = e('>') {:right} | e('<') {:left} | e('*') {[nil]}
       space = e(/ */).skip
-      closing = space & modifier.maybe & space & align & e(']').skip
+      align = e('>') {:right} | e('<') {:left} | e('*') {[nil]}
+      size = e(/\d+x\d+/).map {|value| [value.split('x')]}
       
-      image = (opening & everything_up_to(closing)).map do |url, modifier, align|
+      closing = space & size.maybe & space & modifier.maybe & space & align & e(']').skip
+      
+      image = opening & everything_up_to(closing)
+      image = image.map do |url, size, modifier, align|
         element = Texier::Element.new(
           'img', :src => Texier::Utilities.prepend_root(url, root)
         )
         
         apply_align(element, align)
+        apply_size(element, size)
         element.modify(modifier)
         apply_alt(element)
         
@@ -92,6 +97,11 @@ module Texier::Modules
       else        
         element.alt = default_alt
       end
+    end
+    
+    # Set width and height of image.
+    def apply_size(element, size)
+      element.width, element.height = size if size
     end
   end
 end

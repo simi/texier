@@ -49,6 +49,8 @@ module Texier::Modules
   #   end. Using this, the level of topmost heading can be set (by default, it
   #   is 1)
   class Heading < Texier::Module
+    include Texier::Expressions::Modifier
+    
     # Content of the first heading.
     attr_reader :title
 

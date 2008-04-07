@@ -28,6 +28,10 @@ require 'renderers/html'
 require 'renderers/plain_text'
 require 'utilities'
 
+require 'expressions/html_element'
+require 'expressions/link'
+require 'expressions/modifier'
+
 require 'module'
 require 'modules/basic'
 require 'modules/block'
@@ -38,7 +42,6 @@ require 'modules/heading'
 require 'modules/html'
 require 'modules/image'
 require 'modules/list'
-require 'modules/modifier'
 require 'modules/phrase'
 
 module Texier
@@ -97,10 +100,10 @@ module Texier
 
       @expressions = {}
 
-      # These modules have to be loaded first.
-      add_module Modules::Modifier.new
+      # These module has to be loaded first.
       add_module Modules::Basic.new
 
+      # These can be loaded in any order.
       add_module Modules::Block.new
       add_module Modules::BlockQuote.new
       add_module Modules::Emoticon.new

@@ -79,4 +79,11 @@ class Texier::Modules::ImageTest < Test::Unit::TestCase
       '[* hello.jpg *]:http://metatribe.org'
     )
   end
+  
+  def test_image_with_size
+    assert_output(
+      '<p><img height="90" src="/images/hello.jpg" width="160" /></p>',
+      '[* hello.jpg 160x90 *]'
+    )
+  end
 end

@@ -29,6 +29,8 @@ module Texier::Modules
   # +document+ which is root expression of whole Texier grammar and coresponds
   # to whole document.
   class Basic < Texier::Module
+    include Texier::Expressions::Modifier
+    
     PUNCTUATION = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?")
 
     # Texier converts tabs to spaces. This specifies how may spaces is one tab.
@@ -63,22 +65,13 @@ module Texier::Modules
       document = e(/\s*/).skip & block_element.zero_or_more.separated_by(/\n+/)
       
           
-      # Expression that matches link.
-      # 
-      # TODO: this is just temporary. When Link module is finished, it will be
-      # moved there.
-      link = e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
-        url.gsub(/^:\[?|\]$/, '')
-      end
-
       # Export these expressions, so they can be used in other modules.
       processor.expressions.merge!(
         :document => document,
         :block_element => block_element,
         :block_element_slot => block_element_slot,
         :inline_element => inline_element,
-        :inline_element_slot => inline_element_slot,
-        :link => link
+        :inline_element_slot => inline_element_slot
       )
     end
 

@@ -17,8 +17,6 @@
 # For more information please visit http://code.google.com/p/texier/
 # 
 
-require "#{File.dirname(__FILE__)}/../expressions/html_element"
-
 module Texier::Modules
   # Block module
   # 
@@ -27,6 +25,7 @@ module Texier::Modules
   # TODO: explain text, html, code, div
   class Block < Texier::Module
     include Texier::Expressions::HtmlElement
+    include Texier::Expressions::Modifier
     
     block_element('block/text') do
       opening = e(/\/--+ *text *\n/).skip

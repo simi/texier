@@ -17,20 +17,16 @@
 # For more information please visit http://code.google.com/p/texier/
 # 
 
-module Texier::Modules
-  # This module provides block quotations.
-  class BlockQuote < Texier::Module
-    include Texier::Expressions::Link
-    include Texier::Expressions::Modifier
-    
-    block_element('blockquote') do
-      content = block_element.one_or_more.separated_by(/\n+/).group
-      block_quote = (modifier & e("\n").skip).maybe \
-        & content.indented(/^>( |$)/) & (e("\n>").skip & link).maybe
+module Texier
+  module Expressions
+    module Link
+      private
       
-      block_quote.map do |modifier, content, cite_url|
-        element = Texier::Element.new('blockquote', content, :cite => cite_url)
-        element.modify(modifier)
+      # Expression that matches link.
+      def link
+        processor.expressions[:link] ||= e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
+          url.gsub(/^:\[?|\]$/, '')
+        end
       end
     end
   end

@@ -19,6 +19,8 @@
 
 module Texier::Modules
   class List < Texier::Module
+    include Texier::Expressions::Modifier
+    
     options :bullets => [
       # first bullet | is ordered? | style        | next bullets
       [/\* +/,         false],

@@ -20,6 +20,9 @@
 module Texier::Modules
   # This module defines inline phrase elements, like emphases or simple links.
   class Phrase < Texier::Module
+    include Texier::Expressions::Link
+    include Texier::Expressions::Modifier
+    
     # Unicode character for minus (codepoint U+2212)
     MINUS = "\xE2\x88\x92"
     
