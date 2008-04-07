@@ -57,10 +57,28 @@ class Texier::Modules::LinkTest < Test::Unit::TestCase
     )
   end
   
+  def test_link_reference_without_content_should_use_url_as_content
+    assert_output(
+      '<p><a href="http://metatribe.org">http://metatribe.org</a></p>',
+      "[metatribe]\n\n[metatribe]: http://metatribe.org"
+    )
+  end
+  
+  def test_link_reference_with_inline_elements
+    assert_output(
+      '<p><a href="http://metatribe.org">check <em>this</em> out</a></p>',
+      "[metatribe]\n\n[metatribe]: http://metatribe.org check *this* out"
+    )
+  end
+  
   def test_many_references
     assert_output(
       '<p><a href="foo">click me!</a> <a href="bar">me too!</a></p>',
       "[foo] [bar]\n\n[foo]: foo click me!\n[bar]: bar me too!"
     )
+  end
+  
+  def test_undefined_reference_should_be_ignored
+    assert_output '<p>[foo]</p>', "[foo]\n\n[bar]: bar.com"
   end
 end

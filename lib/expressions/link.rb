@@ -28,7 +28,7 @@ module Texier
       # Expression that matches link.
       def link
         processor.expressions[:link] ||= e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
-          sanitize_url(url.gsub(/^:\[?|\]$/, ''))
+          build_url(url.gsub!(/^:\[?|\]$/, ''))
         end
       end
       
@@ -43,8 +43,17 @@ module Texier
         end
       end
       
+      def build_url(url)
+        # TODO: handle also the case when link_module is not installed.
+        if reference = processor.link_module.dereference(url)
+          url = reference.href
+        end
+        
+        sanitize_url(url)
+      end
+      
       def build_link(content, url)
-        Texier::Element.new('a', content, 'href' => sanitize_url(url))
+        Texier::Element.new('a', content, 'href' => build_url(url))
       end
     end
   end

@@ -20,11 +20,36 @@
 module Texier::Modules
   class Link < Texier::Module
     include Texier::Expressions::Link
+    include Texier::Expressions::Modifier
     
     # TODO: obfuscate emails, shorten urls, ...
     
     def initialize
       @references = {}
+    end
+    
+    def before_parse(input)
+      # Collect reference defintions.
+      
+      return input unless processor.allowed['link/definition']
+      
+      url = e(/[^ \n]+/)
+      content = e(/ */).skip & inline_element.zero_or_more.group
+      value = url & content.up_to(modifier | e(/$/).skip)
+      
+      definition = e(/^/).skip & reference_name & e(/: */).skip & value
+      definition = definition.map do |name, url, content, modifier|
+        element = Texier::Element.new('a', content, 'href' => sanitize_url(url))
+        element.content = url if element.content.empty?
+        element.modify(modifier)
+        
+        add_reference(name, element)
+      end
+      
+      line = definition.skip | e(/^[^\n]*$/)
+      
+      document = line.zero_or_more.separated_by("\n")
+      document.parse(input).join("\n")
     end
     
     inline_element('link/url') do
@@ -40,36 +65,15 @@ module Texier::Modules
     end
     
     inline_element('link/reference') do
-      reference_name.map do |name|
-        Texier::Element.new('a', 'href' => name)
-      end
+      reference_name.map {|name| dereference(name)}
     end
     
-    block_element('link/reference') do
-      url = e(/[^ \n]+/).map {|url| sanitize_url(url)}
-      definition = url & everything_up_to(modifier | e(/$/) {[nil]})
-      
-      reference = e(/^/).skip & reference_name & e(/: */).skip & definition
-      reference = reference.map do |name, url, content, modifier|
-        add_reference(name, [url, content.strip, modifier])
-      end
-      
-      reference.one_or_more.skip
-    end
-    
-    def after_parse(dom)
-      # Dereference references.
-      traverse(dom, 'a') do |element|
-        if reference = dereference(element.href)
-          element.href = reference[0] if reference[0]
-          element.content ||= reference[1]
-          element.modify(reference[2])
-        end
-      end
-    end
-
     def add_reference(name, content)
       @references[name] = content
+    end
+    
+    def dereference(name)
+      @references[name]
     end
     
     private
@@ -78,23 +82,6 @@ module Texier::Modules
     def reference_name
       @reference_name ||= e(/\[[^\*\[\]\n]+\]/).map do |string|
         string.gsub(/^[ \[]+|[ \]]+$/, '')
-      end
-    end
-    
-    def dereference(name)
-      @references[name]
-    end
-    
-    # Traverse the dom, passing each element to the block, one at a time.
-    #
-    # TODO: move this to class Texier::Module
-    def traverse(element, tag_name, &block)
-      case element
-      when Array
-        element.each {|item| traverse(item, tag_name, &block)}
-      when Texier::Element
-        traverse(element.content, tag_name, &block)
-        block.call(element) if element.name == tag_name
       end
     end
   end

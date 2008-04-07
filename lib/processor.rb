@@ -119,6 +119,7 @@ module Texier
 
     # Process input string in Texy format and produce output in HTML format.
     def process(input)
+      initialize_parser
       input = before_parse(input)
       parse(input)
       after_parse
@@ -181,6 +182,13 @@ module Texier
       name.downcase      
     end
 
+    def initialize_parser
+      @expressions = {}
+      @modules.each do |mod|
+        mod.initialize_parser
+      end
+    end
+
     # This is called before parsing. Here the input document can be modified as
     # neccessary.
     def before_parse(input)
@@ -188,15 +196,9 @@ module Texier
         mod.before_parse(input)
       end
     end
-
+    
     # Parse the input document and create Document Object Model (dom).
     def parse(input)
-      @expressions = {}
-
-      @modules.each do |mod|
-        mod.initialize_parser
-      end
-
       unless @expressions[:document]
         raise Texier::Error, 'Document expression not defined.'
       end
