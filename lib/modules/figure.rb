@@ -18,14 +18,25 @@
 # 
 
 module Texier::Modules
+  # This module provides figures - images with descritpions.
   class Figure < Base
+    options :class_name => 'figure'
+    
+    # NOTE: left_class and right_class are taken from image module. This
+    # differs from Texy!, but i think there is no need to duplicate this
+    # functionality.
+    
+    # TODO: alignments
+    
     block_element('figure') do
-      figure = image & e(/ *\*{3,} */).skip & everything_up_to(e(/$/).skip)
-      figure = figure.map do |image, description|
+      description = inline_element.one_or_more.group
+      
+      figure = image & e(/ *\*{3,} */).skip & description.up_to(modifier | e(/$/) {[nil]})
+      figure = figure.map do |image, description, modifier|
         Texier::Element.new(
           'div', [image, Texier::Element.new('p', description)],
-          'class' => 'figure'
-        )
+          'class' => class_name
+        ).modify(modifier)
       end
     end
   end
