@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
 # Test case for Texier::Modules::Modifier class
-class Texier::Expressions::ModifierTest < Test::Unit::TestCase
+class Texier::Modules::ModifierTest < Test::Unit::TestCase
   def setup
     @texier = Texier::Base.new
   end

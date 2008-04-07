@@ -20,9 +20,6 @@
 module Texier::Modules
   # This module provides block quotations.
   class BlockQuote < Base
-    include Texier::Expressions::Link
-    include Texier::Expressions::Modifier
-    
     block_element('blockquote') do
       content = block_element.one_or_more.separated_by(/\n+/).group
       block_quote = (modifier & e("\n").skip).maybe \

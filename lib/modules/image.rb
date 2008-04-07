@@ -20,9 +20,6 @@
 module Texier::Modules
   # This module provides images.
   class Image < Base
-    include Texier::Expressions::Link
-    include Texier::Expressions::Modifier
-    
     options(
       # Root of relative images.
       :root => '/images',
@@ -45,7 +42,7 @@ module Texier::Modules
     
     # TODO: image references
     
-    inline_element('image') do
+    inline_element('image', true) do
       opening = e(/\[\* */).skip
       
       space = e(/ */).skip

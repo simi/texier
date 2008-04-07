@@ -20,9 +20,6 @@
 module Texier::Modules
   # This module defines inline phrase elements, like emphases or simple links.
   class Phrase < Base
-    include Texier::Expressions::Link
-    include Texier::Expressions::Modifier
-    
     # Unicode character for minus (codepoint U+2212)
     MINUS = "\xE2\x88\x92"
     
@@ -82,7 +79,7 @@ module Texier::Modules
         # Span with link and optional modifier.
         span_with_link = mark & everything_up_to(modifier.maybe & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
-          element = build_link(text, url)
+          element = processor.link_module.build_link(text, url)
           element.modify(modifier)
         end
       
@@ -101,7 +98,9 @@ module Texier::Modules
     
     # Quick links (blah:www.metatribe.org)
     inline_element('phrase/quicklink') do
-      (e(/[^\s:]+/) & link).map {|content, url| build_link(content, url)}
+      (e(/[^\s:]+/) & link).map do |content, url|
+        processor.link_module.build_link(content, url)
+      end
     end
     
     inline_element('phrase/notexy') {quoted_text("''")}
@@ -120,7 +119,7 @@ module Texier::Modules
     private
     
     def link
-      @link ||= links_allowed? ? super : nothing
+      links_allowed? ? super : nothing
     end
 
     # Expression that matches a phrase element.
@@ -132,7 +131,7 @@ module Texier::Modules
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
-        element = build_link(element, url) if url
+        element = processor.link_module.build_link(element, url) if url
         element.modify(modifier)
       end
     end

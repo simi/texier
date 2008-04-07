@@ -19,6 +19,14 @@
 
 module Texier::Modules
   class Figure < Base
-    # TODO: after the Image module is done, do this.
+    block_element('figure') do
+      figure = image & e(/ *\*{3,} */).skip & everything_up_to(e(/$/).skip)
+      figure = figure.map do |image, description|
+        Texier::Element.new(
+          'div', [image, Texier::Element.new('p', description)],
+          'class' => 'figure'
+        )
+      end
+    end
   end
 end

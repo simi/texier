@@ -29,8 +29,6 @@ module Texier::Modules
   # +document+ which is root expression of whole Texier grammar and coresponds
   # to whole document.
   class Core < Base
-    include Texier::Expressions::Modifier
-    
     PUNCTUATION = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?")
 
     # Texier converts tabs to spaces. This specifies how may spaces is one tab.

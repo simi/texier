@@ -27,7 +27,6 @@ module Texier
     # This is the base class for all Texier modules.
     class Base
       attr_accessor :processor
-      attr_accessor :name
     
       def dtd
         processor.dtd
@@ -45,15 +44,68 @@ module Texier
       end
     
       def initialize_parser
-        parser_initializers.each do |(type, name, block)|
+        exported_expressions.each do |name, block|
+          processor.expressions[name] = instance_eval(&block)
+        end
+        
+        extending_expressions.each do |(slot, name, block)|
           if processor.allowed[name]
-            processor.expressions[:"#{type}_slot"] << instance_eval(&block)
+            processor.expressions[:"#{slot}_slot"] << instance_eval(&block)
           end
         end
       end
-  
+      
       protected
+      
+      @@extending_expressions = {}
     
+      def self.extend_expression(slot, name, export = false, &block)
+        @@extending_expressions[self] ||= []
+        @@extending_expressions[self] << [slot, name, block]
+        
+        export_expression(name.to_sym, &block) if export
+      end
+      
+      # Define new inline element.
+      def self.inline_element(name, export = false, &block)
+        extend_expression(:inline_element, name, export, &block)
+      end
+    
+      # Define new block element.
+      def self.block_element(name, export = false, &block)
+        extend_expression(:block_element, name, export, &block)
+      end
+    
+      def extending_expressions
+        @@extending_expressions[self.class] || []
+      end
+
+      @@exported_expressions = {}
+      
+      # Export expression so it can be used by other modules.
+      def self.export_expression(name, &block)
+        @@exported_expressions[self] ||= {}
+        @@exported_expressions[self][name] = block
+      end
+      
+      def exported_expressions
+        @@exported_expressions[self.class] || {}
+      end
+      
+      # Helper methods for generating parser rules.
+      include Parser::Generators
+    
+      # Access exported parser expressions as ordinary methods.
+      def method_missing(name, *args, &block)
+        if expression = processor.expressions[name]
+          expression
+        else
+          super
+        end
+      end
+
+
+      
       # Define module options. Options are defined as hash, where key is the
       # name of the option and value is it's default value.
       def self.options(hash)
@@ -69,39 +121,6 @@ module Texier
         
           # Create method with question mark at the end.
           alias_method "#{name}?", name if [true, false].include?(default_value)
-        end
-      end
-    
-      @@parser_initializers = {}
-    
-      def self.define_element(type, name, &block)
-        @@parser_initializers[self] ||= []
-        @@parser_initializers[self] << [type, name, block]
-      end
-    
-      # Define new inline element.
-      def self.inline_element(name, &block)
-        define_element(:inline_element, name, &block)
-      end
-    
-      # Define new block element.
-      def self.block_element(name, &block)
-        define_element(:block_element, name, &block)
-      end
-    
-      def parser_initializers
-        @@parser_initializers[self.class] || []
-      end
-    
-      # Helper methods for generating parser rules.
-      include Parser::Generators
-    
-      # Access exported parser expressions as ordinary methods.
-      def method_missing(name, *args, &block)
-        if expression = processor.expressions[name]
-          expression
-        else
-          super
         end
       end
     end

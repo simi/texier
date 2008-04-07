@@ -28,23 +28,23 @@ require 'renderer/html'
 require 'renderer/plain_text'
 require 'utilities'
 
-require 'expressions/html_element'
-require 'expressions/link'
-require 'expressions/modifier'
-
 require 'modules/base'
 
 require 'modules/block'
 require 'modules/block_quote'
 require 'modules/core'
 require 'modules/emoticon'
-require 'modules/horiz_line'
+require 'modules/figure'
 require 'modules/heading'
+require 'modules/horiz_line'
 require 'modules/html'
 require 'modules/image'
 require 'modules/link'
 require 'modules/list'
+require 'modules/modifier'
 require 'modules/phrase'
+
+
 
 module Texier
   # The main class of Texier. You process Texy files by calling method +process+
@@ -102,18 +102,20 @@ module Texier
 
       @expressions = {}
 
-      # These module has to be loaded first.
+      install Modules::Modifier.new
       install Modules::Core.new
-
-      # These can be loaded in any order.
+      install Modules::Link.new
+      
       install Modules::Block.new
       install Modules::BlockQuote.new
       install Modules::Emoticon.new
       install Modules::Heading.new
       install Modules::HorizLine.new
       install Modules::Html.new
+      
       install Modules::Image.new
-      install Modules::Link.new
+      install Modules::Figure.new
+      
       install Modules::List.new
       install Modules::Phrase.new
     end
@@ -127,22 +129,19 @@ module Texier
       render
     end
 
+    # Install a module.
     def install(mod)
-      # TODO: allow mod to be symbol/string, in that case convert it to 
-      # class and automaticaly require corresponding file.
-      
       @modules ||= []
       @modules << mod
 
-      mod.processor = self
-      mod.name = default_module_name(mod)
+      @named_modules ||= {}
+      @named_modules["#{module_name(mod)}_module".to_sym] = mod
 
-      # Dynamicaly define singleton method with the name of added module, so it
-      # can be accessed from outside as foo_module (this is advanced ruby
-      # magic).
-      method_name = "#{mod.name}_module"
-      (class << self; self; end).send(:define_method, method_name) {mod}
+      # TODO: rename processor to something nicer and shorter
+      mod.processor = self
     end
+    
+    # TODO: uninstall
 
     # Is tag allowed? Allowed tags can be specified in +allowed_tags+ property.
     def tag_allowed?(tag_name)
@@ -175,15 +174,19 @@ module Texier
 
     protected
 
-    # Default name of module is derived from it's class name.
-    def default_module_name(mod)
+    # Access modules using methods.
+    def method_missing(name, *args, &block)
+      @named_modules[name] || super
+    end
+    
+    # Name of module, derived from it's class.
+    def module_name(mod)
       name = mod.class.name
-      name.sub!(/^(.*::)?/, '')
-      
-      # CamelCase to under_score
-      name.gsub!(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-      name.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
-      name.downcase      
+      name.gsub!(/^.*::/, '')
+      name.gsub!(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+      name.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
+      name.downcase!
+      name
     end
 
     def initialize_parser

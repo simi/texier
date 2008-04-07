@@ -24,9 +24,6 @@ module Texier::Modules
   # 
   # TODO: explain text, html, code, div
   class Block < Base
-    include Texier::Expressions::HtmlElement
-    include Texier::Expressions::Modifier
-    
     block_element('block/text') do
       opening = e(/\/--+ *text *\n/).skip
 
@@ -52,7 +49,8 @@ module Texier::Modules
 
     block_element('block/html') do
       content = nothing
-      content << (html_element(dtd, content) | e(/[^<]+/) | e('<'))
+      html_element = processor.html_module.html_element(dtd, content)
+      content << (html_element | e(/[^<]+/) | e('<'))
       
       opening = e(/\/--+ *html *\n/).skip
       opening & content.one_or_more.up_to(closing)
