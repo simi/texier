@@ -4,9 +4,7 @@ require 'rubygems'
 require 'test/unit'
 require 'mocha'
 
-$:.unshift("#{File.dirname(__FILE__)}/../lib")
-
-require 'processor'
+require "#{File.dirname(__FILE__)}/../lib/base"
 
 class String
   def unindent
@@ -28,7 +26,7 @@ class Test::Unit::TestCase
   
   # Assert that Texier produces expected output from given input.
   def assert_output(expected, input)
-    actual = (@processor || Texier::Processor.new).process(input)
+    actual = (@texier || Texier::Base.new).process(input)
     
     message = ''
     message << "<#{input.inspect}> should result in\n"

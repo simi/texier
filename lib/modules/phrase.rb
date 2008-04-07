@@ -19,7 +19,7 @@
 
 module Texier::Modules
   # This module defines inline phrase elements, like emphases or simple links.
-  class Phrase < Texier::Module
+  class Phrase < Base
     include Texier::Expressions::Link
     include Texier::Expressions::Modifier
     

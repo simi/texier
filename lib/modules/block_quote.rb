@@ -19,7 +19,7 @@
 
 module Texier::Modules
   # This module provides block quotations.
-  class BlockQuote < Texier::Module
+  class BlockQuote < Base
     include Texier::Expressions::Link
     include Texier::Expressions::Modifier
     

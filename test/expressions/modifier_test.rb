@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 # Test case for Texier::Modules::Modifier class
 class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   def setup
-    @processor = Texier::Processor.new
+    @texier = Texier::Base.new
   end
 
   def test_title
@@ -21,7 +21,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
   
   def test_only_allowed_classes_should_be_used
-    @processor.allowed_classes = ['foo']
+    @texier.allowed_classes = ['foo']
     assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo]*'
     assert_output '<p><em>hello</em></p>', '*hello .[bar]*'
     assert_output '<p><em class="foo">hello</em></p>', '*hello .[foo bar]*'
@@ -32,7 +32,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
   
   def test_only_allowed_ids_should_be_used
-    @processor.allowed_classes = ['#foo']
+    @texier.allowed_classes = ['#foo']
     assert_output '<p><em id="foo">hello</em></p>', '*hello .[#foo]*'
     assert_output '<p><em>hello</em></p>', '*hello .[#bar]*'
   end
@@ -57,7 +57,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
   
   def test_onle_allowed_styles_should_be_used
-    @processor.allowed_styles = ['font-size']
+    @texier.allowed_styles = ['font-size']
     assert_output(
       '<p><em style="font-size: 20px">hello</em></p>', 
       '*hello .{font-size: 20px}*'
@@ -77,7 +77,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
   
   def test_only_allowed_attributes_should_be_used
-    @processor.allowed_tags = {'em' => ['onclick']}
+    @texier.allowed_tags = {'em' => ['onclick']}
 	
     assert_output(
       '<p><em onclick="hello()">hello</em></p>', 
@@ -94,7 +94,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
 
   def test_horizontal_align_with_specified_align_class
-    @processor.align_classes[:left] = 'foo'
+    @texier.align_classes[:left] = 'foo'
     
     assert_output(
       '<p class="foo">hello world</p>',
@@ -103,7 +103,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
   
   def test_horizontal_align_should_be_used_only_if_text_align_style_is_allowed
-    @processor.allowed_styles = nil
+    @texier.allowed_styles = nil
     assert_output '<p>hello</p>', ".<\nhello"
   end
 
@@ -136,7 +136,7 @@ class Texier::Expressions::ModifierTest < Test::Unit::TestCase
   end
 
   def test_disallow_modifier
-    @processor.allowed['modifier'] = false
+    @texier.allowed['modifier'] = false
 
     assert_output '<p><em>hello .[foo]</em></p>', '*hello .[foo]*'
   end

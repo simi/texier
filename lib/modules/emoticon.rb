@@ -20,7 +20,7 @@
 module Texier::Modules
   # This module repalces emoticons (smilies) with images. It is disabled by
   # default (can be enabled using processor.allowed['emoticon'] = true)
-  class Emoticon < Texier::Module
+  class Emoticon < Base
       
     # TODO: root and file_root
     

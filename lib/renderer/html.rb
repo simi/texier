@@ -18,7 +18,7 @@
 # 
 
 module Texier
-  module Renderers
+  module Renderer
     # This class renders the DOM three as HTML document.
     class Html
       def initialize(dtd = nil)

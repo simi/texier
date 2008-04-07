@@ -18,7 +18,7 @@
 # 
 
 module Texier::Modules
-  # Basic module.
+  # Core module.
   # 
   # This modules provides the most basic features of Texier processor. It
   # exports two parsing expressions: +inline_element+ and +block_element+. They
@@ -28,7 +28,7 @@ module Texier::Modules
   # formatting) and block_element (paragraph). Last, it defines expression
   # +document+ which is root expression of whole Texier grammar and coresponds
   # to whole document.
-  class Basic < Texier::Module
+  class Core < Base
     include Texier::Expressions::Modifier
     
     PUNCTUATION = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?")

@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 # Test case for Texier::Modules::Phrase class
 class Texier::Modules::PhraseTest < Test::Unit::TestCase
   def setup
-    @processor = Texier::Processor.new
+    @texier = Texier::Base.new
   end
   
   def test_em
@@ -53,7 +53,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
   
   def test_ins
-    @processor.allowed['phrase/ins'] = true
+    @texier.allowed['phrase/ins'] = true
     assert_output '<p><ins>hello world</ins></p>', '++hello world++'
   end
   
@@ -62,7 +62,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
 
   def test_del
-    @processor.allowed['phrase/del'] = true
+    @texier.allowed['phrase/del'] = true
     assert_output '<p><del>hello world</del></p>', '--hello world--'
   end
 
@@ -71,7 +71,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
   
   def test_sup
-    @processor.allowed['phrase/sup'] = true
+    @texier.allowed['phrase/sup'] = true
     assert_output '<p>x<sup>2</sup></p>', 'x^^2^^'
 
     assert_output '<p>x<sup>2</sup></p>', 'x^2'
@@ -83,7 +83,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
 
   def test_sub
-    @processor.allowed['phrase/sub'] = true
+    @texier.allowed['phrase/sub'] = true
     assert_output '<p>x<sub>2</sub></p>', 'x__2__'
     
     assert_output '<p>x<sub>2</sub></p>', 'x_2'
@@ -99,7 +99,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
   
   def test_cite
-    @processor.allowed['phrase/cite'] = true
+    @texier.allowed['phrase/cite'] = true
     assert_output '<p><cite>hello world</cite></p>', '~~hello world~~'
   end
 
@@ -189,7 +189,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
   
   def test_links_allowed_set_to_false
-    @processor.phrase_module.links_allowed = false
+    @texier.phrase_module.links_allowed = false
     
     # TODO: Not sure if this is desired behavior. Check how Texy! does it.
     
@@ -200,7 +200,7 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   end
   
   def test_when_links_are_disabled_span_with_link_and_no_modifier_should_be_ignored
-    @processor.phrase_module.links_allowed = false
+    @texier.phrase_module.links_allowed = false
     
     # TODO: Not sure if this is desired behavior. Check how Texy! does it.
 

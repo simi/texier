@@ -18,7 +18,7 @@
 # 
 
 module Texier::Modules
-  class List < Texier::Module
+  class List < Base
     include Texier::Expressions::Modifier
     
     options :bullets => [

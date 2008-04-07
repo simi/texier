@@ -18,7 +18,7 @@
 # 
 
 module Texier
-  module Renderers
+  module Renderer
     # This class renders DOM tree as plain text.
     class PlainText
       def render(element)

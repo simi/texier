@@ -1,9 +1,9 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-# Test case for Texier::Renderers::Html class
-class Texier::Renderers::HtmlTest < Test::Unit::TestCase
+# Test case for Texier::Renderer::Html class
+class Texier::Renderer::HtmlTest < Test::Unit::TestCase
   def setup
-    @renderer = Texier::Renderers::Html.new
+    @renderer = Texier::Renderer::Html.new
   end
 
   def test_empty_element_should_be_rendered_as_empty_string

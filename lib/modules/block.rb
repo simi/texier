@@ -23,7 +23,7 @@ module Texier::Modules
   # This module defines various blocks in the document.
   # 
   # TODO: explain text, html, code, div
-  class Block < Texier::Module
+  class Block < Base
     include Texier::Expressions::HtmlElement
     include Texier::Expressions::Modifier
     

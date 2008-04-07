@@ -19,7 +19,7 @@
 
 module Texier::Modules
   # This module provides images.
-  class Image < Texier::Module
+  class Image < Base
     include Texier::Expressions::Link
     include Texier::Expressions::Modifier
     

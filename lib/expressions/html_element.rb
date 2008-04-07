@@ -99,7 +99,7 @@ module Texier
         )
       end
     
-      # TODO: move this to Processor class
+      # TODO: move this to Base class
       def sanitize_attributes(tag, attributes)
         attributes.inject({}) do |result, (name, value)|
           next(result) unless processor.attribute_allowed?(tag.to_s, name)

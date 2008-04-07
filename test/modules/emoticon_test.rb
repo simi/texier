@@ -7,8 +7,8 @@ class Texier::Modules::EmoticonTest < Test::Unit::TestCase
   end
   
   def test_emoticons
-    @processor = Texier::Processor.new
-    @processor.allowed['emoticon'] = true
+    @texier = Texier::Base.new
+    @texier.allowed['emoticon'] = true
     
     assert_output '<p><img alt=":-)" src="smile.gif" /></p>', ':-)' 
     assert_output '<p><img alt=";-)" src="wink.gif" /></p>', ';-)' 
@@ -17,16 +17,16 @@ class Texier::Modules::EmoticonTest < Test::Unit::TestCase
   end
   
   def test_repeated_mouth_should_be_accepted
-    @processor = Texier::Processor.new
-    @processor.allowed['emoticon'] = true
+    @texier = Texier::Base.new
+    @texier.allowed['emoticon'] = true
 
     assert_output '<p><img alt=":-)" src="smile.gif" /></p>', ':-))))'
   end
   
   def test_class_name
-    @processor = Texier::Processor.new
-    @processor.allowed['emoticon'] = true
-    @processor.emoticon_module.class_name = 'smilie'
+    @texier = Texier::Base.new
+    @texier.allowed['emoticon'] = true
+    @texier.emoticon_module.class_name = 'smilie'
     
     assert_output(
       '<p><img alt=":-)" class="smilie" src="smile.gif" /></p>', ':-)'

@@ -64,8 +64,8 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_html_element_should_be_ignored_unless_it_is_allowed
-    @processor = Texier::Processor.new
-    @processor.allowed_tags = {'em' => :all}
+    @texier = Texier::Base.new
+    @texier.allowed_tags = {'em' => :all}
     
     assert_output(
       '<p><em>i am allowed</em> &lt;strong&gt;i am not&lt;/strong&gt;</p>',
@@ -74,8 +74,8 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_attribute_should_be_ignored_unless_it_is_allowed
-    @processor = Texier::Processor.new
-    @processor.allowed_tags = {'em' => ['class']}
+    @texier = Texier::Base.new
+    @texier.allowed_tags = {'em' => ['class']}
     
     assert_output(
       '<p><em class="foo">hello</em></p>', 
@@ -84,8 +84,8 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_class_should_be_ignored_unless_it_is_allowed
-    @processor = Texier::Processor.new
-    @processor.allowed_classes = ['foo']
+    @texier = Texier::Base.new
+    @texier.allowed_classes = ['foo']
     
     assert_output(
       '<p><em class="foo">hello</em></p>', 
@@ -94,8 +94,8 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_id_should_be_ignored_unless_it_is_allowed
-    @processor = Texier::Processor.new
-    @processor.allowed_classes = ['#foo']
+    @texier = Texier::Base.new
+    @texier.allowed_classes = ['#foo']
     
     assert_output(
       '<p><em id="foo">hello</em> <strong>world</strong></p>', 
@@ -104,8 +104,8 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_style_should_be_ignored_unless_it_is_allowed
-    @processor = Texier::Processor.new
-    @processor.allowed_styles = ['color']
+    @texier = Texier::Base.new
+    @texier.allowed_styles = ['color']
     
     assert_output(
       '<p><em style="color: blue">hello</em></p>', 
@@ -114,18 +114,18 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_class_should_be_parsed_into_array
-    @processor = Texier::Processor.new
-    @processor.process('<em class="foo bar">hello</em>')
+    @texier = Texier::Base.new
+    @texier.process('<em class="foo bar">hello</em>')
     
-    element = @processor.dom[0].content[0]
+    element = @texier.dom[0].content[0]
     assert_instance_of Array, element.attributes['class']
   end
   
   def test_style_should_be_parsed_into_hash
-    @processor = Texier::Processor.new
-    @processor.process('<em style="color: red">hello</em>')
+    @texier = Texier::Base.new
+    @texier.process('<em style="color: red">hello</em>')
     
-    element = @processor.dom[0].content[0]
+    element = @texier.dom[0].content[0]
     assert_instance_of Hash, element.style
   end
   
@@ -159,8 +159,8 @@ class Texier::Modules::HtmlTest < Test::Unit::TestCase
   end
   
   def test_comments_should_be_discarded_if_pass_comments_is_false
-    @processor = Texier::Processor.new
-    @processor.html_module.pass_comments = false
+    @texier = Texier::Base.new
+    @texier.html_module.pass_comments = false
     
     assert_output '<p>hello world</p>', 'hello<!-- comment --> world'
   end

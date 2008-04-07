@@ -18,7 +18,7 @@
 # 
 
 module Texier::Modules
-  class HorizLine < Texier::Module
+  class HorizLine < Base
     # TODO: classes and modifiers (Texy! has them, but are there realy needed
     # here?)
     

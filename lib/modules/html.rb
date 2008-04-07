@@ -21,7 +21,7 @@ require "#{File.dirname(__FILE__)}/../expressions/html_element"
 
 module Texier::Modules
   # This module processes html elements.
-  class Html < Texier::Module
+  class Html < Base
     include Texier::Expressions::HtmlElement
     
     # TODO: preprocess document to ensure validity and well-formness.

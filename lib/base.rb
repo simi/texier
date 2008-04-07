@@ -24,18 +24,19 @@ require 'dtd'
 require 'element'
 require 'error'
 require 'parser'
-require 'renderers/html'
-require 'renderers/plain_text'
+require 'renderer/html'
+require 'renderer/plain_text'
 require 'utilities'
 
 require 'expressions/html_element'
 require 'expressions/link'
 require 'expressions/modifier'
 
-require 'module'
-require 'modules/basic'
+require 'modules/base'
+
 require 'modules/block'
 require 'modules/block_quote'
+require 'modules/core'
 require 'modules/emoticon'
 require 'modules/horiz_line'
 require 'modules/heading'
@@ -49,7 +50,7 @@ module Texier
   # The main class of Texier. You process Texy files by calling method +process+
   #   on an instance of this class:
   # 
-  #   p = Texier::Processor
+  #   p = Texier::Base
   #   output = p.process(input)
   # 
   # There is also a shortcut, if you don't need to do anything fancy with the
@@ -59,7 +60,7 @@ module Texier
   # 
   # This class also contain methods to configure Texier output or manage
   # Texier's modules.
-  class Processor
+  class Base
     # Configuration of Texier syntax. If you want to disable certain feature,
     # set allowed[feature_name] to false. Features and their names are defined
     # in modules.
@@ -102,19 +103,19 @@ module Texier
       @expressions = {}
 
       # These module has to be loaded first.
-      add_module Modules::Basic.new
+      install Modules::Core.new
 
       # These can be loaded in any order.
-      add_module Modules::Block.new
-      add_module Modules::BlockQuote.new
-      add_module Modules::Emoticon.new
-      add_module Modules::Heading.new
-      add_module Modules::HorizLine.new
-      add_module Modules::Html.new
-      add_module Modules::Image.new
-      add_module Modules::Link.new
-      add_module Modules::List.new
-      add_module Modules::Phrase.new
+      install Modules::Block.new
+      install Modules::BlockQuote.new
+      install Modules::Emoticon.new
+      install Modules::Heading.new
+      install Modules::HorizLine.new
+      install Modules::Html.new
+      install Modules::Image.new
+      install Modules::Link.new
+      install Modules::List.new
+      install Modules::Phrase.new
     end
 
     # Process input string in Texy format and produce output in HTML format.
@@ -126,7 +127,10 @@ module Texier
       render
     end
 
-    def add_module(mod)
+    def install(mod)
+      # TODO: allow mod to be symbol/string, in that case convert it to 
+      # class and automaticaly require corresponding file.
+      
       @modules ||= []
       @modules << mod
 
@@ -216,7 +220,7 @@ module Texier
 
     # Traverse dom tree and create output HTML document.
     def render
-      renderer = Renderers::Html.new(@dtd)
+      renderer = Renderer::Html.new(@dtd)
       renderer.render(@dom)
     end
   end
@@ -224,6 +228,6 @@ module Texier
   # Shortcut method that creates a Texier processor and calls it's +process+
   # method.
   def self.process(input)
-    Processor.new.process(input)
+    Base.new.process(input)
   end
 end

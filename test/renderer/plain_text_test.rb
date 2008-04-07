@@ -1,9 +1,9 @@
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-# Test case for Texier::Renderers::PlainText class
-class Texier::Renderers::PlainTextTest < Test::Unit::TestCase
+# Test case for Texier::Renderer::PlainText class
+class Texier::Renderer::PlainTextTest < Test::Unit::TestCase
   def setup
-    @renderer = Texier::Renderers::PlainText.new
+    @renderer = Texier::Renderer::PlainText.new
   end
 
   def test_render

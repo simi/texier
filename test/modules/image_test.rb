@@ -6,9 +6,9 @@ class Texier::Modules::ImageTest < Test::Unit::TestCase
   end
   
   def test_image_should_be_aligned_using_left_and_right_class_options_if_they_are_set
-    @processor = Texier::Processor.new
-    @processor.image_module.left_class = 'left'
-    @processor.image_module.right_class = 'right'
+    @texier = Texier::Base.new
+    @texier.image_module.left_class = 'left'
+    @texier.image_module.right_class = 'right'
     
     assert_output(
       '<p><img class="left" src="/images/hello.jpg" /></p>',
@@ -22,9 +22,9 @@ class Texier::Modules::ImageTest < Test::Unit::TestCase
   end
   
   def test_image_should_be_aligned_using_global_align_class_if_it_is_set
-    @processor = Texier::Processor.new
-    @processor.align_classes[:left] = 'left'
-    @processor.align_classes[:right] = 'right'
+    @texier = Texier::Base.new
+    @texier.align_classes[:left] = 'left'
+    @texier.align_classes[:right] = 'right'
     
     assert_output(
       '<p><img class="left" src="/images/hello.jpg" /></p>',
@@ -64,8 +64,8 @@ class Texier::Modules::ImageTest < Test::Unit::TestCase
   end
   
   def test_if_alt_is_not_set_default_alt_should_be_used
-    @processor = Texier::Processor.new
-    @processor.image_module.default_alt = 'hello world'
+    @texier = Texier::Base.new
+    @texier.image_module.default_alt = 'hello world'
     
     assert_output(
       '<p><img alt="hello world" src="/images/hello.jpg" /></p>',

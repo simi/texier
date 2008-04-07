@@ -18,11 +18,21 @@
 # 
 
 module Texier::Modules
-  class Link < Texier::Module
+  class Link < Base
     include Texier::Expressions::Link
     include Texier::Expressions::Modifier
     
-    # TODO: obfuscate emails, shorten urls, ...
+    # TODO: obfuscate emails
+    
+    # TODO: shorten urls
+    
+    # TODO: prepend root to relative urls
+    
+    # TODO: nofollowify absolute links
+    
+    # TODO: handle class popup
+    
+    # TODO: image links
     
     def initialize
       @references = {}

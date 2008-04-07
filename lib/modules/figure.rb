@@ -18,7 +18,7 @@
 # 
 
 module Texier::Modules
-  class Figure < Texier::Module
+  class Figure < Base
     # TODO: after the Image module is done, do this.
   end
 end
