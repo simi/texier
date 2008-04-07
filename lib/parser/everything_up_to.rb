@@ -32,7 +32,7 @@ module Texier::Parser
         result << char
       end
       
-      result.empty? ? nil : [result] + stop
+      [result] + stop
     end
   end
 

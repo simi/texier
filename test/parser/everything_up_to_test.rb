@@ -5,7 +5,7 @@ class Texier::Parser::EverythingUpToTest < Test::Unit::TestCase
     parser = everything_up_to('bar')
     
     assert_nil parser.parse('')
-    assert_nil parser.parse('bar')
+    assert_equal ['', 'bar'], parser.parse('bar')
     assert_equal ['foo', 'bar'], parser.parse('foobar')
   end
   

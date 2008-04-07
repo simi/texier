@@ -191,17 +191,21 @@ class Texier::Modules::PhraseTest < Test::Unit::TestCase
   def test_links_allowed_set_to_false
     @processor.phrase_module.links_allowed = false
     
+    # TODO: Not sure if this is desired behavior. Check how Texy! does it.
+    
     assert_output(
-      '<p><em>hello</em>:http://metatribe.org</p>', 
+      '<p><em>hello</em>:<a href="http://metatribe.org">http://metatribe.org</a></p>', 
       '*hello*:http://metatribe.org'
     )
   end
   
   def test_when_links_are_disabled_span_with_link_and_no_modifier_should_be_ignored
     @processor.phrase_module.links_allowed = false
+    
+    # TODO: Not sure if this is desired behavior. Check how Texy! does it.
 
     assert_output(
-      '<p>"hello":http://metatribe.org</p>',
+      '<p>"hello":<a href="http://metatribe.org">http://metatribe.org</a></p>',
       '"hello":http://metatribe.org'
     )
   end

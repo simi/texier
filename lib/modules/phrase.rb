@@ -82,7 +82,7 @@ module Texier::Modules
         # Span with link and optional modifier.
         span_with_link = mark & everything_up_to(modifier.maybe & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
-          element = Texier::Element.new('a', text, 'href' => url)
+          element = build_link(text, url)
           element.modify(modifier)
         end
       
@@ -101,9 +101,7 @@ module Texier::Modules
     
     # Quick links (blah:www.metatribe.org)
     inline_element('phrase/quicklink') do
-      (e(/[^\s:]+/) & link).map do |content, url|
-        Texier::Element.new('a', content, 'href' => url)
-      end
+      (e(/[^\s:]+/) & link).map {|content, url| build_link(content, url)}
     end
     
     inline_element('phrase/notexy') {quoted_text("''")}
@@ -134,7 +132,7 @@ module Texier::Modules
         element = [*tags].reverse.inject(content) do |element, tag|
           Texier::Element.new(tag, element)
         end
-        element = Texier::Element.new('a', element, 'href' => url) if url
+        element = build_link(element, url) if url
         element.modify(modifier)
       end
     end

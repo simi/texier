@@ -43,6 +43,8 @@ module Texier::Modules
     # TODO: determine image size automaticaly (if image is local and some
     # image processing tool (RMagic, for example) is loaded)
     
+    # TODO: image references
+    
     inline_element('image') do
       opening = e(/\[\* */).skip
       

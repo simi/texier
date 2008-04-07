@@ -38,8 +38,8 @@ module Texier
       input
     end
     
-    # This method is called after parsing. Derived classeas should override it
-    # if they need to do something with dom tree.
+    # This method is called after parsing. Derived classes should override it if
+    # they need to do something with dom tree.
     def after_parse(dom)      
     end
     

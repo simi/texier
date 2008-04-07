@@ -41,6 +41,7 @@ require 'modules/horiz_line'
 require 'modules/heading'
 require 'modules/html'
 require 'modules/image'
+require 'modules/link'
 require 'modules/list'
 require 'modules/phrase'
 
@@ -111,6 +112,7 @@ module Texier
       add_module Modules::HorizLine.new
       add_module Modules::Html.new
       add_module Modules::Image.new
+      add_module Modules::Link.new
       add_module Modules::List.new
       add_module Modules::Phrase.new
     end

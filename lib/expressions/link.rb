@@ -20,13 +20,31 @@
 module Texier
   module Expressions
     module Link
+      URL = /(https?:\/\/|www\.|ftp:\/\/)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;\#,-]+[\/\w\d+~%?@=_\#]/i
+      EMAIL = /[a-z0-9.+_-]{1,64}@[a-z0-9.+_-]{1,252}\.[a-z]{2,6}/i
+      
       private
       
       # Expression that matches link.
       def link
         processor.expressions[:link] ||= e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
-          url.gsub(/^:\[?|\]$/, '')
+          sanitize_url(url.gsub(/^:\[?|\]$/, ''))
         end
+      end
+      
+      def sanitize_url(url)
+        case url
+        when /^www\./
+          "http://#{url}"
+        when EMAIL
+          "mailto:#{url}"
+        else
+          url
+        end
+      end
+      
+      def build_link(content, url)
+        Texier::Element.new('a', content, 'href' => sanitize_url(url))
       end
     end
   end
