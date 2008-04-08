@@ -19,6 +19,8 @@
 
 require 'set'
 
+$: << "#{File.dirname(__FILE__)}"
+
 require 'comment'
 require 'dtd'
 require 'element'

@@ -34,11 +34,16 @@ module Texier::Modules
       :default_alt => nil
     )
     
-    # TODO: add support for mouseover images. (this feature isn't that useful
-    # in my opinion. It gets low priority...)
+    # NOTE: what about discard right_class/left_class and use just
+    # Texier::Base#align_classes ? (this is about removing unnecessary
+    # complexity). Also default_alt seems prety useles to me...
     
-    # TODO: determine image size automaticaly (if image is local and some
-    # image processing tool (RMagic, for example) is loaded)
+    
+    # TODO: add support for mouseover images. (this feature isn't that useful in
+    # my opinion. It gets low priority...)
+    
+    # TODO: determine image size automaticaly (if image is local and some image
+    # processing tool (RMagic, for example) is loaded)
     
     # TODO: image references
     
@@ -80,7 +85,7 @@ module Texier::Modules
         if align_class = send("#{align}_class") || processor.align_classes[align]
           element.add_class_name(align_class)
         else
-          element.add_style('float', align.to_s)
+          element.style['float'] = align.to_s
         end
       end
     end

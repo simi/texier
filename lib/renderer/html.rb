@@ -71,7 +71,8 @@ module Texier
           when Hash
             # TODO: sanitize names and values
             value = value.inject([]) do |value, (hash_name, hash_value)|
-              value + ["#{hash_name}: #{hash_value}"]
+              value << "#{hash_name}: #{hash_value}" unless hash_value.to_s.empty?
+              value
             end.join('; ')
           else
             # Sanitize values
@@ -79,7 +80,7 @@ module Texier
             value = value.gsub('"', '&quot;')
           end
 
-          output << " #{name}=\"#{value}\""
+          output << " #{name}=\"#{value}\"" unless value.to_s.empty?
           output
         end.sort.join
       end

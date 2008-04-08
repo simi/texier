@@ -22,22 +22,43 @@ module Texier::Modules
   class Figure < Base
     options :class_name => 'figure'
     
-    # NOTE: left_class and right_class are taken from image module. This
-    # differs from Texy!, but i think there is no need to duplicate this
-    # functionality.
-    
-    # TODO: alignments
+    # NOTE: left_class and right_class are taken from image module. This differs
+    # from Texy!, but i think there is no need to duplicate these options.
     
     block_element('figure') do
+      separator = e(/ *\*{3,} */).skip
+      eol = e(/$/) {[nil]}
+
       description = inline_element.one_or_more.group
-      
-      figure = image & e(/ *\*{3,} */).skip & description.up_to(modifier | e(/$/) {[nil]})
+
+      figure = image & separator & description.up_to(modifier | eol)
       figure = figure.map do |image, description, modifier|
-        Texier::Element.new(
+        element = Texier::Element.new(
           'div', [image, Texier::Element.new('p', description)],
           'class' => class_name
-        ).modify(modifier)
+        )
+        
+        element.modify(modifier)
+        apply_align(element)
+        
+        element
       end
+    end
+    
+    private
+    
+    # Take align from image and apply it to the whole figure.
+    def apply_align(figure)
+      image = figure.content[0]
+      
+      [:left, :right].each do |align|
+        align_class = processor.image_module.send("#{align}_class") ||
+          processor.align_classes[align]
+      
+        figure.add_class_name(image.class_name.delete(align_class))
+      end
+      
+      figure.style['float'] = image.style.delete('float')
     end
   end
 end

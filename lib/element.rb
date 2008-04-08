@@ -91,20 +91,26 @@ module Texier
     end
 	
     def class_name
-      @attributes['class']
+      @attributes['class'] ||= []
+    end
+
+    def has_class_name?(value)
+      @attributes['class'] && [*@attributes['class']].include?(value)
     end
 	
-    # Convenience method for adding class names.
     def add_class_name(value)
       @attributes['class'] = [*@attributes['class']].compact
       @attributes['class'] << value if value
       self
     end
     
-    # Convenience method for setting styles.
-    def add_style(name, value)
+    def remove_class_name(value)
+      @attributes['class'].delete(value)
+      self
+    end
+    
+    def style
       @attributes['style'] ||= {}
-      @attributes['style'][name] = value
     end
     
     # Apply modifier.

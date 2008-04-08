@@ -32,4 +32,22 @@ class Texier::Modules::FigureTest < Test::Unit::TestCase
       '[* hello.jpg *] *** hello world'
     )
   end
+  
+  def test_figure_aligned_with_inline_style
+    assert_output(
+      '<div class="figure" style="float: right">' \
+      '<img src="/images/hello.jpg" /><p>hello world</p></div>',
+      '[* hello.jpg >] *** hello world'
+    )
+  end
+  
+  def test_figure_aligned_with_class
+    @texier = Texier::Base.new
+    @texier.image_module.right_class = 'right'
+    
+    assert_output(
+      '<div class="figure right"><img src="/images/hello.jpg" /><p>hello world</p></div>',
+      '[* hello.jpg >] *** hello world'
+    )
+  end
 end

@@ -73,6 +73,15 @@ class Texier::Renderer::HtmlTest < Test::Unit::TestCase
     )
   end
   
+  def test_hash_attribute_should_ignore_empty_values
+    element = Texier::Element.new('em', 'style' => {
+      'font-family' => nil,
+      'color' => ''
+    })
+  
+    assert_equal('<em></em>', @renderer.render(element))
+  end
+  
   def test_boolean_attribute
     element = Texier::Element.new('input', 'disabled' => true)
     
