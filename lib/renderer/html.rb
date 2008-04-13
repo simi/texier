@@ -76,7 +76,7 @@ module Texier
             end.join('; ')
           else
             # Sanitize values
-            value = Texier::Utilities.escape_html(value)
+            value = Texier::Utilities.escape_html(value.to_s)
             value = value.gsub('"', '&quot;')
           end
 

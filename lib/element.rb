@@ -20,7 +20,7 @@
 module Texier
   # Element of the Document Object Model.
   class Element
-    attr_reader :name
+    attr_accessor :name
     attr_reader :content
     attr_reader :attributes
 
@@ -39,16 +39,13 @@ module Texier
     
     # TODO: dom builder
     
-    def name=(value)
-      @name = value
-    end
-    
     def content=(value)
       if value.is_a?(Array) && value.all? {|item| item.is_a?(String)}
         value = value.join
       end
       
       @content = value
+      self
     end
 
     # Append child element.
@@ -66,14 +63,14 @@ module Texier
     # Access attributes using methods:
     # 
     # element.foo = 'bar' is the same as element.attributes['foo'] = 'bar'.
-    def method_missing(name, *args)
-      return super unless name.to_s =~ /[a-z_]+=?/
+    def method_missing(method, *args)
+      return super unless method.to_s =~ /[a-z_]+=?/
 
-      name = name.to_s
-      if name[-1] == ?=
-        @attributes[name[0..-2]] = args.first
+      method = method.to_s
+      if method[-1] == ?=
+        @attributes[method[0..-2]] = args.first
       else
-        @attributes[name]
+        @attributes[method]
       end
     end
 	

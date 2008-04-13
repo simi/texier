@@ -87,6 +87,11 @@ class Texier::Renderer::HtmlTest < Test::Unit::TestCase
     
     assert_equal '<input disabled="disabled" />', @renderer.render(element)
   end
+  
+  def test_number_attribute
+    element = Texier::Element.new('td', 'colspan' => 42)
+    assert_equal '<td colspan="42"></td>', @renderer.render(element)
+  end
 
   def test_empty_element
     element = Texier::Element.new('br')

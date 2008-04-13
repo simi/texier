@@ -107,4 +107,16 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       |* two one|two two|'.unindent
     )
   end
+  
+  def test_cell_spanning_more_columns
+    assert_output(
+      '<table><tbody>' \
+        '<tr><td colspan="2">one</td></tr>' \
+        '<tr><td>two one</td><td>two two</td></tr>' \
+        '</tbody></table>',
+      '
+      |one           ||
+      |two one|two two|'.unindent
+    )
+  end
 end

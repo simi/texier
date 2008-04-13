@@ -29,9 +29,21 @@ module Texier::Modules
 
     block_element('table') do
       n = e("\n")
+      space = e(/ */).skip
+      separator = e(/\|+|$/).map do |pipes|
+        count = pipes.count('|')
+        count > 1 ? count : [nil]
+      end
 
-      head_row = row('th')
-      body_row = row('td')
+      cell_content = space & inline_element.one_or_more.group.up_to(space & separator)
+
+      body_cell = cell_content.map {|*args| build_cell('td', *args)}
+      head_cell = cell_content.map {|*args| build_cell('th', *args)}
+
+      header_cell = e('*').skip & head_cell
+
+      head_row = row(header_cell | head_cell)
+      body_row = row(header_cell | body_cell)
 
       head_opening = e(/#{HEAD_SEPARATOR}\n/).skip
       head_closing = e(/\n#{HEAD_SEPARATOR}/).skip
@@ -50,25 +62,15 @@ module Texier::Modules
     private
 
     # Create an expression that parses table row.
-    def row(cell_tag)
-      space = e(/ */).skip
-      separator = e('|').skip
-
-      content = space & inline_element.one_or_more.up_to(space & (separator | e(/$/).skip))
-
-      normal_cell = content.map do |*content|
-        build(cell_tag, content)
-      end
-
-      header_cell = e('*').skip & content.map do |*content|
-        build('th', content)
-      end
-
-      cell = header_cell | normal_cell
-
-      -e(HEAD_SEPARATOR) & separator & cell.one_or_more.map do |*cells|
+    def row(cell)
+      -e(HEAD_SEPARATOR) & e('|').skip & cell.one_or_more.map do |*cells|
         build('tr', cells)
       end
+    end
+
+    # Build table cell element.
+    def build_cell(tag, content, column_span)
+        build(tag, content, 'colspan' => column_span)
     end
   end
 end
