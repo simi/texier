@@ -65,9 +65,7 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     assert_output(
       '<table><tbody>' \
         '<tr><td>one one</td><td>one two</td></tr>' \
-        '</tbody><thead>' \
         '<tr><th>two one</th><th>two two</th></tr>' \
-        '</thead><tbody>' \
         '<tr><td>three one</td><td>three two</td></tr>' \
         '</tbody></table>',
       '
@@ -85,9 +83,8 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
         '<tr><th>one one</th><th>one two</th></tr>' \
         '</thead><tbody>' \
         '<tr><td>two one</td><td>two two</td></tr>' \
-        '</tbody><thead>' \
         '<tr><th>three one</th><th>three two</th></tr>' \
-        '</thead></table>',
+        '</tbody></table>',
       '
       |--------------------
       |one one  |one two  |

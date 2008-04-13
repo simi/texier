@@ -19,24 +19,28 @@
 
 module Texier::Modules
   class Table < Base
-    HEADER_SEPARATOR = / *\|[+-]{3,} */
+    HEAD_SEPARATOR = / *\|[+-]{3,} */
     
     block_element('table') do
       n = e("\n")
       
-      header_opening = e(/#{HEADER_SEPARATOR}\n/).skip
-      header_closing = e(/\n#{HEADER_SEPARATOR}/).skip
+      head_row = row('th')
+      body_row = row('td')
       
-      header = header_opening & row('th').one_or_more.separated_by(n) & header_closing
-      header = header.map do |*rows|
+      head_opening = e(/#{HEAD_SEPARATOR}\n/).skip
+      head_closing = e(/\n#{HEAD_SEPARATOR}/).skip
+      
+      head_rows = head_opening & head_row.one_or_more.separated_by(n) & head_closing
+      head = head_rows.map do |*rows|
         Texier::Element.new('thead', rows)
       end
 
-      body = row('td').one_or_more.separated_by(n).map do |*rows|
+      body = (body_row | head_rows).one_or_more.separated_by(n).map do |*rows|
         Texier::Element.new('tbody', rows)
       end
       
-      (header | body).one_or_more.separated_by(n).map do |*blocks|
+      table = (head & n.skip & body) | head | body
+      table.map do |*blocks|
         Texier::Element.new('table', blocks)
       end
     end
@@ -52,7 +56,7 @@ module Texier::Modules
         Texier::Element.new(cell_tag, content)
       end
       
-      -e(HEADER_SEPARATOR) & @cell_separator & cell.one_or_more.map do |*cells|
+      -e(HEAD_SEPARATOR) & @cell_separator & cell.one_or_more.map do |*cells|
         Texier::Element.new('tr', cells)
       end
     end
