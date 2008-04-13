@@ -26,7 +26,7 @@ module Texier::Modules
         & content.indented(/^>( |$)/) & (e("\n>").skip & link).maybe
       
       block_quote.map do |modifier, content, cite_url|
-        element = Texier::Element.new('blockquote', content, :cite => cite_url)
+        element = build('blockquote', content, :cite => cite_url)
         element.modify(modifier)
       end
     end

@@ -49,7 +49,7 @@ module Texier::Modules
 
       definition = e(/^/).skip & reference_name & e(/: */).skip & value
       definition = definition.map do |name, url, content, modifier|
-        element = Texier::Element.new('a', content, 'href' => sanitize_url(url))
+        element = build('a', content, 'href' => sanitize_url(url))
         element.content = url if element.content.empty?
         element.modify(modifier)
 
@@ -96,7 +96,7 @@ module Texier::Modules
     end
 
     def build_link(content, url)
-      Texier::Element.new('a', content, 'href' => build_url(url))
+      build('a', content, 'href' => build_url(url))
     end
 
     def add_reference(name, content)

@@ -93,7 +93,7 @@ module Texier::Modules
 
       heading = marker & inline_element.one_or_more.group.up_to(tail)
       heading.map do |level, content, modifier|
-        build_element(level, content, modifier)
+        build_heading(level, content, modifier)
       end
     end
 
@@ -108,7 +108,7 @@ module Texier::Modules
 
       heading = inline_element.one_or_more.group.up_to(tail) & underline
       heading.map do |content, modifier, level|
-        build_element(level, content, modifier)
+        build_heading(level, content, modifier)
       end
     end
 
@@ -153,8 +153,8 @@ module Texier::Modules
     private
 
     # Create Heading DOM element
-    def build_element(level, content, modifier)
-      heading = Texier::Element.new("h#{level + 1}", content, 'level' => level)
+    def build_heading(level, content, modifier)
+      heading = build("h#{level + 1}", content, 'level' => level)
       heading.modify(modifier)
       heading.id ||= auto_id(content)
 

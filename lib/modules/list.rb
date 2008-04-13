@@ -41,7 +41,7 @@ module Texier::Modules
     # Definition lists.
     block_element('list/definition') do
       term = inline_element.one_or_more.up_to(e(":").skip).map do |*content|
-        Texier::Element.new('dt', content)
+        build('dt', content)
       end
       
       definition = build_item(/-(?![>-])/, 'dd')
@@ -49,7 +49,7 @@ module Texier::Modules
       
       list = term & modifier.maybe & e("\n").skip & definitions
       list.map do |term, modifier, *definitions|
-        Texier::Element.new('dl', [term] + definitions).modify(modifier)
+        build('dl', [term] + definitions).modify(modifier)
       end
     end
 
@@ -68,7 +68,7 @@ module Texier::Modules
       
       list = (modifier & e("\n").skip).maybe & items
       list.map do |modifier, *items|
-        element = Texier::Element.new(style[1] ? 'ol' : 'ul', items)
+        element = build(style[1] ? 'ol' : 'ul', items)
         
         if style[2]
           element.style ||= {}
@@ -87,7 +87,7 @@ module Texier::Modules
       
       item = bullet & first_line & (e(/\n+/).skip & blocks).maybe
       item.map do |first, modifier, *rest|
-        Texier::Element.new(tag, first + rest).modify(modifier)
+        build(tag, first + rest).modify(modifier)
       end
     end
   end

@@ -57,6 +57,11 @@ module Texier
       
       protected
       
+      # Build DOM element.
+      def build(*args)
+        Texier::Element.new(*args)
+      end
+      
       @@extending_expressions = {}
     
       def self.extend_expression(slot, name, export = false, &block)

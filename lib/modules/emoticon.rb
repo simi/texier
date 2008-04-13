@@ -47,9 +47,7 @@ module Texier::Modules
     inline_element('emoticon') do
       icons.inject(nothing) do |result, (pattern, image)|
         result | e(/#{Regexp.quote(pattern)}+/).map do
-          Texier::Element.new(
-            'img', 'src' => image, 'alt' => pattern, 'class' => class_name
-          )
+          build('img', 'src' => image, 'alt' => pattern, 'class' => class_name)
         end
       end
     end

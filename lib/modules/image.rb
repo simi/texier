@@ -58,9 +58,7 @@ module Texier::Modules
       
       image = opening & everything_up_to(closing)
       image = image.map do |url, size, modifier, align|
-        element = Texier::Element.new(
-          'img', :src => Texier::Utilities.prepend_root(url, root)
-        )
+        element = build('img', :src => Texier::Utilities.prepend_root(url, root))
         
         apply_align(element, align)
         apply_size(element, size)
@@ -71,7 +69,7 @@ module Texier::Modules
       end
       
       image_with_link = (image & link).map do |image, url|
-        Texier::Element.new('a', image, :href => url)
+        build('a', image, :href => url)
       end
       
       image_with_link | image

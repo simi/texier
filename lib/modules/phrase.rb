@@ -46,7 +46,7 @@ module Texier::Modules
     inline_element('phrase/quote') do
       quote = e('>>').skip & everything_up_to(modifier.maybe & e('<<').skip) & link.maybe
       quote = quote.map do |content, modifier, url|
-        Texier::Element.new('q', content, 'cite' => url).modify(modifier)
+        build('q', content, 'cite' => url).modify(modifier)
       end
     end
     
@@ -54,7 +54,7 @@ module Texier::Modules
     def self.subscript_or_superscript(name, mark, tag)
       inline_element(name) do
         (e(/[a-z0-9]/) & e(mark) & e(/-?\d+(?!\w)/)).map do |a, _, b|
-          [a, Texier::Element.new(tag, b.gsub('-', MINUS))]
+          [a, build(tag, b.gsub('-', MINUS))]
         end
       end
     end
@@ -67,7 +67,7 @@ module Texier::Modules
       content = e(/\w{2,}|(\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
       
       (content & quoted_text('((', '))')).map do |acronym, meaning|
-        Texier::Element.new('acronym', acronym, 'title' => meaning)
+        build('acronym', acronym, 'title' => meaning)
       end
     end
     
@@ -86,7 +86,7 @@ module Texier::Modules
         # Span with modifier.
         span_with_modifier = mark & everything_up_to(modifier & mark)
         span_with_modifier = span_with_modifier.map do |text, modifier|
-          Texier::Element.new('span', text).modify(modifier)
+          build('span', text).modify(modifier)
         end
       
         span_with_link | span_with_modifier
@@ -129,7 +129,7 @@ module Texier::Modules
       phrase = mark & everything_up_to(modifier.maybe & mark) & link.maybe
       phrase = phrase.map do |content, modifier, url|
         element = [*tags].reverse.inject(content) do |element, tag|
-          Texier::Element.new(tag, element)
+          build(tag, element)
         end
         element = processor.link_module.build_link(element, url) if url
         element.modify(modifier)

@@ -19,14 +19,12 @@
 
 module Texier::Modules
   class HorizLine < Base
-    # TODO: classes and modifiers (Texy! has them, but are there realy needed
+    # TODO: classes and modifiers (Texy! has them, but are there realy useful
     # here?)
     
     block_element('horizline') do
       ['-', '*'].inject(nothing) do |result, style|      
-        result | e(/^#{Regexp.quote(style)}{3,} *$/).map do
-          Texier::Element.new('hr')
-        end
+        result | e(/^#{Regexp.quote(style)}{3,} *$/).map {build('hr')}
       end
     end
   end

@@ -35,8 +35,8 @@ module Texier::Modules
 
       figure = image & separator & description.up_to(modifier | eol)
       figure = figure.map do |image, description, modifier|
-        element = Texier::Element.new(
-          'div', [image, Texier::Element.new('p', description)],
+        element = build(
+          'div', [image, build('p', description)],
           'class' => class_name
         )
         

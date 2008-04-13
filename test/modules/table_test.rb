@@ -22,7 +22,7 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
-  def test_table_header
+  def test_table_head
     assert_output(
       '<table><thead><tr><th>one</th><th>two</th></tr></thead></table>',
       '
@@ -32,7 +32,7 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
-  def test_table_header_with_many_rows
+  def test_table_head_with_many_rows
     assert_output(
       '<table><thead>' \
         '<tr><th>one one</th><th>one two</th></tr>' \
@@ -46,7 +46,7 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
-  def test_table_with_header_at_the_top
+  def test_table_with_head_rows_at_the_top
     assert_output(
       '<table><thead>' \
         '<tr><th>one one</th><th>one two</th></tr>' \
@@ -61,7 +61,7 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
-  def test_table_with_header_in_the_middle
+  def test_table_with_head_rows_in_the_middle
     assert_output(
       '<table><tbody>' \
         '<tr><td>one one</td><td>one two</td></tr>' \
@@ -77,7 +77,7 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
-  def test_table_with_many_headers
+  def test_table_head_rows_in_various_places
     assert_output(
       '<table><thead>' \
         '<tr><th>one one</th><th>one two</th></tr>' \
@@ -93,6 +93,18 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       |--------------------
       |three one|three two|
       |--------------------'.unindent
+    )
+  end
+  
+  def test_header_cells_outside_head_row
+    assert_output(
+      '<table><tbody>' \
+        '<tr><th>one one</th><td>one two</td></tr>' \
+        '<tr><th>two one</th><td>two two</td></tr>' \
+        '</tbody></table>',
+      '
+      |* one one|one two|
+      |* two one|two two|'.unindent
     )
   end
 end

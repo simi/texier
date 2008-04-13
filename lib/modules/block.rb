@@ -29,7 +29,7 @@ module Texier::Modules
 
       (opening & everything_up_to(closing)).map do |content|
         lines = content.split("\n")
-        breaks = Array.new(lines.size - 1, Texier::Element.new('br'))
+        breaks = Array.new(lines.size - 1, build('br'))
 
         # Put one line break between each two lines.
         lines.zip(breaks).flatten
@@ -41,8 +41,8 @@ module Texier::Modules
         & modifier.maybe & e("\n").skip
 
       (opening & everything_up_to(closing)).map do |language, modifier, content|
-        Texier::Element.new(
-          'pre', Texier::Element.new('code', content), 'class' => language
+        build(
+          'pre', build('code', content), 'class' => language
         ).modify(modifier)
       end
     end
@@ -60,7 +60,7 @@ module Texier::Modules
       opening = e(/\/--+ *div */).skip & modifier.maybe & e("\n").skip
       
       (opening & document.up_to(closing)).map do |modifier, *content|
-        Texier::Element.new('div', content).modify(modifier)
+        build('div', content).modify(modifier)
       end
     end
     

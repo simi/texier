@@ -116,9 +116,7 @@ module Texier::Modules
       # Fail if tag is not allowed.
       return nil unless processor.tag_allowed?(tag.to_s)
       
-      Texier::Element.new(
-        tag.to_s, content, sanitize_attributes(tag, attributes)
-      )
+      build(tag.to_s, content, sanitize_attributes(tag, attributes))
     end
     
     # TODO: move this to Base class
