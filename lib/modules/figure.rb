@@ -25,6 +25,8 @@ module Texier::Modules
     # NOTE: left_class and right_class are taken from image module. This differs
     # from Texy!, but i think there is no need to duplicate these options.
     
+    # TODO: option width_delta and it's functionality like in Texy!
+    
     block_element('figure') do
       separator = e(/ *\*{3,} */).skip
       eol = e(/$/) {[nil]}
