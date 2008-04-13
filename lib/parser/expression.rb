@@ -66,15 +66,5 @@ module Texier::Parser
 
       result
     end
-    
-    # Modify the expression to return its result in array.
-    def group
-      map {|*results| [results]}
-    end
-
-    # Modify the expression to discard its result.
-    def skip
-      map {[]}
-    end
   end
 end

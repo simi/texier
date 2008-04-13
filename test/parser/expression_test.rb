@@ -23,18 +23,4 @@ class Texier::Parser::ExpressionTest < Test::Unit::TestCase
       assert_same original, created 
     end
   end
-  
-  def test_group
-    parser = (e('a') & e('b')).group & e('c')
-    
-    assert_equal [['a', 'b'], 'c'], parser.parse('abc')
-  end
-  
-  def test_skip
-    parser = e('foo').skip
-    
-    assert_nil parser.parse('')
-    assert_nil parser.parse('bar')
-    assert_equal [], parser.parse('foo')
-  end
 end

@@ -51,5 +51,16 @@ module Texier::Parser
     def map(&block)
       Map.new(self, &block)
     end
+
+    # Modify the expression to discard its result.
+    # OPTIMIZE: foo.skip.skip.skip should be the same as foo.skip
+    def skip
+      map {[]}
+    end
+    
+    # Modify the expression to return its result in array.
+    def group
+      map {|*results| [results]}
+    end
   end
 end

@@ -118,5 +118,52 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       |one           ||
       |two one|two two|'.unindent
     )
+    
+    assert_output(
+      '<table><tbody>' \
+        '<tr><td colspan="3">one</td></tr>' \
+        '<tr><td>two one</td><td>two two</td><td>two three</td></tr>' \
+        '</tbody></table>',
+      '
+      |one                    |||
+      |two one|two two|two three|'.unindent
+    )
   end
+  
+  def test_single_column_cell_and_multi_column_cell_in_single_row
+    assert_output(
+      '<table><tbody>' \
+        '<tr><td>one one</td><td colspan="2">one two</td></tr>' \
+        '<tr><td>two one</td><td>two two</td><td>two three</td></tr>' \
+        '</tbody></table>',
+      '
+      |one one|one two         ||
+      |two one|two two|two three|'.unindent
+    )
+  end
+  
+  def test_table_with_modifier
+    assert_output(
+      '<table class="foo"><tbody>' \
+        '<tr><td>one one</td><td>one two</td></tr>' \
+        '<tr><td>two one</td><td>two two</td></tr>' \
+        '</tbody></table>',
+      '
+      .[foo]
+      |one one|one two|
+      |two one|two two|'.unindent
+    )
+  end
+  
+#  def test_table_row_with_modifier
+#    assert_output(
+#      '<table><tbody>' \
+#        '<tr class="foo"><td>one one</td><td>one two</td></tr>' \
+#        '<tr><td>two one</td><td>two two</td></tr>' \
+#        '</tbody></table>',
+#      '
+#      |one one|one two| .[foo]
+#      |two one|two two|'.unindent
+#    )
+#  end
 end

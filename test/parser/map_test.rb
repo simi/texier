@@ -24,4 +24,18 @@ class Texier::Parser::MapTest < Test::Unit::TestCase
     
     assert_nil parser.parse('foo')
   end
+  
+  def test_skip
+    parser = e('foo').skip
+    
+    assert_nil parser.parse('')
+    assert_nil parser.parse('bar')
+    assert_equal [], parser.parse('foo')
+  end
+  
+  def test_group
+    parser = (e('a') & e('b')).group & e('c')
+    
+    assert_equal [['a', 'b'], 'c'], parser.parse('abc')
+  end
 end
