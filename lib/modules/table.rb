@@ -29,7 +29,7 @@ module Texier::Modules
     
     # TODO: rowspans
     
-    # TODO: table, row, column and cell modifiers
+    # TODO: row, column and cell modifiers
 
     block_element('table') do
       n = e("\n").skip
@@ -41,14 +41,27 @@ module Texier::Modules
 
       cell_content = space & inline_element.one_or_more.group.up_to(space & separator)
 
-      body_cell = cell_content.map {|*args| build_cell('td', *args)}
-      head_cell = cell_content.map {|*args| build_cell('th', *args)}
+      body_cell = cell_content.map do |content, column_span|
+        build_cell('td', content, column_span)
+      end
+      
+      head_cell = cell_content.map do |content, column_span|
+        build_cell('th', content, column_span)
+      end
 
       header_cell = e('*').skip & head_cell
+      
+      row_opening = -e(HEAD_SEPARATOR) & e('|').skip
 
-      head_row = row(header_cell | head_cell)
-      body_row = row(header_cell | body_cell)
-
+      head_row = row_opening & (header_cell | head_cell).one_or_more.map do |*cells|
+        build('tr', cells)
+      end
+      
+      body_row = row_opening & (header_cell | body_cell).one_or_more.map do |*cells|
+        build('tr', cells)
+      end
+      
+      
       head_opening = e(/#{HEAD_SEPARATOR}\n/).skip
       head_closing = e(/\n#{HEAD_SEPARATOR}/).skip
 
@@ -66,13 +79,6 @@ module Texier::Modules
     end
 
     private
-
-    # Create an expression that parses table row.
-    def row(cell)
-      -e(HEAD_SEPARATOR) & e('|').skip & cell.one_or_more.map do |*cells|
-        build('tr', cells)
-      end
-    end
 
     # Build table cell element.
     def build_cell(tag, content, column_span)
