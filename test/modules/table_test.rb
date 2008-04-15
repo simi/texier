@@ -155,15 +155,15 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
-#  def test_table_row_with_modifier
-#    assert_output(
-#      '<table><tbody>' \
-#        '<tr class="foo"><td>one one</td><td>one two</td></tr>' \
-#        '<tr><td>two one</td><td>two two</td></tr>' \
-#        '</tbody></table>',
-#      '
-#      |one one|one two| .[foo]
-#      |two one|two two|'.unindent
-#    )
-#  end
+  def test_table_row_with_modifier
+    assert_output(
+      '<table><tbody>' \
+        '<tr class="foo"><td>one one</td><td>one two</td></tr>' \
+        '<tr><td>two one</td><td>two two</td></tr>' \
+        '</tbody></table>',
+      '
+      |one one|one two| .[foo]
+      |two one|two two|'.unindent
+    )
+  end
 end

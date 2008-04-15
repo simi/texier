@@ -35,7 +35,7 @@ module Texier::Modules
 
     # Ordered and unordered lists.
     block_element('list') do
-      bullets.inject(nothing) {|list, style| list | build_list(style)}
+      bullets.inject(nothing) {|list, style| list | list(style)}
     end
     
     # Definition lists.
@@ -44,7 +44,7 @@ module Texier::Modules
         build('dt', content)
       end
       
-      definition = build_item(/-(?![>-])/, 'dd')
+      definition = item(/-(?![>-])/, 'dd')
       definitions = definition.one_or_more.separated_by(/\n+/).indented
       
       list = term & modifier.maybe & e("\n").skip & definitions
@@ -55,12 +55,12 @@ module Texier::Modules
 
     private
     
-    # Build expression that matches list.
-    def build_list(style)
-      item = build_item(style[0], 'li')
+    # Expression that matches a list.
+    def list(style)
+      item = item(style[0], 'li')
       
       if style[3]
-        next_item = build_item(style[3], 'li')
+        next_item = item(style[3], 'li')
         items = item & e("\n").skip & next_item.one_or_more.separated_by("\n")
       else
         items = item.one_or_more.separated_by("\n")
@@ -79,8 +79,8 @@ module Texier::Modules
       end
     end
     
-    # Build expression that matches list item.
-    def build_item(pattern, tag)
+    # Expression that matches a list item.
+    def item(pattern, tag)
       bullet = e(/(#{pattern}) */).skip
       first_line = inline_element.one_or_more.group.up_to(modifier.maybe & eol)
       blocks = block_element.one_or_more.separated_by(/\n*/).indented

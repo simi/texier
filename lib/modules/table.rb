@@ -29,45 +29,55 @@ module Texier::Modules
     
     # TODO: rowspans
     
-    # TODO: row, column and cell modifiers
+    # TODO: column and cell modifiers
 
     block_element('table') do
       n = e("\n").skip
+      eol = e(/$/).skip
       space = e(/ */).skip
-      separator = e(/\|+|$/).map do |pipes|
+      pipe = e('|')
+      
+      column_span = e(/\|*(?=\|)/).map do |pipes|
         count = pipes.count('|')
-        count > 1 ? count : [nil]
+        count > 0 ? count + 1 : [nil]
       end
 
-      cell_content = space & inline_element.one_or_more.group.up_to(space & separator)
+      cell_content = inline_element.one_or_more.group & space & column_span
+      cell = space & cell_content.up_to(space & +pipe)
 
-      body_cell = cell_content.map do |content, column_span|
+      body_cell = cell.map do |content, column_span|
         build_cell('td', content, column_span)
       end
       
-      head_cell = cell_content.map do |content, column_span|
+      head_cell = cell.map do |content, column_span|
         build_cell('th', content, column_span)
       end
-
+      
       header_cell = e('*').skip & head_cell
       
-      row_opening = -e(HEAD_SEPARATOR) & e('|').skip
+      body_cells = (header_cell | body_cell).one_or_more.separated_by(pipe).group
+      
+      row_start = -e(HEAD_SEPARATOR) & pipe.skip
+      row_stop = pipe.maybe.skip & modifier.maybe & eol
 
-      head_row = row_opening & (header_cell | head_cell).one_or_more.map do |*cells|
-        build('tr', cells)
+      body_row = (row_start & body_cells & row_stop).map do |cells, modifier|
+        build('tr', cells).modify(modifier)
       end
       
-      body_row = row_opening & (header_cell | body_cell).one_or_more.map do |*cells|
-        build('tr', cells)
+      head_cells = head_cell.one_or_more.separated_by(pipe).group
+      
+      head_row = (row_start & head_cells & row_stop).map do |cells, modifier|
+        build('tr', cells).modify(modifier)
+      end
+
+      head_start = e(/#{HEAD_SEPARATOR}\n/).skip
+      head_stop = e(/\n#{HEAD_SEPARATOR}/).skip
+
+      head_rows = head_start & head_row.one_or_more.separated_by(n) & head_stop
+      head = head_rows.map do |*rows|
+        build('thead', rows)
       end
       
-      
-      head_opening = e(/#{HEAD_SEPARATOR}\n/).skip
-      head_closing = e(/\n#{HEAD_SEPARATOR}/).skip
-
-      head_rows = head_opening & head_row.one_or_more.separated_by(n) & head_closing
-      head = head_rows.map {|*rows| build('thead', rows)}
-
       body = (body_row | head_rows).one_or_more.separated_by(n).map do |*rows|
         build('tbody', rows)
       end

@@ -1,21 +1,21 @@
-# 
+#
 # Copyright (c) 2008 Adam Ciganek <adam.ciganek@gmail.com>
-# 
+#
 # This file is part of Texier.
-# 
+#
 # Texier is free software: you can redistribute it and/or modify it under the
 # terms of the GNU General Public License version 2 as published by the Free
 # Software Foundation.
-# 
+#
 # Texier is distributed in the hope that it will be useful, but WITHOUT ANY
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along with
 # Texier. If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 # For more information please visit http://code.google.com/p/texier/
-# 
+#
 
 require 'set'
 
@@ -52,15 +52,15 @@ require 'modules/table'
 module Texier
   # The main class of Texier. You process Texy files by calling method +process+
   #   on an instance of this class:
-  # 
+  #
   #   p = Texier::Base
   #   output = p.process(input)
-  # 
+  #
   # There is also a shortcut, if you don't need to do anything fancy with the
   # processor:
-  # 
+  #
   #   output = Texier.process(input)
-  # 
+  #
   # This class also contain methods to configure Texier output or manage
   # Texier's modules.
   class Base
@@ -90,7 +90,7 @@ module Texier
 
     # Exported parsing expressions.
     attr_reader :expressions
-    
+
     # DTD of output document.
     attr_accessor :dtd
 
@@ -100,7 +100,7 @@ module Texier
       @allowed_classes = :all
       @allowed_styles = :all
       @align_classes = {}
-      
+
       @dtd = Dtd.new
 
       @expressions = {}
@@ -108,17 +108,17 @@ module Texier
       install Modules::Modifier.new
       install Modules::Core.new
       install Modules::Link.new
-      
+
       install Modules::Block.new
       install Modules::BlockQuote.new
       install Modules::Emoticon.new
       install Modules::Heading.new
       install Modules::HorizLine.new
       install Modules::Html.new
-      
+
       install Modules::Image.new
       install Modules::Figure.new
-      
+
       install Modules::List.new
       install Modules::Phrase.new
       install Modules::Table.new
@@ -144,7 +144,7 @@ module Texier
       # TODO: rename processor to something nicer and shorter
       mod.processor = self
     end
-    
+
     # TODO: uninstall
 
     # Is tag allowed? Allowed tags can be specified in +allowed_tags+ property.
@@ -157,7 +157,7 @@ module Texier
     # +allowed_tags+ property.
     def attribute_allowed?(tag_name, attribute_name)
       # TODO: take also current dtd into consideration.
-    
+
       tag_allowed?(tag_name) &&
         (allowed_tags == :all ||
           allowed_tags[tag_name] == :all ||
@@ -182,7 +182,7 @@ module Texier
     def method_missing(name, *args, &block)
       @named_modules[name] || super
     end
-    
+
     # Name of module, derived from it's class.
     def module_name(mod)
       name = mod.class.name
@@ -207,7 +207,7 @@ module Texier
         mod.before_parse(input)
       end
     end
-    
+
     # Parse the input document and create Document Object Model (dom).
     def parse(input)
       unless @expressions[:document]
