@@ -33,42 +33,8 @@ module Texier::Modules
 
     block_element('table') do
       n = e("\n").skip
-      eol = e(/$/).skip
-      space = e(/ */).skip
-      pipe = e('|')
       
-      column_span = e(/\|*(?=\|)/).map do |pipes|
-        count = pipes.count('|')
-        count > 0 ? count + 1 : [nil]
-      end
-
-      cell_content = inline_element.one_or_more.group & space & column_span
-      cell = space & cell_content.up_to(space & +pipe)
-
-      body_cell = cell.map do |content, column_span|
-        build_cell('td', content, column_span)
-      end
-      
-      head_cell = cell.map do |content, column_span|
-        build_cell('th', content, column_span)
-      end
-      
-      header_cell = e('*').skip & head_cell
-      
-      body_cells = (header_cell | body_cell).one_or_more.separated_by(pipe).group
-      
-      row_start = -e(HEAD_SEPARATOR) & pipe.skip
-      row_stop = pipe.maybe.skip & modifier.maybe & eol
-
-      body_row = (row_start & body_cells & row_stop).map do |cells, modifier|
-        build('tr', cells).modify(modifier)
-      end
-      
-      head_cells = head_cell.one_or_more.separated_by(pipe).group
-      
-      head_row = (row_start & head_cells & row_stop).map do |cells, modifier|
-        build('tr', cells).modify(modifier)
-      end
+      head_row = row('th')
 
       head_start = e(/#{HEAD_SEPARATOR}\n/).skip
       head_stop = e(/\n#{HEAD_SEPARATOR}/).skip
@@ -77,6 +43,8 @@ module Texier::Modules
       head = head_rows.map do |*rows|
         build('thead', rows)
       end
+
+      body_row = row('td')
       
       body = (body_row | head_rows).one_or_more.separated_by(n).map do |*rows|
         build('tbody', rows)
@@ -89,10 +57,33 @@ module Texier::Modules
     end
 
     private
+    
+    def row(cell_tag)
+      main_cell = cell(cell_tag)
+      head_cell = e('*').skip & cell('th')
+      
+      cells = (head_cell | main_cell).one_or_more.separated_by('|').group
+      
+      row_start = -e(HEAD_SEPARATOR) & e('|').skip
+      row_stop = e('|').maybe.skip & modifier.maybe & eol
 
-    # Build table cell element.
-    def build_cell(tag, content, column_span)
-      build(tag, content, 'colspan' => column_span)
+      (row_start & cells & row_stop).map do |cells, modifier|
+        build('tr', cells).modify(modifier)
+      end
+    end
+    
+    def cell(tag)
+      space = e(/ */).skip
+
+      column_span = e(/\|*(?=\|)/).map do |pipes|
+        count = pipes.count('|')
+        count > 0 ? count + 1 : [nil]
+      end
+      
+      cell = space & inline_element.one_or_more.group & space & column_span
+      cell.up_to(space & +e('|')).map do |content, column_span|
+        build(tag, content, 'colspan' => column_span)
+      end
     end
   end
 end
