@@ -12,6 +12,15 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       |two one|two two|'.unindent
     )
   end
+
+  def test_last_cell_separator_should_be_optional
+    assert_output(
+      '<table><tbody>' \
+        '<tr><td>one</td><td>two</td></tr>' \
+        '</tbody></table>',
+      '|one|two'
+    )
+  end
   
   def test_table_cell_with_inline_elements
     assert_output(
@@ -164,6 +173,15 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       '
       |one one|one two| .[foo]
       |two one|two two|'.unindent
+    )
+  end
+  
+  def test_table_cell_with_modifier
+    assert_output(
+      '<table><tbody>' \
+        '<tr><td class="foo">one</td><td>two</td></tr>' \
+        '</tbody></table>',
+      '|one .[foo]|two|'
     )
   end
 end

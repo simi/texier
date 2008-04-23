@@ -29,7 +29,7 @@ module Texier::Modules
     
     # TODO: rowspans
     
-    # TODO: column and cell modifiers
+    # TODO: column modifiers
 
     block_element('table') do
       n = e("\n").skip
@@ -67,22 +67,23 @@ module Texier::Modules
       row_start = -e(HEAD_SEPARATOR) & e('|').skip
       row_stop = e('|').maybe.skip & modifier.maybe & eol
 
-      (row_start & cells & row_stop).map do |cells, modifier|
+      (row_start & cells.up_to(row_stop)).map do |cells, modifier|
         build('tr', cells).modify(modifier)
       end
     end
     
     def cell(tag)
       space = e(/ */).skip
-
-      column_span = e(/\|*(?=\|)/).map do |pipes|
+      
+      separator = e(/ *(?:(?:\|*(?=\|))|$)/).map do |pipes|
         count = pipes.count('|')
         count > 0 ? count + 1 : [nil]
       end
       
-      cell = space & inline_element.one_or_more.group & space & column_span
-      cell.up_to(space & +e('|')).map do |content, column_span|
-        build(tag, content, 'colspan' => column_span)
+      cell = space & inline_element.one_or_more.group
+      cell = cell.up_to(space & modifier.maybe & separator)
+      cell.map do |content, modifier, column_span|
+        build(tag, content, 'colspan' => column_span).modify(modifier)
       end
     end
   end
