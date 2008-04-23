@@ -184,4 +184,28 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       '|one .[foo]|two|'
     )
   end
+
+#  def test_if_row_has_less_cells_than_other_rows_then_empty_cells_should_be_appended
+#    assert_output(
+#      '<table><tbody>' \
+#        '<tr><td>one one</td><td>one two</td></tr>' \
+#        '<tr><td>two one</td><td></td></tr>' \
+#        '</tbody></table>',
+#      '
+#      |one one|one two|
+#      |two one|'.unindent
+#    )
+#  end
+#    
+#  def test_if_row_has_less_cells_than_the_sum_of_colspans_of_other_rows_then_empty_cells_should_be_appended
+#    assert_output(
+#      '<table><tbody>' \
+#        '<tr><td colspan="2">one one</td></tr>' \
+#        '<tr><td>two one</td><td></td></tr>' \
+#        '</tbody></table>',
+#      '
+#      |one one||
+#      |two one|'.unindent
+#    )
+#  end
 end

@@ -37,8 +37,6 @@ module Texier
     
     # TODO: consecutive string children should be concatenated into one.
     
-    # TODO: dom builder
-    
     def content=(value)
       if value.is_a?(Array) && value.all? {|item| item.is_a?(String)}
         value = value.join
@@ -57,7 +55,16 @@ module Texier
 
     # Has this element any children elements?
     def has_children?
-      content.is_a?(Array) && content.size > 0
+      content.is_a?(Array) && !content.empty?
+    end
+    
+    # Number of children.
+    def child_count
+      case content
+      when Array then content.size
+      when Element then 1
+      else 0
+      end
     end
     
     # Access attributes using methods:

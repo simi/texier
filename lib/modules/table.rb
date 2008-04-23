@@ -19,6 +19,10 @@
 
 module Texier::Modules
   class Table < Base
+    
+    require 'modules/table/row_element'
+    require 'modules/table/table_element'
+    
     HEAD_SEPARATOR = / *\|[+-]{3,} */
 
     # NOTE: Texy! supports tables with only one head separator (if it is
@@ -30,6 +34,9 @@ module Texier::Modules
     # TODO: rowspans
     
     # TODO: column modifiers
+    
+    # TODO: table sanitization (make sure that each row has the same number of
+    # columns (respecting colspans)
 
     block_element('table') do
       n = e("\n").skip
@@ -52,7 +59,7 @@ module Texier::Modules
 
       table = (modifier & n).maybe & ((head & n & body) | head | body)
       table.map do |modifier, *blocks|
-        build('table', blocks).modify(modifier)
+        TableElement.new(blocks).modify(modifier)
       end
     end
 
@@ -68,7 +75,7 @@ module Texier::Modules
       row_stop = e('|').maybe.skip & modifier.maybe & eol
 
       (row_start & cells.up_to(row_stop)).map do |cells, modifier|
-        build('tr', cells).modify(modifier)
+        RowElement.new(cells).modify(modifier)
       end
     end
     
