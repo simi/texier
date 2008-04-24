@@ -85,7 +85,7 @@ module Texier::Modules
     
     # Expression that matches attributes of a tag.
     def attributes
-      processor.expressions[:attributes] ||= begin
+      base.expressions[:attributes] ||= begin
         attribute = nothing
         
         # class
@@ -116,7 +116,7 @@ module Texier::Modules
     
     def build_html_element(tag, content, attributes)
       # Fail if tag is not allowed.
-      return nil unless processor.tag_allowed?(tag.to_s)
+      return nil unless base.tag_allowed?(tag.to_s)
       
       build(tag.to_s, content, sanitize_attributes(tag, attributes))
     end
@@ -124,18 +124,18 @@ module Texier::Modules
     # TODO: move this to Base class
     def sanitize_attributes(tag, attributes)
       attributes.inject({}) do |result, (name, value)|
-        next(result) unless processor.attribute_allowed?(tag.to_s, name)
+        next(result) unless base.attribute_allowed?(tag.to_s, name)
   
         case name
         when 'class'
           result[name] = value.select do |value|
-            processor.class_allowed?(value)
+            base.class_allowed?(value)
           end
         when 'id'
-          result[name] = value if processor.class_allowed?("\##{value}")
+          result[name] = value if base.class_allowed?("\##{value}")
         when 'style'
           result[name] = value.reject do |name, value|
-            !processor.style_allowed?(name)
+            !base.style_allowed?(name)
           end
         else
           result[name] = value

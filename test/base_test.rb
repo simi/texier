@@ -6,7 +6,7 @@ class Texier::BaseTest < Test::Unit::TestCase
     @texier = Texier::Base.new
   end
   
-  def test_dom_of_new_processor_should_be_nil
+  def test_dom_of_unprocessed_document_should_be_nil
     assert_nil @texier.dom
   end
   

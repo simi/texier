@@ -3,11 +3,11 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 # Test case for class Texier::Modules::HorizLine
 class Texier::Modules::HorizLineTest < Test::Unit::TestCase
   def test_module_name_should_be_horiz_line
-    processor = Texier::Base.new
+    texier = Texier::Base.new
     
     assert_nothing_raised do 
       assert_instance_of(
-        Texier::Modules::HorizLine, processor.horiz_line_module
+        Texier::Modules::HorizLine, texier.horiz_line_module
       )
     end
   end

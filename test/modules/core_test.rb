@@ -3,10 +3,10 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 # Test case for Texier::Modules::Core class
 class Texier::Modules::CoreTest < Test::Unit::TestCase
   def test_empty_input_should_produce_empty_dom
-    processor = Texier::Base.new
-    processor.process('')
+    texier = Texier::Base.new
+    texier.process('')
     
-    assert_equal [], processor.dom
+    assert_equal [], texier.dom
   end
 
   def test_empty_input_should_produce_empty_output

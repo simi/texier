@@ -26,10 +26,11 @@ module Texier
     # 
     # This is the base class for all Texier modules.
     class Base
-      attr_accessor :processor
+      # The main Texier::Base object.
+      attr_accessor :base
     
       def dtd
-        processor.dtd
+        base.dtd
       end
     
       # This method is called before parsing. Derived classes should override it
@@ -45,12 +46,12 @@ module Texier
     
       def initialize_parser
         exported_expressions.each do |name, block|
-          processor.expressions[name] = instance_eval(&block)
+          base.expressions[name] = instance_eval(&block)
         end
         
         extending_expressions.each do |(slot, name, block)|
-          if processor.allowed[name]
-            processor.expressions[:"#{slot}_slot"] << instance_eval(&block)
+          if base.allowed[name]
+            base.expressions[:"#{slot}_slot"] << instance_eval(&block)
           end
         end
       end
@@ -102,7 +103,7 @@ module Texier
     
       # Access exported parser expressions as ordinary methods.
       def method_missing(name, *args, &block)
-        if expression = processor.expressions[name]
+        if expression = base.expressions[name]
           expression
         else
           super

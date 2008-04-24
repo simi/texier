@@ -80,7 +80,7 @@ module Texier::Modules
     # Apply alignment to image.
     def apply_align(element, align)
       if align
-        if align_class = send("#{align}_class") || processor.align_classes[align]
+        if align_class = send("#{align}_class") || base.align_classes[align]
           element.add_class_name(align_class)
         else
           element.style['float'] = align.to_s

@@ -20,14 +20,13 @@
 module Texier::Modules
   # Core module.
   # 
-  # This modules provides the most basic features of Texier processor. It
-  # exports two parsing expressions: +inline_element+ and +block_element+. They
-  # are provided for other modules to extend Texier syntax with their own
-  # expressions (see documentation of class Module for explanation how to do
-  # that). It also defines default inline element (plain text without any
-  # formatting) and block_element (paragraph). Last, it defines expression
-  # +document+ which is root expression of whole Texier grammar and coresponds
-  # to whole document.
+  # This module provides the most basic features of Texier. It exports two
+  # parsing expressions: +inline_element+ and +block_element+. They are provided
+  # for other modules to extend Texier syntax with their own expressions (see
+  # documentation of class Module for explanation how to do that). It also
+  # defines default inline element (plain text without any formatting) and
+  # block_element (paragraph). Last, it defines expression +document+ which is
+  # root expression of whole Texier grammar and coresponds to whole document.
   class Core < Base
     PUNCTUATION = Regexp.escape(" \n`~!@\#$%\^&*()\-_=+\\|[{]};:'\",<.>/?")
 
@@ -64,7 +63,7 @@ module Texier::Modules
       
           
       # Export these expressions, so they can be used in other modules.
-      processor.expressions.merge!(
+      base.expressions.merge!(
         :document => document,
         :block_element => block_element,
         :block_element_slot => block_element_slot,

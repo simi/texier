@@ -41,7 +41,7 @@ module Texier::Modules
     def before_parse(input)
       # Collect reference defintions.
 
-      return input unless processor.allowed['link/definition']
+      return input unless base.allowed['link/definition']
 
       url = e(/[^ \n]+/)
       content = e(/ */).skip & inline_element.zero_or_more.group

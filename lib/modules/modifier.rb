@@ -42,7 +42,7 @@ module Texier::Modules
     ].to_set
       
     export_expression(:modifier) do
-      if processor.allowed['modifier']
+      if base.allowed['modifier']
         e(/ *\./).skip & (
           title_modifier | class_modifier | style_modifier |
           horizontal_align_modifier
@@ -72,7 +72,7 @@ module Texier::Modules
       (e('[').skip & classes & e(']').skip).map do |*values|
         proc do |element|
           values.each do |value|
-            next unless processor.class_allowed?(value)
+            next unless base.class_allowed?(value)
 			
             if value[0] == ?#
               element.id = value[1..-1]
@@ -95,11 +95,11 @@ module Texier::Modules
         proc do |element|
           values.each do |name, value|
             if ATTRIBUTES.include?(name)
-              if processor.attribute_allowed?(element.name, name)
+              if base.attribute_allowed?(element.name, name)
                 element.attributes[name] = value 
               end
             else
-              if processor.style_allowed?(name)
+              if base.style_allowed?(name)
                 element.style ||= {}
                 element.style[name] = value
               end
@@ -114,9 +114,9 @@ module Texier::Modules
       e(/<>|<|>|=/) do |value|
         proc do |element|
           align = ALIGNS[value]
-          if align_class = processor.align_classes[align]
+          if align_class = base.align_classes[align]
             element.add_class_name(align_class)
-          elsif processor.style_allowed?('text-align')
+          elsif base.style_allowed?('text-align')
             element.style ||= {}
             element.style['text-align'] = align.to_s
           end

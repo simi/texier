@@ -49,7 +49,7 @@ module Texier::Modules
 
     block_element('block/html') do
       content = nothing
-      html_element = processor.html_module.html_element(dtd, content)
+      html_element = base.html_module.html_element(dtd, content)
       content << (html_element | e(/[^<]+/) | e('<'))
       
       opening = e(/\/--+ *html *\n/).skip

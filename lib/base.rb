@@ -57,7 +57,7 @@ module Texier
   #   output = p.process(input)
   #
   # There is also a shortcut, if you don't need to do anything fancy with the
-  # processor:
+  # Texier::Base object:
   #
   #   output = Texier.process(input)
   #
@@ -141,8 +141,7 @@ module Texier
       @named_modules ||= {}
       @named_modules["#{module_name(mod)}_module".to_sym] = mod
 
-      # TODO: rename processor to something nicer and shorter
-      mod.processor = self
+      mod.base = self
     end
 
     # TODO: uninstall
@@ -232,7 +231,7 @@ module Texier
     end
   end
 
-  # Shortcut method that creates a Texier processor and calls it's +process+
+  # Shortcut method that creates a Texier::Base object and calls it's +process+
   # method.
   def self.process(input)
     Base.new.process(input)

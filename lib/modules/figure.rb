@@ -54,8 +54,8 @@ module Texier::Modules
       image = figure.content[0]
       
       [:left, :right].each do |align|
-        align_class = processor.image_module.send("#{align}_class") ||
-          processor.align_classes[align]
+        align_class = base.image_module.send("#{align}_class") ||
+          base.align_classes[align]
       
         figure.add_class_name(image.class_name.delete(align_class))
       end

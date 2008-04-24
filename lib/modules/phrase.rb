@@ -79,7 +79,7 @@ module Texier::Modules
         # Span with link and optional modifier.
         span_with_link = mark & everything_up_to(modifier.maybe & mark) & link
         span_with_link = span_with_link.map do |text, modifier, url|
-          element = processor.link_module.build_link(text, url)
+          element = base.link_module.build_link(text, url)
           element.modify(modifier)
         end
       
@@ -99,21 +99,21 @@ module Texier::Modules
     # Quick links (blah:www.metatribe.org)
     inline_element('phrase/quicklink') do
       (e(/[^\s:]+/) & link).map do |content, url|
-        processor.link_module.build_link(content, url)
+        base.link_module.build_link(content, url)
       end
     end
     
     inline_element('phrase/notexy') {quoted_text("''")}
 
-    def processor=(processor)
+    def base=(base)
       super
       
       # Disable these by default.
-      processor.allowed['phrase/ins'] = false
-      processor.allowed['phrase/del'] = false
-      processor.allowed['phrase/sup'] = false
-      processor.allowed['phrase/sub'] = false
-      processor.allowed['phrase/cite'] = false
+      base.allowed['phrase/ins'] = false
+      base.allowed['phrase/del'] = false
+      base.allowed['phrase/sup'] = false
+      base.allowed['phrase/sub'] = false
+      base.allowed['phrase/cite'] = false
     end
     
     private
@@ -131,7 +131,7 @@ module Texier::Modules
         element = [*tags].reverse.inject(content) do |element, tag|
           build(tag, element)
         end
-        element = processor.link_module.build_link(element, url) if url
+        element = base.link_module.build_link(element, url) if url
         element.modify(modifier)
       end
     end
