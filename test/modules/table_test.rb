@@ -151,6 +151,18 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
     )
   end
   
+#  def test_cell_spanning_more_rows
+#    assert_output(
+#      '<table><tbody>' \
+#        '<tr><td rowspan="2">one one</td><td>one two</td></tr>' \
+#        '<tr><td>two two</td></tr>' \
+#        '</tbody></table>',
+#      '
+#      |one one|one two|
+#      |^      |two two|'.unindent
+#    )
+#  end
+  
   def test_table_with_modifier
     assert_output(
       '<table class="foo"><tbody>' \
@@ -223,4 +235,21 @@ class Texier::Modules::TableTest < Test::Unit::TestCase
       |two one|two two|'.unindent
     )
   end
+  
+  def test_odd_and_even_classes
+    @texier = Texier::Base.new
+    @texier.table_module.odd_class = 'odd'
+    @texier.table_module.even_class = 'even'
+    
+    assert_output(
+      '<table><tbody>' \
+        '<tr class="even"><td>one one</td><td>one two</td></tr>' \
+        '<tr class="odd"><td>two one</td><td>two two</td></tr>' \
+        '</tbody></table>',
+      '
+      |one one|one two|
+      |two one|two two|'.unindent
+    )
+  end
+  
 end

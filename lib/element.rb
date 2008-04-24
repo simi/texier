@@ -58,15 +58,6 @@ module Texier
       content.is_a?(Array) && !content.empty?
     end
     
-    # Number of children.
-    def child_count
-      case content
-      when Array then content.size
-      when Element then 1
-      else 0
-      end
-    end
-    
     # Access attributes using methods:
     # 
     # element.foo = 'bar' is the same as element.attributes['foo'] = 'bar'.

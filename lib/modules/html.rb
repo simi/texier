@@ -92,7 +92,9 @@ module Texier::Modules
         classes = e(/[^"> \n]+/).one_or_more.separated_by(/ +/).group
         attribute << (e(/class *= *" */).map {'class'} & classes & e(/ *"/).skip)
         
-        # TODO: unquoted class TODO: styles with ; at the end
+        # TODO: unquoted class 
+        
+        # TODO: styles with ; at the end
         
         # style
         style_name = e(/[^:"> \n]+/)
