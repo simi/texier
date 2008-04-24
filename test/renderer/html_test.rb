@@ -57,8 +57,12 @@ class Texier::Renderer::HtmlTest < Test::Unit::TestCase
 
   def test_array_attribute
     element = Texier::Element.new('em', 'class' => ['foo', 'bar'])
-
     assert_equal '<em class="foo bar"></em>', @renderer.render(element)
+  end
+  
+  def test_array_attribute_should_be_sanitized
+    element = Texier::Element.new('em', 'class' => ['<foo>', 'bar'])
+    assert_equal '<em class="&lt;foo&gt; bar"></em>', @renderer.render(element)
   end
 
   def test_hash_attribute
@@ -75,11 +79,19 @@ class Texier::Renderer::HtmlTest < Test::Unit::TestCase
   
   def test_hash_attribute_should_ignore_empty_values
     element = Texier::Element.new('em', 'style' => {
-      'font-family' => nil,
-      'color' => ''
-    })
+        'font-family' => nil,
+        'color' => ''
+      })
   
     assert_equal('<em></em>', @renderer.render(element))
+  end
+  
+  def test_hash_attribute_should_be_sanitized
+    element = Texier::Element.new('em', 'style' => {'<foo>' => '<bar>'})
+
+    assert_equal(
+      '<em style="&lt;foo&gt;: &lt;bar&gt;"></em>', @renderer.render(element)
+    )
   end
   
   def test_boolean_attribute

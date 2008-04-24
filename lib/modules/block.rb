@@ -21,9 +21,11 @@ module Texier::Modules
   # Block module
   # 
   # This module defines various blocks in the document.
-  # 
-  # TODO: explain text, html, code, div
   class Block < Base
+    # Text block. /-- text
+    # 
+    # Content of this block is interpreted as plain text. No Texier elements are
+    # processed and all html is escaped.
     block_element('block/text') do
       opening = e(/\/--+ *text *\n/).skip
 
@@ -36,6 +38,14 @@ module Texier::Modules
       end
     end
 
+    # Code block. /-- code language
+    # 
+    # Content of this block is interpreted as source code. No Texier elements
+    # are processed and formatting and indentation are left intact. The optional
+    # "language" parameter can specify language of the source code. This can be
+    # used to provide syntax highlighting.
+    # 
+    # TODO: syntax highlighting (use some external tool).
     block_element('block/code') do
       opening = e(/\/--+ *code */).skip & e(/[^ \n\.]+/).maybe \
         & modifier.maybe & e("\n").skip
@@ -47,6 +57,10 @@ module Texier::Modules
       end
     end
 
+    # Html block. /-- html
+    # 
+    # Content of this block is interpreted as fragment of html document. No
+    # Texier elements are processed. Html tags are left intact.
     block_element('block/html') do
       content = nothing
       html_element = base.html_module.html_element(dtd, content)
@@ -56,6 +70,11 @@ module Texier::Modules
       opening & content.one_or_more.up_to(closing)
     end
 
+    # Div block. /-- div
+    # 
+    # The content of this block is interpeted as ordinary Texier document. The
+    # result is enclosed in <div> ... </div> tags. It can be used to delimit the
+    # document into logical sections.
     block_element('block/div') do
       opening = e(/\/--+ *div */).skip & modifier.maybe & e("\n").skip
       
@@ -64,7 +83,8 @@ module Texier::Modules
       end
     end
     
-    # TODO: add pre, comment, texysource and default blocks.
+    # TODO: add pre, comment, texysource and default blocks. (but they are not
+    # specified in Texy! documentation, do i realy need them?)
 
     private
 

@@ -66,21 +66,19 @@ module Texier
           when TrueClass
             value = name
           when Array
-            # TODO: sanitize values
             value = value.join(' ')
           when Hash
-            # TODO: sanitize names and values
             value = value.inject([]) do |value, (hash_name, hash_value)|
               value << "#{hash_name}: #{hash_value}" unless hash_value.to_s.empty?
               value
             end.join('; ')
-          else
-            # Sanitize values
-            value = Texier::Utilities.escape_html(value.to_s)
-            value = value.gsub('"', '&quot;')
           end
 
-          output << " #{name}=\"#{value}\"" unless value.to_s.empty?
+          # Sanitize value.
+          value = Texier::Utilities.escape_html(value.to_s)
+          value = value.gsub('"', '&quot;')
+
+          output << " #{name}=\"#{value}\"" unless value.empty?
           output
         end.sort.join
       end
@@ -88,8 +86,8 @@ module Texier
       private
     
       def empty_element?(element)
-        # OPTIMIZE: this is O(n), make it O(1)
-        @dtd.empty.include?(element.name)
+        @empty_tags ||= @dtd.empty.map {|tag| tag.name}.to_set
+        @empty_tags.include?(element.name)
       end
     end
   end
