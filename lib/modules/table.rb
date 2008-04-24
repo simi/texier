@@ -35,9 +35,6 @@ module Texier::Modules
     
     # TODO: column modifiers
     
-    # TODO: table sanitization (make sure that each row has the same number of
-    # columns (respecting colspans)
-
     block_element('table') do
       n = e("\n").skip
       

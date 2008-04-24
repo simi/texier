@@ -21,20 +21,26 @@ class Texier::Modules::Table::RowElement < Texier::Element
   def initialize(cells = [])
     super('tr', cells)
   end
-  
+
   # Returns number of cells in this row.
   # 
   # This method respects cells that spans several columns. Every such cell is
   # counted as many times, as many columns it spans.
-  #
+  # 
   # For example, this method returns 4 for row like this:
   #   <tr><td>foo</td><td colspan="3">bar</td></tr>
   def cell_count
-    0
+    content.inject(0) do |count, cell|
+      count + (cell.colspan || 1)
+    end
+  end
+
+  # Ensure that the row has +count+ cells by appending empty cells if necessary.
+  def ensure_cell_count(count)
+    tag = content.last.name || 'td'
+    
+    (count - cell_count).times do
+      self << Texier::Element.new(tag)
+    end
   end
 end
-
-#      cell_count = row.content.inject(0) do |cell_count, cell|
-#        cell_count + (cell.colspan ? cell.colspan : 1)
-#      end
-      

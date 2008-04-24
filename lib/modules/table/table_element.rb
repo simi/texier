@@ -48,16 +48,13 @@ class Texier::Modules::Table::TableElement < Texier::Element
   private
   
   def equalize_cell_count
-    # Find maximum number of cells in all rows.
+    # Find maximum number of cells for all rows.
     max_cell_count = rows.inject(0) do |max_cell_count, row|
       [max_cell_count, row.cell_count].max
     end
    
-    # Append empty cells to rows that have not enough cells.
     rows.each do |row|
-      (max_cell_count - row.cell_count).times do
-        row << Texier::Element.new('td')
-      end
+      row.ensure_cell_count(max_cell_count)
     end
   end
 end   
