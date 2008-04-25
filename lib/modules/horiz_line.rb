@@ -19,8 +19,8 @@
 
 module Texier::Modules
   class HorizLine < Base
-    # TODO: classes and modifiers (Texy! has them, but are there realy useful
-    # here?)
+    # NOTE: Texy! supports classes and modifiers here, but i don't think they
+    # are realy necessary. KISS.
     
     block_element('horizline') do
       ['-', '*'].inject(nothing) do |result, style|      

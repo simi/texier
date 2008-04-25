@@ -18,7 +18,9 @@
 # 
 
 module Texier::Modules
-  # TODO: describe various modifiers
+  # This module provides modifiers. They are used to set classes, ids, titles,
+  # inline styles and alignments (and many more, of course :)). Modifiers can be
+  # specified for almost every Texier element.
   class Modifier < Base
     ALIGNS = {
       '<>' => :center,
@@ -54,7 +56,9 @@ module Texier::Modules
         
     private
       
-    # .(hello world)
+    # Title attribute for element.
+    # 
+    # Syntax: .(hello world)
     def title_modifier
       quoted_text('(', ')').map do |value|
         proc do |element|
@@ -64,7 +68,9 @@ module Texier::Modules
       end
     end
 
-    # .[class #id]
+    # Classes and ids.
+    # 
+    # Syntax: .[class #id]
     def class_modifier
       class_value = e(/\#?[a-zA-Z0-9_-]+/)
       classes = class_value.one_or_more.separated_by(/ */)
@@ -84,7 +90,9 @@ module Texier::Modules
       end
     end
 
-    # .{style-name: style-value; ...}
+    # Inline styles.
+    # 
+    # Syntax: .{style-name: style-value; ...}
     def style_modifier
       style_name = e(/[^: \n]+/)
       style_value = e(/[^;}\n]+/)
@@ -109,7 +117,9 @@ module Texier::Modules
       end
     end
 
-    # .> or .< or .<> or .=
+    # Horizontal alignments.
+    # 
+    # Syntax: .> or .< or .<> or .=
     def horizontal_align_modifier
       e(/<>|<|>|=/) do |value|
         proc do |element|
@@ -123,5 +133,7 @@ module Texier::Modules
         end
       end
     end
+    
+    # TODO: Vertical alignments
   end
 end
