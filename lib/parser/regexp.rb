@@ -38,10 +38,13 @@ module Texier::Parser
     
     private
     
-    # HACK: Count number of captures in regexp so i can pass them as arguments
-    # when the expression matches. This needs to be done this way, because there
-    # is no way how to get number of captured subexpression from StringScanner.
+    # WORKAROUND: Count number of captures in regexp so i can pass them as
+    # arguments when the expression matches. This needs to be done this way,
+    # because there is no way how to get number of captured subexpression from
+    # StringScanner.
     def captures_count
+      # Count number of opening parenthesis that are neither escaped, nor
+      # followed by question mark.
       @captures ||= @regexp.source.scan(/(?:[^\\]|^)\((?!\?)/).size
     end
     

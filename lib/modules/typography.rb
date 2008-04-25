@@ -80,20 +80,18 @@ module Texier::Modules
 
       ellipsis = e(/\.{3,4}(?!\.)/) {"\xe2\x80\xa6"}
 
-      en_dash = e(/\d+| |^/) & e(/-(?=[\d ]|$)/).skip
+      en_dash = e(/(\d+| |^)-(?=[\d ]|$)/)
       en_dash = en_dash.map {|prefix| "#{prefix}\xe2\x80\x93"}
 
       # TODO: en-dash alphanum--alphanum
 
-      day, month, year = e(/\d{1,2}\./), e(/\d{1,2}\./), e(/\d{2,}/)
-      space = e(' ').skip
       
-      full_date = day & space & month & space & year
+      full_date = e(/(\d{1,2}\.) (\d{1,2}\.) (\d{2,})/)
       full_date = full_date.map do |day, month, year|
         "#{day}\xc2\xa0#{month}\xc2\xa0#{year}"
       end
       
-      date_without_year = day & space & month
+      date_without_year = e(/(\d{1,2}\.) (\d{1,2}\.)/)
       date_without_year = date_without_year.map do |day, month|
         "#{day}\xc2\xa0#{month}"
       end
@@ -106,8 +104,8 @@ module Texier::Modules
       left_arrow = e(/<-+/) {"\xe2\x86\x90"}
       right_arrow = e(/-+>/) {"\xe2\x86\x92"} | e(/=+>/) {"\xe2\x87\x92"}
 
-      dimension_sign = e(/\d+/) & e(/(?:(?:(?: x )|x)(?=\d))|(?:x(?= |,|.|$))/)
-      dimension_sign = dimension_sign.map {|number, _| "#{number}\xc3\x97"}
+      dimension_sign = e(/(\d+)(?:(?:(?:(?: x )|x)(?=\d))|(?:x(?= |,|.|$)))/)
+      dimension_sign = dimension_sign.map {|number| "#{number}\xc3\x97"}
       
       trademark = e(/ ?\(tm\)/i) {"\xe2\x84\xa2"}
       registered = e(/ ?\(r\)/i) {"\xc2\xae"}
@@ -118,8 +116,8 @@ module Texier::Modules
       # TODO: maybe more currency signs? (GBP, JPY, CNY, KRW, ... anything that
       # has special symbol)
       
-      phone_number = e(/\d{1,3}/) & e(/ (?=\d{3})/)
-      phone_number = phone_number.map {|number, _| "#{number}\xc2\xa0"}
+      phone_number = e(/(\d{1,3}) (?=\d{3})/)
+      phone_number = phone_number.map {|number| "#{number}\xc2\xa0"}
 
       # TODO: space before last short word (wtf?)
       

@@ -53,7 +53,7 @@ module Texier::Modules
     # Alternative syntax for subscripts and superscripts
     def self.subscript_or_superscript(name, mark, tag)
       inline_element(name) do
-        (e(/[a-z0-9]/) & e(mark) & e(/-?\d+(?!\w)/)).map do |a, _, b|
+        e(/([a-z0-9])#{Regexp.quote(mark)}(-?\d+(?!\w))/) do |a, b|
           [a, build(tag, b.gsub('-', MINUS))]
         end
       end
@@ -64,7 +64,7 @@ module Texier::Modules
 
     # Acronym/abbreviation
     inline_element('phrase/acronym') do
-      content = e(/\w{2,}|(?:\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
+      content = e(/(\w{2,})|(?:\"([^\"\n]+)\")/).map {|a, b| a || b}
       
       (content & quoted_text('((', '))')).map do |acronym, meaning|
         build('acronym', acronym, 'title' => meaning)
