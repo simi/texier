@@ -38,10 +38,13 @@ module Texier::Modules
       # expressions in modules.
       block_element_slot = nothing
       inline_element_slot = nothing
-
-      plain_text = e(/[^#{PUNCTUATION}]+/)
+      
+      # TODO: the "plain_text" expression can be removed, it will still work and
+      # actualy make some things easier. However this way it is slightly faster.
+      # I should do some benchmarks to measure if it is realy worth it.
+      plain_text = e(/[^#{PUNCTUATION}]+/) 
       inline_element = inline_element_slot | plain_text | e(/[^\n]/)
-
+      
       line = inline_element.one_or_more
 
       line_break = e("\n") # TODO: insert <br /> when neccessary

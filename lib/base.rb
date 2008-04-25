@@ -83,6 +83,8 @@ module Texier
     # alignments: :left, :right, :center, :justify, :top, :middle, :bottom
     attr_accessor :align_classes
 
+    # TODO: option merge_lines as in Texy!
+    
 
     # Document Object Model of last parsed document. You must call method
     #   +process+ before this attribute is set.
