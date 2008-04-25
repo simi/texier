@@ -64,7 +64,7 @@ module Texier::Modules
 
     # Acronym/abbreviation
     inline_element('phrase/acronym') do
-      content = e(/\w{2,}|(\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
+      content = e(/\w{2,}|(?:\"[^\"\n]+\")/).map {|s| s.gsub(/^\"|\"$/, '')}
       
       (content & quoted_text('((', '))')).map do |acronym, meaning|
         build('acronym', acronym, 'title' => meaning)

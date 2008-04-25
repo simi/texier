@@ -24,17 +24,40 @@ module Texier::Parser
       @regexp = regexp
     end
     
-    # TODO: if pattern contains captures, return them as array.
-
     def parse_scanner(scanner)
-      result = scanner.scan(@regexp)
-      result ? [result] : nil
+      if result = scanner.scan(@regexp)
+        if captures_count > 0
+          collect_captures(scanner)
+        else
+          [result]
+        end
+      else
+        nil
+      end
+    end
+    
+    private
+    
+    # HACK: Count number of captures in regexp so i can pass them as arguments
+    # when the expression matches. This needs to be done this way, because there
+    # is no way how to get number of captured subexpression from StringScanner.
+    def captures_count
+      @captures ||= @regexp.source.scan(/(?:[^\\]|^)\((?!\?)/).size
+    end
+    
+    # Collect captured subexpression from StringScanner object.
+    def collect_captures(scanner)
+      (1..@captures).inject([]) do |result, index|
+        result << scanner[index]
+        result
+      end
     end
   end
   
   module Generators
     # Expression that matches end of line.
     def eol
+      # OPTIMIZE: Don't use regexps here, create special class for it.
       e(/$/).skip
     end
   end

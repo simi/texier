@@ -19,7 +19,7 @@
 
 module Texier::Modules
   class Link < Base
-    URL = /(https?:\/\/|www\.|ftp:\/\/)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;\#,-]+[\/\w\d+~%?@=_\#]/i
+    URL = /(?:https?:\/\/|www\.|ftp:\/\/)[a-z0-9.-][\/a-z\d+\.~%&?@=_:;\#,-]+[\/\w\d+~%?@=_\#]/i
     EMAIL = /[a-z0-9.+_-]{1,64}@[a-z0-9.+_-]{1,252}\.[a-z]{2,6}/i
 
     # TODO: obfuscate emails
@@ -80,7 +80,7 @@ module Texier::Modules
     end
 
     export_expression(:link) do
-      e(/:((\[[^\]\n]+\])|(\S*[^:);,.!?\s]))/).map do |url|
+      e(/:(?:\[[^\]\n]+\])|(?:\S*[^:);,.!?\s])/).map do |url|
         build_url(url.gsub!(/^:\[?|\]$/, ''))
       end
     end

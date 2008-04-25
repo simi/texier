@@ -45,6 +45,11 @@ class Texier::Modules::TypographyTest < Test::Unit::TestCase
     assert_output "<p>hello\xc2\xa0\xe2\x80\x94 world</p>", 'hello --- world'
   end
   
+  def test_date
+    assert_output "<p>1.\xc2\xa01.\xc2\xa01970</p>", '1. 1. 1970'
+    assert_output "<p>1.\xc2\xa01.</p>", '1. 1.'
+  end
+  
   def test_left_right_arrow
     assert_output "<p>hello \xe2\x86\x94 world</p>", 'hello <-> world'
     assert_output "<p>hello \xe2\x86\x94 world</p>", 'hello <--> world'

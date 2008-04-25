@@ -32,6 +32,11 @@ module Texier::Modules
         :double_quotes => ["\xe2\x80\x9e", "\xe2\x80\x9c"], # U+201E, U+201C
       },
 
+      'de' => {
+        :single_quotes => ["\xe2\x80\x9a", "\xe2\x80\x98"], # U+201A, U+2018
+        :double_quotes => ["\xe2\x80\x9e", "\xe2\x80\x9c"]  # U+201E, U+201C
+      },
+      
       'en' => {
         :single_quotes => ["\xe2\x80\x98", "\xe2\x80\x99"], # U+2018, U+2019
         :double_quotes => ["\xe2\x80\x9c", "\xe2\x80\x9d"]  # U+201C, U+201D
@@ -40,8 +45,13 @@ module Texier::Modules
       'fr' => {
         :single_quotes => ["\xe2\x80\xb9", "\xe2\x80\xb9"], # U+2039, U+203A
         :double_quotes => ["\xc2\xab", "\xc2\xbb"]          # U+00AB, U+00BB
+      },
+      
+      'pl' => {
+        :single_quotes => ["\xe2\x80\x9a", "\xe2\x80\x99"], # U+201A, U+2019
+        :double_quotes => ["\xe2\x80\x9e", "\xe2\x80\x9d"]  # U+201E, U+201D
       }
-
+      
       # TODO: add more locales
     }
 
@@ -54,14 +64,16 @@ module Texier::Modules
     options :locale => 'en'
 
     inline_element('typography') do
+      content = inline_element.one_or_more
+      
       quote = e('"').skip
-      double_quotes = quote & inline_element.one_or_more.up_to(quote)
+      double_quotes = quote & content.up_to(quote)
       double_quotes = double_quotes.map do |*content|
         quote(:double_quotes, content)
       end
 
       quote = e('\'').skip
-      single_quotes = quote & inline_element.one_or_more.up_to(quote)
+      single_quotes = quote & content.up_to(quote)
       single_quotes = single_quotes.map do |*content|
         quote(:single_quotes, content)
       end
@@ -73,13 +85,22 @@ module Texier::Modules
 
       # TODO: en-dash alphanum--alphanum
 
-      # TODO: date 1. 1. 1970
-
-      # TODO: date 1. 1.
+      day, month, year = e(/\d{1,2}\./), e(/\d{1,2}\./), e(/\d{2,}/)
+      space = e(' ').skip
+      
+      full_date = day & space & month & space & year
+      full_date = full_date.map do |day, month, year|
+        "#{day}\xc2\xa0#{month}\xc2\xa0#{year}"
+      end
+      
+      date_without_year = day & space & month
+      date_without_year = date_without_year.map do |day, month|
+        "#{day}\xc2\xa0#{month}"
+      end
 
       em_dash = e(' --- ') {"\xc2\xa0\xe2\x80\x94 "}
 
-      # TODO: non-breaking space after dash
+      # TODO: non-breaking space before dash
 
       left_right_arrow = e(/<-{1,2}>/) {"\xe2\x86\x94"}
       left_arrow = e(/<-+/) {"\xe2\x86\x90"}
@@ -107,9 +128,10 @@ module Texier::Modules
 
       # TODO: space between preposition and word
 
-      single_quotes | double_quotes | ellipsis | en_dash | em_dash |
-      left_right_arrow | left_arrow | right_arrow | dimension_sign | trademark | 
-      registered | copyright | euro_sign | phone_number
+      single_quotes | double_quotes | ellipsis | en_dash | em_dash | full_date |
+      date_without_year | left_right_arrow | left_arrow | right_arrow | 
+      dimension_sign | trademark | registered | copyright | euro_sign | 
+      phone_number
     end
 
     private
