@@ -1,21 +1,21 @@
-#
+# 
 # Copyright (c) 2008 Adam Ciganek <adam.ciganek@gmail.com>
-#
+# 
 # This file is part of Texier.
-#
+# 
 # Texier is free software: you can redistribute it and/or modify it under the
 # terms of the GNU General Public License version 2 as published by the Free
 # Software Foundation.
-#
+# 
 # Texier is distributed in the hope that it will be useful, but WITHOUT ANY
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 # A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License along with
 # Texier. If not, see <http://www.gnu.org/licenses/>.
-#
+# 
 # For more information please visit http://code.google.com/p/texier/
-#
+# 
 
 module Texier::Modules
   class Link < Base
@@ -39,10 +39,10 @@ module Texier::Modules
     end
 
     def before_parse(input)
-      # Collect reference defintions.
-
       return input unless base.allowed['link/definition']
 
+      # Construct a parser that collects all reference definitions in the
+      # document.
       url = e(/[^ \n]+/)
       content = e(/ */).skip & inline_element.zero_or_more.group
       value = url & content.up_to(modifier | e(/$/).skip)
@@ -57,8 +57,9 @@ module Texier::Modules
       end
 
       line = definition.skip | e(/^[^\n]*$/)
-
       document = line.zero_or_more.separated_by("\n")
+      
+      # Now run it.
       document.parse(input).join("\n")
     end
 

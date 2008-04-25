@@ -46,6 +46,7 @@ require 'modules/list'
 require 'modules/modifier'
 require 'modules/phrase'
 require 'modules/table'
+require 'modules/typography'
 
 
 
@@ -122,6 +123,7 @@ module Texier
       install Modules::List.new
       install Modules::Phrase.new
       install Modules::Table.new
+      install Modules::Typography.new
     end
 
     # Process input string in Texy format and produce output in HTML format.

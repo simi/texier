@@ -20,12 +20,11 @@
 module Texier::Parser
   # Expression that matches when regexp matches.
   class Regexp < Expression
-    def initialize(regexp = //)
+    def initialize(regexp)
       @regexp = regexp
     end
     
-    # TODO: if pattern contains captures, return them as array. For this i will
-    # need to replace StringScanner my own class though.
+    # TODO: if pattern contains captures, return them as array.
 
     def parse_scanner(scanner)
       result = scanner.scan(@regexp)

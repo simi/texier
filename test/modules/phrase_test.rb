@@ -4,6 +4,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class Texier::Modules::PhraseTest < Test::Unit::TestCase
   def setup
     @texier = Texier::Base.new
+    @texier.allowed['typography'] = false # This just simplifies testing.
   end
   
   def test_em
