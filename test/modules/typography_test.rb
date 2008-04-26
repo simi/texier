@@ -100,5 +100,4 @@ class Texier::Modules::TypographyTest < Test::Unit::TestCase
   def test_phone_number
     assert_output "<p>1\xc2\xa0234\xc2\xa0567</p>", '1 234 567'
   end
-  
 end

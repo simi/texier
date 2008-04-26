@@ -22,11 +22,12 @@ module Texier::Parser
   class Regexp < Expression
     def initialize(regexp)
       @regexp = regexp
+      @captures = count_captures
     end
     
     def parse_scanner(scanner)
       if result = scanner.scan(@regexp)
-        if captures_count > 0
+        if @captures > 0
           collect_captures(scanner)
         else
           [result]
@@ -38,14 +39,14 @@ module Texier::Parser
     
     private
     
-    # WORKAROUND: Count number of captures in regexp so i can pass them as
-    # arguments when the expression matches. This needs to be done this way,
-    # because there is no way how to get number of captured subexpression from
-    # StringScanner.
-    def captures_count
+    # Count number of subgroups in regexp so i can return them when the
+    # expression matches. This needs to be done this way, because there is no
+    # way how to get number of subgroups from StringScanner (at least i don't
+    # know of any).
+    def count_captures
       # Count number of opening parenthesis that are neither escaped, nor
-      # followed by question mark.
-      @captures ||= @regexp.source.scan(/(?:[^\\]|^)\((?!\?)/).size
+      # followed by question mark (that should equal to number of subgroups).
+      @regexp.source.scan(/(?:[^\\]|^)\((?!\?)/).size
     end
     
     # Collect captured subexpression from StringScanner object.
