@@ -3,47 +3,17 @@ require 'element'
 
 # Test case for Texier::Element class
 class Texier::ElementTest < Test::Unit::TestCase
-  def test_append_child
-    parent = Texier::Element.new('parent')
-    child = Texier::Element.new('child')
-    
-    parent << child
-    
-    assert_not_nil parent.content
-    assert_equal 1, parent.content.size
-    assert_equal 'child', parent.content[0].name
-  end
-  
   def test_has_children_should_return_false_if_content_is_nil
     element = Texier::Element.new('foo')
     
     assert !element.has_children?
   end
   
-  def test_has_children_should_return_false_if_content_is_string
-    element = Texier::Element.new('foo', 'hello world')
+  def test_array_containing_only_strings_should_be_joined_when_assigned_to_content
+    element = Texier::Element.new('em')
     
-    assert !element.has_children?
-  end
-  
-  def test_has_children_should_return_false_if_content_is_empty_array
-    element = Texier::Element.new('foo', [])
-    
-    assert !element.has_children?
-  end
-  
-  def test_has_children_should_return_true_if_element_contains_at_least_one_child
-    element = Texier::Element.new('parent')
-    element << Texier::Element.new('child')
-    
-    assert element.has_children?
-  end
-  
-  def test_array_or_strings_assigned_as_content_should_be_joined_into_single_string
-    element = Texier::Element.new('foo')
-    element.content = ['hello', ' ', 'world']
-    
-    assert_equal 'hello world', element.content
+    element.content = ['foo', 'bar']
+    assert_equal 'foobar', element.content
   end
   
   def test_attributes_should_be_accessible_as_methods
@@ -74,5 +44,12 @@ class Texier::ElementTest < Test::Unit::TestCase
     element.style['color'] = 'red'
     
     assert_equal({'color' => 'red'}, element.style)
+  end
+  
+  def test_assigning_content_should_not_modify_assigned_value
+    content = ['hello', 'world']
+    Texier::Element.new('em', content)
+    
+    assert_equal ['hello', 'world'], content
   end
 end

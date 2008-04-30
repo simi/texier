@@ -18,7 +18,7 @@
 # 
 
 module Texier
-  # Element of the Document Object Model.
+  # Element in the Document Object Model.
   class Element
     attr_accessor :name
     attr_reader :content
@@ -34,29 +34,20 @@ module Texier
         @attributes = attributes
       end
     end
-    
-    # TODO: consecutive string children should be concatenated into one.
-    
+
+    # Set a content of the element. A content can be either string, or array of
+    # child elements. Some of the child elements can be strings too.
     def content=(value)
       if value.is_a?(Array) && value.all? {|item| item.is_a?(String)}
-        value = value.join
+        @content = value.join
+      else
+        @content = value
       end
       
-      @content = value
       self
     end
 
-    # Append child element.
-    def << (child)
-      @content = [*@content].compact
-      @content << child
-      self
-    end
-
-    # Has this element any children elements?
-    def has_children?
-      content.is_a?(Array) && !content.empty?
-    end
+    public
     
     # Access attributes using methods:
     # 
@@ -71,20 +62,22 @@ module Texier
         @attributes[method]
       end
     end
-	
+
     # This is here just to suppress warning that foo.id is deprecated.
     def id
       @attributes['id']
     end
-	
+
     def id=(value)
       @attributes['id'] = value
     end
-	
+
+    # The class attribute has to be accessed as +class_name+, because method
+    # +class+ is already defined.
     def class_name=(value)
       @attributes['class'] = value
     end
-	
+
     def class_name
       @attributes['class'] ||= []
     end
@@ -92,22 +85,22 @@ module Texier
     def has_class_name?(value)
       @attributes['class'] && [*@attributes['class']].include?(value)
     end
-	
+
     def add_class_name(value)
       @attributes['class'] = [*@attributes['class']].compact
       @attributes['class'] << value if value
       self
     end
-    
+
     def remove_class_name(value)
       @attributes['class'].delete(value)
       self
     end
-    
+
     def style
       @attributes['style'] ||= {}
     end
-    
+
     # Apply modifier.
     def modify(modifier)
       modifier.each {|m| m.call(self)} if modifier

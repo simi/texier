@@ -133,7 +133,7 @@ module Texier::Modules
       tag = row.content.last.name || 'td'
 
       (count - cell_count_of(row)).times do
-        row << Texier::Element.new(tag)
+        row.content << Texier::Element.new(tag)
       end
     end
 

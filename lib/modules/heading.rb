@@ -84,12 +84,12 @@ module Texier::Modules
       # Surrounded headings
       marker = e(/ *(\#{2,}|={2,}) +/) do |line|
         # Calculate relative level of heading according to length of the marker.
-        level = [line.strip.length, 7].min
+        level = [line.length, 7].min
         level = 7 - level if more_means_higher
         level
       end
       
-      tail = e(/ *(\#{2,}|={2,})? */).skip & modifier.maybe & eol
+      tail = e(/ *(?:\#{2,}|={2,})? */).skip & modifier.maybe & eol
 
       heading = marker & inline_element.one_or_more.group.up_to(tail)
       heading.map do |level, content, modifier|
@@ -157,7 +157,7 @@ module Texier::Modules
       heading = build("h#{level + 1}", content, 'level' => level)
       heading.modify(modifier)
       heading.id ||= auto_id(content)
-
+      
       @title ||= Texier::Renderer::PlainText.new.render(heading)
       @toc << heading
 

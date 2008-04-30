@@ -13,12 +13,12 @@ class Texier::Modules::HorizLineTest < Test::Unit::TestCase
   end
   
   def test_horiz_line
-    assert_output '<hr />', '--------'
-    assert_output '<hr />', '********'
+    assert_equal_output '<hr />', '--------'
+    assert_equal_output '<hr />', '********'
   end
   
   def test_horiz_line_with_paragraph
-    assert_output(
+    assert_equal_output(
       '<p>hello world</p><hr />',
       "hello world\n\n---"
     )
