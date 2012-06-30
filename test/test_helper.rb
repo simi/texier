@@ -2,7 +2,7 @@ require 'rubygems'
 require 'test/unit'
 require 'mocha'
 
-require "#{File.dirname(__FILE__)}/../lib/base"
+require "#{File.dirname(__FILE__)}/../lib/texier"
 
 class String
   def unindent
