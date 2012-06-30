@@ -128,7 +128,7 @@ module Texier::Modules
   
         case name
         when 'class'
-          result[name] = value.select do |value|
+          result[name] = Array(value).select do |value|
             base.class_allowed?(value)
           end
         when 'id'
