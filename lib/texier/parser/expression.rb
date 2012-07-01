@@ -46,7 +46,7 @@ module Texier::Parser
     include Generators
     
     def parse_string(string)
-      parse_scanner(StringScanner.new(string))
+      parse_scanner(Texier::StringScanner.new(string))
     end
     
     alias_method :parse, :parse_string
